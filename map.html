@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENSAM x Cartier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #e0e0e0, #ffffff); /* Light gray to white gradient */
+            color: #333333; /* Dark gray text color */
+            transition: all 0.3s ease;
+        }
+        .menu {
+            display: flex;
+            justify-content: center;
+            background-color: #d3d3d3; /* Light gray background */
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+        .menu a {
+            font-family: 'Montserrat', sans-serif;
+            //font-weight: bold;
+            color: #333333; /* Dark gray text color */
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .menu a:hover {
+            background-color: #b0b0b0; /* Slightly darker gray hover color */
+        }
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: fadeIn 1.5s ease;
+        }
+        .content h1 {
+            font-size: 2.5em;
+            font-style: italic;
+            font-weight: 500;
+            text-align: center;
+            color: #bfa13a; /* Gold color */
+        }
+        .content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4f4f4f; /* Medium gray text color */
+        }
+        .content img {
+            max-width: 40%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .content img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+        .dropdown-content a {
+            font-family: 'Montserrat', sans-serif;
+            color: #2b2b2b; /* Dark gray text color */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+        }
+        .dropdown-description {
+            margin-top: 10px;
+            font-style: italic;
+            text-align: center;
+            color: #7f7f7f; /* Lighter gray text color */
+        }
+        .header-image {
+            width: 100%;
+            height: 250px;
+            background: url('static/images/header_image.jpg') no-repeat center center;
+            background-size: cover;
+            border-bottom: 5px solid #bfa13a; /* Gold border color */
+            animation: zoomIn 2s ease;
+            position: relative;
+        }
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(210, 180, 140, 0.5); /* Gold overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff; /* White text color */
+            font-size: 3em;
+            font-weight: 150;
+            font-style: italic;
+            font-family: 'Libre Bodoni', serif; /* Elegant cursive font */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .main-content {
+            flex: 1 0 auto;
+        }
+        .footer {
+            background-color: #2b2b2b; /* Dark gray background color */
+            color: #f4f4f4; /* Light gray text color */
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes zoomIn {
+            from {
+                transform: scale(1.1);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        #map {
+            width: 50%; /* Adjust the width as needed */
+            height: 360px; /* Adjust the height as needed */
+            margin: 0 auto; /* Center the map */
+            border: 2px solid #8b0000; /* Optional border for better visibility */
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .chart {
+            width: 80%; /* Largeur des graphes */
+            max-width: 1000px; /* Largeur maximale pour les graphes */
+            height: 700px; /* Hauteur fixe pour les graphes */
+            display: none; /* Cache initialement les graphes */
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            display: none; /* Cache initialement le tableau */
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-image">
+        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+    </div>
+    <div class="menu">
+        <a href="/">Home</a>
+        <a href="/#about">About</a>
+        <a href="/#services">Route calculation</a>
+    	<a href="/#graphs">Graphs and datas for a specific country</a>
+    	<a href="/#optimization">End-of-Life Process Optimization</a>
+        <a href="/#contact">Contact</a>
+    </div>
+    <div class="content">
+        <h1>Optimized Route</h1>
+        <div id="map">
+            {{ map_html|safe }}
+        </div>
+	<div>
+		<h1>Results</h1>
+		<p>Optimal itinerary: {{ best_sol }}</p>
+		<p>Distance: {{ distance }}</p>
+		<p>Carbon Footprint: {{ cbfp }}</p>
+		<img src="static/images/image_home.jpg" alt="Home Image">
+	</div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
+    </div>
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            // Show vehicle category dropdown initially
+            document.getElementById("vehicleCategoryButton").addEventListener("click", function() {
+                document.getElementById("vehicleCategoryDropdown").style.display = "block";
+            });
+        });
+        function selectVehicle(vehicle) {
+            document.getElementById('selectedVehicle').value = vehicle;
+            console.log("Selected vehicle category:", vehicle);
+            document.getElementById("selectedVehicleText").textContent = vehicle;
+            document.getElementById("selectedVehicleDisplay").style.display = "block";
+            document.getElementById("vehicleCategoryDropdownContainer").style.display = "none";
+            document.getElementById("countryDropdown").style.display = "block";
+        }
+
+        function selectCountry(country) {
+            document.getElementById("countryDropdown").style.display = "none";
+            document.getElementById(country).style.display = 'block';
+            document.getElementById('selectedService').value = country;
+            document.getElementById("selectedServiceText").textContent = country;
+            document.getElementById("selectedServiceDisplay").style.display = "block";
+            document.getElementById('selectedOption').value = ''; // Reset the option
+        }
+
+        function selectOption(option) {
+            document.getElementById('selectedOption').value = option;
+            document.getElementById("selectedOptionText").textContent = option;
+            document.getElementById("selectedOptionDisplay").style.display = "block";
+            document.getElementById("OptionDropdownContainer").style.display = "none";
+            console.log("Selected geographical area:", option);
+            // Optionally, you can submit the form here if needed:
+            // document.querySelector('form').submit();
+        }
+
+        const data = {
+            "Germany": [209.2, 40.6, 32.1, 14.7, 4.6, 0.5, 4.1, 6.7, 4.8, 0.1],
+            "France": [711.0, 104.0, 110.8, 67.4, 9.1, 0.8, 4.3, 17.3, 17.9, 0.0],
+            "Italy": [78.1, 1.7, 38.3, 18.6, 0.5, 0.2, 3.0, 0.3, 2.2, 0.0],
+            "Holland": [206.5, 33.7, 15.2, 8.4, 3.2, 0.3, 1.4, 1.4, 4.8, 0.1],
+            "Spain": [273.3, 38.9, 38.3, 20.0, 4.2, 0.4, 3.1, 5.0, 6.6, 0.1],
+            "Switzerland": [321.6, 76.7, 79.4, 53.0, 6.4, 0.2, 0.1, 11.3, 6.6, 0.2],
+            "UK": [189.4, 44.7, 28.7, 17.4, 3.5, 0.3, 1.5, 4.8, 4.1, 0.2],
+            "RLG AFRICA": [32.5, 6.7, 0.1, 0.1, 0.6, 0.1, 0.2, 0.2, 0.7, 0.0]
+        };
+
+        const materials = ["STAINLESS STEEL", "MDF LIGHT", "RECYCLED CARDBOARD", "RECYCLED POLYESTER", "MICROFIBER", "ALUMINIUM", "PAPER", "PMMA", "PP", "PVA"];
+        const carbonImpact = {
+            "MDF LIGHT": 0.818,
+            "STAINLESS STEEL": 4.91,
+            "RECYCLED CARDBOARD": 0.725,
+            "RECYCLED POLYESTER": 4.18,
+            "MICROFIBER": 12.6,
+            "ALUMINIUM": 7.6,
+            "PAPER": 1.27,
+            "PMMA": 1.18,
+            "PP": 2.32,
+            "PVA": 0.11
+        };
+
+        const densities = {
+            "MDF LIGHT": 700,
+            "STAINLESS STEEL": 8000,
+            "RECYCLED CARDBOARD": 690,
+            "RECYCLED POLYESTER": 1380,
+            "MICROFIBER": 1500,
+            "ALUMINIUM": 2700,
+            "PAPER": 1200,
+            "PMMA": 1180,
+            "PP": 900,
+            "PVA": 1300
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const countrySelect = document.getElementById("country-select");
+            Object.keys(data).forEach(country => {
+                const option = document.createElement("option");
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+        });
+
+        function updateContent() {
+            const country = document.getElementById("country-select").value;
+            if (country) {
+                updateCharts(country);
+                updateTable(country);
+                displayElements();
+            } else {
+                hideElements();
+            }
+        }
+
+        function updateCharts(country) {
+            const values = data[country];
+
+            const materialChartData = [{
+                values: values,
+                labels: materials,
+                type: 'pie',
+                hoverinfo: 'label+percent+name+value'
+            }];
+
+            const layout = {
+                title: `Material consumption in ${country} (Poids)`
+            };
+
+            Plotly.newPlot('material-chart', materialChartData, layout);
+
+            const carbonImpacts = values.map((value, index) => value * carbonImpact[materials[index].toUpperCase()]);
+            const carbonChartData = [{
+                values: carbonImpacts,
+                labels: materials,
+                type: 'pie',
+                hoverinfo: 'label+percent+name+value'
+            }];
+
+            Plotly.newPlot('carbon-chart', carbonChartData, { title: 'Distribution of Carbon Impacts by Material' });
+
+            const volumes = values.map((value, index) => value / densities[materials[index].toUpperCase()]);
+            const volumeChartData = [{
+                values: volumes,
+                labels: materials,
+                type: 'pie',
+                hoverinfo: 'label+percent+name+value'
+            }];
+
+            Plotly.newPlot('volume-chart', volumeChartData, { title: 'Distribution of Volumes by Materials' });
+        }
+
+        function updateTable(country) {
+            const values = data[country];
+            const tableBody = document.querySelector("#summary-table tbody");
+            tableBody.innerHTML = "";
+
+            let totalQuantity = 0;
+            let totalCarbonImpact = 0;
+            let totalVolume = 0;
+
+            values.forEach((value, index) => {
+                const material = materials[index];
+                const quantity = value;
+                const carbonImpactTotal = quantity * (carbonImpact[material.toUpperCase()] || 0);
+                const volume = quantity / (densities[material.toUpperCase()] || 1);
+
+                totalQuantity += quantity;
+                totalCarbonImpact += carbonImpactTotal;
+                totalVolume += volume;
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${material}</td>
+                    <td>${quantity.toFixed(2)}</td>
+                    <td>${carbonImpactTotal.toFixed(2)}</td>
+                    <td>${volume.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById("total-quantity").textContent = totalQuantity.toFixed(2);
+            document.getElementById("total-carbon-impact").textContent = totalCarbonImpact.toFixed(2);
+            document.getElementById("total-volume").textContent = totalVolume.toFixed(2);
+        }
+
+        function displayElements() {
+            document.querySelectorAll('.chart').forEach(chart => chart.style.display = 'block');
+            document.getElementById('summary-table').style.display = 'table';
+        }
+
+        function hideElements() {
+            document.querySelectorAll('.chart').forEach(chart => chart.style.display = 'none');
+            document.getElementById('summary-table').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

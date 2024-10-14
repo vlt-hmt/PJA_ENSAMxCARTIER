@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENSAM x Cartier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #e0e0e0, #ffffff); /* Light gray to white gradient */
+            color: #333333; /* Dark gray text color */
+            transition: all 0.3s ease;
+        }
+        .menu {
+            display: flex;
+            justify-content: center;
+            background-color: #d3d3d3; /* Light gray background */
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+        .menu a {
+            font-family: 'Montserrat', sans-serif;
+            //font-weight: bold;
+            color: #333333; /* Dark gray text color */
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .menu a:hover {
+            background-color: #b0b0b0; /* Slightly darker gray hover color */
+        }
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: fadeIn 1.5s ease;
+        }
+        .content h1 {
+            font-size: 2.5em;
+            font-style: italic;
+            font-weight: 500;
+            text-align: center;
+            color: #bfa13a; /* Gold color */
+        }
+        .content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4f4f4f; /* Medium gray text color */
+        }
+        .content img {
+            max-width: 40%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .content img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+        .dropdown-content a {
+            font-family: 'Montserrat', sans-serif;
+            color: #2b2b2b; /* Dark gray text color */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+        }
+        .dropdown-description {
+            margin-top: 10px;
+            font-style: italic;
+            text-align: center;
+            color: #7f7f7f; /* Lighter gray text color */
+        }
+        .header-image {
+            width: 100%;
+            height: 250px;
+            background: url('static/images/header_image.jpg') no-repeat center center;
+            background-size: cover;
+            border-bottom: 5px solid #bfa13a; /* Gold border color */
+            animation: zoomIn 2s ease;
+            position: relative;
+        }
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(210, 180, 140, 0.5); /* Gold overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff; /* White text color */
+            font-size: 3em;
+            font-weight: 150;
+            font-style: italic;
+            font-family: 'Libre Bodoni', serif; /* Elegant cursive font */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .main-content {
+            flex: 1 0 auto;
+        }
+        .footer {
+            background-color: #2b2b2b; /* Dark gray background color */
+            color: #f4f4f4; /* Light gray text color */
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes zoomIn {
+            from {
+                transform: scale(1.1);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* Modern button styles */
+        .dropbtn, button {
+            background-color: #d3d3d3; /* Green background */
+            border: none;
+            color: black; /* White text */
+            padding: 14px 20px; /* Padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* No underline */
+            display: inline-block; /* Inline block */
+            font-size: 16px; /* Font size */
+            margin: 4px 2px; /* Margin */
+            cursor: pointer; /* Pointer cursor */
+            transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow */
+        }
+        .dropbtn:hover, button:hover {
+            background-color: #b0b0b0; /* Darker green on hover */
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+        .dropbtn:focus, button:focus {
+            outline: none; /* Remove outline on focus */
+        }
+        .dropdown-content {
+            background-color: #f9f9f9; /* Light gray background */
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .chart {
+            width: 80%; /* Largeur des graphes */
+            max-width: 1000px; /* Largeur maximale pour les graphes */
+            height: 700px; /* Hauteur fixe pour les graphes */
+            display: none; /* Cache initialement les graphes */
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            display: none; /* Cache initialement le tableau */
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+	.partPVBody {
+            font-size: 1.2em;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4f4f4f; /* Medium gray text color */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+	}
+	.partBody {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2em;
+            line-height: 1.6;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+	}
+        select, button {
+            margin: 10px;
+            padding: 8px;
+        }
+        #emissionsChartContainer {
+            width: 30%;
+            display: flex;
+            justify-content: center;
+        }
+        #emissionsChart {
+            width: 100%;
+            aspect-ratio: 3 / 2;
+        }
+        #instruction, #lowestImpact, #transportNote {
+            font-size: 16px;
+            text-align: center;
+            margin-top: 20px;
+            width: 80%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header-image">
+        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+    </div>
+
+    <div class="menu">
+        <a onclick="showSection('home')">Home</a>
+        <a onclick="showSection('about')">About</a>
+        <a onclick="showSection('services')">Route calculation</a>
+    	<a onclick="showSection('graphs')">Graphs and datas for a specific country</a>
+    	<a onclick="showSection('optimization')">End-of-Life Process Optimization</a>
+        <a onclick="showSection('contact')">Contact</a>
+    </div>
+
+    <div class="content" id="home">
+        <h1>Welcome to our project page</h1>
+        <p>Dive into a new era of responsible luxury: ENSAM and Cartier are reinventing fine jewelry by combining exceptional craftsmanship with sustainable innovation for a greener future. Together, let's shape the eco-friendly elegance of tomorrow.</p>
+        <img src="static/images/image_home.jpg" alt="Home Image">
+        <div class="dropdown-description">Explore "About" to find more details on our calculation methods, "Route Calculation" to calculate your optimal collection route, "Graphs and datas for a specific country" to find interesting graphs over the material consuption per country and End-of-Life Process Optimization to help you find the best end-of-life for your POSM</div>
+    </div>
+    <div class="content" id="about" style="display:none;">
+        <h1>About our project</h1>
+        <h2>The Multiple Depot Vehicle Routing Problem (MDVRP).</h2>
+        <p>The Multiple Depot Vehicle Routing Problem (MDVRP) is an optimization and logistical challenge where a set of vehicles stationed at multiple depots must deliver goods to various customers. The primary goal is to minimize the total route cost, often quantified as the total distance traveled or the total time spent, while adhering to certain constraints such as vehicle capacity and service time windows. The MDVRP seeks to optimize these routes across all depots. Optimization algorithms such as Genetic Algorithms, Simulated Annealing, or more traditional approaches like Linear Programming and Integer Programming can be used. These algorithms adjust customer assignments and routes to minimize the overall system cost. The process involves iterative techniques where routes are continuously refined to find a more optimized set of routes.</p>
+        <h2>What are the benefits for a company like Cartier?</h2>
+        <p>For a company like Cartier, renowned for luxury jewelry and watches, implementing MDVRP can have significant environmental and operational benefits.</p>
+        <p><U><B>1. Reduced Mileage of the vehicles used:</B></U> optimized collection routes leads to the minimization of the distance traveled by vehicles. Less travel translates directly into reduced fuel consumption, which lowers the carbon emissions associated with logistics. </p>
+        <p><U><B>2. Decreased Number of Vehicles:</B></U> optimized routing leads to fewer vehicles used. This reduces the carbon footprint associated with the vehicle fleet's maintenance and operational energy usage.</p>
+        <p><U><B>3. Enhanced Corporate Responsibility:</B></U> For a luxury brand like Cartier, reducing the carbon footprint aligns with global sustainability goals and enhances the company's image as environmentally responsible. This alignment can strengthen brand loyalty among eco-conscious consumers.
+        Moreover, environmental regulations are becoming stricter globally, and companies are expected to show proactive efforts in reducing their environmental impact. Thus choosing MDVRP, Cartier can set new standards for environmental responsability in the luxury field.</p>
+        <p><U><B>4. Cost Savings:</B></U> Reduced fuel consumption and improved vehicle efficiency lead to lower operational costs. These savings can be significant, especially when scaled across multiple depots and routes.</p>
+        <h2>Calculation method: Genetic Algorithm</h2>
+        <p>The genetic algorithm method, or simply genetic algorithm (GA), is a metaheuristic optimization technique based on the principles of genetics and natural selection. It is particularly useful for solving complex problems such as the Multiple Depot Vehicle Routing Problem (MDVRP), where the solution space is extremely vast and exhaustive exploration would be impractical due to excessive calculation time.</p>
+        <p>To illustrate, let's consider the 15 Cartier stores in France. Let's suppose that the number of potential depots is equal to 30 and the store are visited only once by a truck. The number of possible routes without digital optimization is astronomically high, and even factorial. Thus, the number of calculation would be equal to : 1.1962222e+56. The CPU of a extremely powerful computer can do approximately 3 billion calculation per second. Thus, by exploring each solutions it will take 2 billion billion billion billion years to only calculate a optimized route for the french Cartier stores. Thus, a brute-force approach could take an exponentially longer time, proving impractical or impossible with current computing resources.
+        In contrast, a genetic algorithm, can start producing feasible routes within just a few generations, often in a matter of minutes or seconds, depending on the complexity and the implementation specifics.</p>
+
+        <img src="static/images/image_about.jpg" alt="About Image">
+    </div>
+    <div class="content" id="services" style="display:none;">
+     <h1>Determination of collection route</h1>
+     <p>On this page please indicate your vehicle category, country and geographical area of ​​collection.</p>
+      <div class="partBody">
+        <div class="dropdown" id="vehicleCategoryDropdownContainer">
+            <button class="dropbtn" id="vehicleCategoryButton">Vehicle Category (MPLW)</button>
+            <div class="dropdown-content" id="vehicleCategoryDropdown">
+                <a href="#" onclick="selectVehicle('< 1,5 t gasoline')">< 1,5 t gasoline</a>
+                <a href="#" onclick="selectVehicle('< 1,5 t diesel')">< 1,5 t diesel</a>
+                <a href="#" onclick="selectVehicle('1,5 to 2,5 t gasoline')">1,5 to 2,5 t gasoline</a>
+                <a href="#" onclick="selectVehicle('1,5 to 2,5 t diesel')">1,5 to 2,5 t diesel</a>
+                <a href="#" onclick="selectVehicle('2,51 to 3,5 t gasoline')">2,51 to 3,5 t gasoline</a>
+                <a href="#" onclick="selectVehicle('2,51 to 3,5 t diesel')">2,51 to 3,5 t diesel</a>
+            </div>
+        </div>
+        <p id="selectedVehicleDisplay" style="display:none;">Selected Vehicle: <span id="selectedVehicleText"></span></p>
+        <div class="dropdown" id="countryDropdown" style="display:none;">
+            <button class="dropbtn">Country</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="selectCountry('France')">France</a>
+                <a href="#" onclick="selectCountry('Germany')">Germany</a>
+                <a href="#" onclick="selectCountry('Italy')">Italy</a>
+                <a href="#" onclick="selectCountry('Netherlands')">Netherlands</a>
+                <a href="#" onclick="selectCountry('Spain')">Spain</a>
+                <a href="#" onclick="selectCountry('Switzerland')">Switzerland</a>
+                <a href="#" onclick="selectCountry('United Kingdom')">United Kingdom</a>
+                <a href="#" onclick="selectCountry('Türkiye')">Türkiye</a>
+                <a href="#" onclick="selectCountry('RLG Africa')">RLG Africa</a>
+            </div>
+        </div>
+        <p id="selectedServiceDisplay" style="display:none;">Selected Country: <span id="selectedServiceText"></span></p>
+        <div id="France" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Paris')">Paris</a>
+                    <a href="#" onclick="selectOption('Bordeaux')">Bordeaux</a>
+                    <a href="#" onclick="selectOption('South-East')">South-East</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="Germany" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Berlin')">Berlin</a>
+                    <a href="#" onclick="selectOption('Frankfurt')">Frankfurt</a>
+                    <a href="#" onclick="selectOption('Munich')">Munich</a>
+                    <a href="#" onclick="selectOption('Düsseldorf')">Düsseldorf</a>
+                    <a href="#" onclick="selectOption('Hamburg')">Hamburg</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="Italy" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Milan')">Milan</a>
+                    <a href="#" onclick="selectOption('Florence')">Florence</a>
+                    <a href="#" onclick="selectOption('Venice')">Venice</a>
+                    <a href="#" onclick="selectOption('Roma')">Roma</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="Netherlands" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Amsterdam')">Amsterdam</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="Spain" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Madrid')">Madrid</a>
+                    <a href="#" onclick="selectOption('Barcelona')">Barcelona</a>
+                    <a href="#" onclick="selectOption('Palma')">Palma</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="Switzerland" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Geneva')">Geneva</a>
+                    <a href="#" onclick="selectOption('Lugano')">Lugano</a>
+                    <a href="#" onclick="selectOption('St Moritz')">St Moritz</a>
+                    <a href="#" onclick="selectOption('Basel')">Basel</a>
+                    <a href="#" onclick="selectOption('Interlaken')">Interlaken</a>
+                    <a href="#" onclick="selectOption('Zürich')">Zürich</a>
+                    <a href="#" onclick="selectOption('Lucerne')">Lucerne</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="United Kingdom" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('London')">London</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="Türkiye" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Istanbul')">Istanbul</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <div id="RLG Africa" class="geographical-area" style="display:none;">
+            <div class="dropdown" id="OptionDropdownContainer">
+                <button class="dropbtn">Geographical area</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="selectOption('Johannesburg')">Johannesburg</a>
+                </div>
+            </div>
+        </div>
+        <p id="selectedOptionDisplay" style="display:none;">Selected geographical area: <span id="selectedOptionText"></span></p>
+        <form action="/submit" method="post">
+            <input type="hidden" name="vehicle" id="selectedVehicle" value="">
+            <input type="hidden" name="service" id="selectedService" value="">
+            <input type="hidden" name="option" id="selectedOption" value="">
+            <button type="submit">Submit</button>
+        </form>
+      </div>
+     <img src="static/images/image_home.jpg" alt="Home Image">
+    </div>
+
+    <div class="content" id="graphs" style="display:none;">
+        <h1>Graphs and datas for a specific country</h1>
+            <div class="partBody">
+                <label for="country-select">Select a country :</label>
+                <select id="country-select" onchange="updateContent()">
+                    <option value="">Country selected</option>
+                </select>
+            </div>
+        <div class="chart-container">
+            <div id="material-chart" class="chart"></div>
+            <div id="carbon-chart" class="chart"></div>
+            <div id="volume-chart" class="chart"></div>
+        </div>
+        <table id="summary-table">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Quantity (kg)</th>
+                    <th>Carbon footprint (kgCO2)</th>
+                    <th>Volume (m³)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th id="total-quantity">0</th>
+                    <th id="total-carbon-impact">0</th>
+                    <th id="total-volume">0</th>
+                </tr>
+            </tfoot>
+	    <caption> Quantity, Carbon footprint and Volume per materials used in the EOY24 POSM campaign </caption>
+        </table>
+        <img src="static/images/image_home.jpg" alt="Home Image">
+    </div>
+    <div class="content" id="optimization" style="display:none;">
+            <div class="partPVBody">
+                <h1>End-of-Life Process Optimization</h1>
+                <div id="instruction">Choose a material, an allocation coefficient and enter the weight to calculate emissions.</div>
+                <label for="material-select">Material:</label>
+                <select id="material-select" onchange="calculateEmissions()">
+            	    <option value="">Material selected</option>
+		</select>
+                <label for="allocation-factor">Allocation coefficient (%):</label>
+                <select id="allocation-factor" onchange="calculateEmissions()">
+            	    <option value="0">0%</</option>
+            	    <option value="0.1">10%</option>
+        	    <option value="0.2">20%</option>
+        	    <option value="0.3">30%</option>
+        	    <option value="0.4">40%</option>
+        	    <option value="0.5">50%</option>
+        	    <option value="0.6">60%</option>
+        	    <option value="0.7">70%</option>
+        	    <option value="0.8">80%</option>
+        	    <option value="0.9">90%</option>
+        	    <option value="1">100%</option>
+                </select>
+                <label for="material-weight">Weight (kg):</label>
+                <input type="text" id="material-weight" value="1" onchange="calculateEmissions()">
+                <button onclick="calculateEmissions()">Calculer les émissions</button>
+                <div id="emissionsChartContainer">
+        	    <canvas id="emissionsChart"></canvas>
+                </div>
+                <div id="lowestImpact"></div>
+                <div id="transportNote">Note, the transport distance between the waste treatment site and the disposal site must be taken into account when calculating the carbon impact of the end-of-life process. 
+The data used for the calculations comes from ADEME's carbon base Version 2023.1.0</div>
+            </div>
+        <img src="static/images/image_contact.jpg" alt="Contact Image">
+    </div>
+    <div class="content" id="contact" style="display:none;">
+        <h1>Contact Us</h1>
+        <p>baptiste.legier@ensam.eu</p>
+        <p>pierre-vincent.arcade@ensam.eu</p>
+        <p>valentin.hyaumet@ensam.eu</p>
+        <img src="static/images/image_contact.jpg" alt="Contact Image">
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            // Show vehicle category dropdown initially
+            document.getElementById("vehicleCategoryButton").addEventListener("click", function() {
+                document.getElementById("vehicleCategoryDropdown").style.display = "block";
+            });
+        });
+        function selectVehicle(vehicle) {
+            document.getElementById('selectedVehicle').value = vehicle;
+            console.log("Selected vehicle category:", vehicle);
+            document.getElementById("selectedVehicleText").textContent = vehicle;
+            document.getElementById("selectedVehicleDisplay").style.display = "block";
+            document.getElementById("vehicleCategoryDropdownContainer").style.display = "none";
+            document.getElementById("countryDropdown").style.display = "block";
+        }
+
+        function selectCountry(country) {
+            document.getElementById("countryDropdown").style.display = "none";
+            document.getElementById(country).style.display = 'block';
+            document.getElementById('selectedService').value = country;
+            document.getElementById("selectedServiceText").textContent = country;
+            document.getElementById("selectedServiceDisplay").style.display = "block";
+            document.getElementById('selectedOption').value = ''; // Reset the option
+        }
+
+        function selectOption(option) {
+            document.getElementById('selectedOption').value = option;
+            document.getElementById("selectedOptionText").textContent = option;
+            document.getElementById("selectedOptionDisplay").style.display = "block";
+            document.getElementById("OptionDropdownContainer").style.display = "none";
+            console.log("Selected geographical area:", option);
+            // Optionally, you can submit the form here if needed:
+            // document.querySelector('form').submit();
+        }
+
+        const data = {
+            "Germany": [209.2, 40.6, 32.1, 14.7, 4.6, 0.5, 4.1, 6.7, 4.8, 0.1],
+            "France": [711.0, 104.0, 110.8, 67.4, 9.1, 0.8, 4.3, 17.3, 17.9, 0.0],
+            "Italy": [78.1, 1.7, 38.3, 18.6, 0.5, 0.2, 3.0, 0.3, 2.2, 0.0],
+            "Netherlands": [206.5, 33.7, 15.2, 8.4, 3.2, 0.3, 1.4, 1.4, 4.8, 0.1],
+            "Spain": [273.3, 38.9, 38.3, 20.0, 4.2, 0.4, 3.1, 5.0, 6.6, 0.1],
+            "Switzerland": [321.6, 76.7, 79.4, 53.0, 6.4, 0.2, 0.1, 11.3, 6.6, 0.2],
+            "UK": [189.4, 44.7, 28.7, 17.4, 3.5, 0.3, 1.5, 4.8, 4.1, 0.2],
+            "RLG AFRICA": [32.5, 6.7, 0.1, 0.1, 0.6, 0.1, 0.2, 0.2, 0.7, 0.0]
+        };
+
+        const materials = ["STAINLESS STEEL", "MDF LIGHT", "RECYCLED CARDBOARD", "RECYCLED POLYESTER", "MICROFIBER", "ALUMINIUM", "PAPER", "PMMA", "PP", "PVA"];
+        const carbonImpact = {
+            "MDF LIGHT": 0.818,
+            "STAINLESS STEEL": 4.91,
+            "RECYCLED CARDBOARD": 0.725,
+            "RECYCLED POLYESTER": 4.18,
+            "MICROFIBER": 12.6,
+            "ALUMINIUM": 7.6,
+            "PAPER": 1.27,
+            "PMMA": 1.18,
+            "PP": 2.32,
+            "PVA": 0.11
+        };
+
+        const densities = {
+            "MDF LIGHT": 700,
+            "STAINLESS STEEL": 8000,
+            "RECYCLED CARDBOARD": 690,
+            "RECYCLED POLYESTER": 1380,
+            "MICROFIBER": 1500,
+            "ALUMINIUM": 2700,
+            "PAPER": 1200,
+            "PMMA": 1180,
+            "PP": 900,
+            "PVA": 1300
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const countrySelect = document.getElementById("country-select");
+            Object.keys(data).forEach(country => {
+                const option = document.createElement("option");
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+        });
+
+        function updateContent() {
+            const country = document.getElementById("country-select").value;
+            if (country) {
+                updateCharts(country);
+                updateTable(country);
+                displayElements();
+            } else {
+                hideElements();
+            }
+        }
+
+        function updateCharts(country) {
+            const values = data[country];
+
+            const materialChartData = [{
+                values: values,
+                labels: materials,
+                type: 'pie',
+                hoverinfo: 'label+percent+name+value'
+            }];
+
+            const layout = {
+                title: `Material consumption in ${country} (Weight)`
+            };
+
+            Plotly.newPlot('material-chart', materialChartData, layout);
+
+            const carbonImpacts = values.map((value, index) => value * carbonImpact[materials[index].toUpperCase()]);
+            const carbonChartData = [{
+                values: carbonImpacts,
+                labels: materials,
+                type: 'pie',
+                hoverinfo: 'label+percent+name+value'
+            }];
+
+            Plotly.newPlot('carbon-chart', carbonChartData, { title: 'Distribution of Carbon Impacts by Material' });
+
+            const volumes = values.map((value, index) => value / densities[materials[index].toUpperCase()]);
+            const volumeChartData = [{
+                values: volumes,
+                labels: materials,
+                type: 'pie',
+                hoverinfo: 'label+percent+name+value'
+            }];
+
+            Plotly.newPlot('volume-chart', volumeChartData, { title: 'Distribution of Volumes by Materials' });
+        }
+
+        function updateTable(country) {
+            const values = data[country];
+            const tableBody = document.querySelector("#summary-table tbody");
+            tableBody.innerHTML = "";
+
+            let totalQuantity = 0;
+            let totalCarbonImpact = 0;
+            let totalVolume = 0;
+
+            values.forEach((value, index) => {
+                const material = materials[index];
+                const quantity = value;
+                const carbonImpactTotal = quantity * (carbonImpact[material.toUpperCase()] || 0);
+                const volume = quantity / (densities[material.toUpperCase()] || 1);
+
+                totalQuantity += quantity;
+                totalCarbonImpact += carbonImpactTotal;
+                totalVolume += volume;
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${material}</td>
+                    <td>${quantity.toFixed(2)}</td>
+                    <td>${carbonImpactTotal.toFixed(2)}</td>
+                    <td>${volume.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById("total-quantity").textContent = totalQuantity.toFixed(2);
+            document.getElementById("total-carbon-impact").textContent = totalCarbonImpact.toFixed(2);
+            document.getElementById("total-volume").textContent = totalVolume.toFixed(2);
+        }
+
+        function displayElements() {
+            document.querySelectorAll('.chart').forEach(chart => chart.style.display = 'block');
+            document.getElementById('summary-table').style.display = 'table';
+        }
+
+        function hideElements() {
+            document.querySelectorAll('.chart').forEach(chart => chart.style.display = 'none');
+            document.getElementById('summary-table').style.display = 'none';
+        }
+
+        const materialsData = [
+            { name: "Rigid Plastic PS-PSE", incinerationImpact: 2970, recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: -704, recyclingAvoided: -1705, methanationAvoided: 'N/A' },
+            { name: "Bio-based Plastic PP", incinerationImpact: 122, recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: -768, recyclingAvoided: -1310, methanationAvoided: 'N/A' },
+            { name: "Petro-based Plastic PP", incinerationImpact: 2770, recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: -768, recyclingAvoided: -1310, methanationAvoided: 'N/A' },
+            { name: "Bio-based Plastic PE", incinerationImpact: 122, recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: -747, recyclingAvoided: -1130, methanationAvoided: 'N/A' },
+            { name: "Petro-based Plastic PE", incinerationImpact: 2770, recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: -747, recyclingAvoided: -1130, methanationAvoided: 'N/A' },
+            { name: "Steel", incinerationImpact: 'N/A', recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: -2090, methanationAvoided: 'N/A' },
+            { name: "Aluminum", incinerationImpact: 'N/A', recyclingImpact: 873, methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: -8430, methanationAvoided: 'N/A' },
+            { name: "Glass", incinerationImpact: 130, recyclingImpact: 639, methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: -1160, methanationAvoided: 'N/A' },
+            { name: "Cardboard", incinerationImpact: 120, recyclingImpact: 992, methanationImpact: 110, incinerationAvoided: -260, recyclingAvoided: -379, methanationAvoided: -77 },
+            { name: "Petro-based Plastic PET", incinerationImpact: 2140, recyclingImpact: 662, methanationImpact: 'N/A', incinerationAvoided: -384, recyclingAvoided: -1740, methanationAvoided: 'N/A' },
+            { name: "Bio-based Plastic PET", incinerationImpact: 160, recyclingImpact: 18, methanationImpact: 'N/A', incinerationAvoided: -384, recyclingAvoided: -1740, methanationAvoided: 'N/A' },
+            { name: "Residual Household Waste", incinerationImpact: 374, recyclingImpact: 18, methanationImpact: 110, incinerationAvoided: -212, recyclingAvoided: 'N/A', methanationAvoided: -77 },
+            { name: "Putrescible Waste", incinerationImpact: 45, recyclingImpact: 'N/A', methanationImpact: 'N/A', incinerationAvoided: -126, recyclingAvoided: 'N/A', methanationAvoided: 'N/A' },
+            { name: "Ceramics and Other Inerts", incinerationImpact: 130, recyclingImpact: 'N/A', methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: 'N/A', methanationAvoided: 'N/A' },
+            { name: "Wood", incinerationImpact: 69, recyclingImpact: 'N/A', methanationImpact: 'N/A', incinerationAvoided: -405, recyclingAvoided: 'N/A', methanationAvoided: 'N/A' },
+            { name: "Other Complex Plastics", incinerationImpact: 2660, recyclingImpact: 'N/A', methanationImpact: 'N/A', incinerationAvoided: -651, recyclingAvoided: 'N/A', methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PVC", incinerationImpact: 4610, recyclingImpact: 141, methanationImpact: 'N/A', incinerationAvoided: -299, recyclingAvoided: -1850, methanationAvoided: 'N/A' },
+            { name: "Medium Plastic", incinerationImpact: 5560, recyclingImpact: 'N/A', methanationImpact: 'N/A', incinerationAvoided: -626, recyclingAvoided: 'N/A', methanationAvoided: 'N/A' },
+            { name: "Food Waste", incinerationImpact: 2930, recyclingImpact: 'N/A', methanationImpact: 18, incinerationAvoided: -97.3, recyclingAvoided: 'N/A', methanationAvoided: -77 },
+            { name: "Kitchen Waste", incinerationImpact: 'N/A', recyclingImpact: 'N/A', methanationImpact: 173, incinerationAvoided: 'N/A', recyclingAvoided: 'N/A', methanationAvoided: -12 },
+            { name: "Rigid Plastic PE Bottles", incinerationImpact: 2915, recyclingImpact: 434, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1440, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PE Other Packaging", incinerationImpact: 2915, recyclingImpact: 434, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1440, methanationAvoided: 'N/A' },
+            { name: "Flexible Plastic PE", incinerationImpact: 2915, recyclingImpact: 530, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1130, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PP Bottles", incinerationImpact: 2915, recyclingImpact: 434, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1310, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PP Other Packaging", incinerationImpact: 2915, recyclingImpact: 434, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1310, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PET Bottles", incinerationImpact: 2915, recyclingImpact: 662, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1740, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PET Other Packaging", incinerationImpact: 2915, recyclingImpact: 662, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1740, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PET/Flake Recycling", incinerationImpact: 2915, recyclingImpact: 480, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1510, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PET/Granule Recycling", incinerationImpact: 2915, recyclingImpact: 548, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1630, methanationAvoided: 'N/A' },
+            { name: "Flexible Plastic PE/Granule Recycling", incinerationImpact: 2915, recyclingImpact: 134, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1640, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PP/Granule Recycling", incinerationImpact: 2915, recyclingImpact: 173, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1600, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PE/Flake Recycling", incinerationImpact: 2915, recyclingImpact: 258, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1450, methanationAvoided: 'N/A' },
+            { name: "Rigid Plastic PE/Granule Recycling", incinerationImpact: 2915, recyclingImpact: 313, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1390, methanationAvoided: 'N/A' },
+            { name: "Aluminum/Recycling", incinerationImpact: 'N/A', recyclingImpact: 873, methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: -8430, methanationAvoided: 'N/A' },
+            { name: "Glass/Recycling", incinerationImpact: 'N/A', recyclingImpact: 639, methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: -1160, methanationAvoided: 'N/A' },
+            { name: "Cardboard/Recycling", incinerationImpact: 'N/A', recyclingImpact: 992, methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: -379, methanationAvoided: 'N/A' },
+            { name: "Kitchen Waste/Methanation", incinerationImpact: 'N/A', recyclingImpact: 'N/A', methanationImpact: 173, incinerationAvoided: 'N/A', recyclingAvoided: 'N/A', methanationAvoided: -12 },
+            { name: "Class B Wood", incinerationImpact: 'N/A', recyclingImpact: 'N/A', methanationImpact: 'N/A', incinerationAvoided: 'N/A', recyclingAvoided: 'N/A', methanationAvoided: -24 },
+            { name: "Rigid Plastic PVC/Recycling", incinerationImpact: 2915, recyclingImpact: 141, methanationImpact: 'N/A', incinerationAvoided: -1093, recyclingAvoided: -1850, methanationAvoided: 'N/A' }
+        ];
+
+        function fillMaterialOptions() {
+            const select = document.getElementById('material-select');
+            materialsData.forEach(material => {
+                const option = document.createElement('option');
+                option.value = material.name;
+                option.textContent = material.name;
+                select.appendChild(option);
+            });
+        }
+
+        function calculateEmissions() {
+            const selectedMaterial = document.getElementById('material-select').value;
+            const allocationFactor = parseFloat(document.getElementById('allocation-factor').value.replace(',', '.'));
+            const weightInput = document.getElementById('material-weight').value.replace(',', '.');
+            const weightInKg = parseFloat(weightInput);
+
+            if (isNaN(weightInKg) || weightInKg <= 0) {
+                alert("Please set a valid weight");
+                return;
+            }
+
+            const weightInTonnes = weightInKg / 1000; // Conversion de kg en tonnes
+
+            const material = materialsData.find(m => m.name === selectedMaterial);
+
+            const incinerationTotal = material.incinerationImpact === 'N/A' ? 0 : (material.incinerationImpact + material.incinerationAvoided) * weightInTonnes;
+            const recyclingTotal = material.recyclingImpact === 'N/A' ? 0 : (material.recyclingImpact + material.recyclingAvoided) * allocationFactor * weightInTonnes;
+            const methanationTotal = material.methanationImpact === 'N/A' ? 0 : (material.methanationImpact + material.methanationAvoided) * weightInTonnes;
+
+            const data = [incinerationTotal, recyclingTotal, methanationTotal];
+            const labels = ['Incineration', 'Recycling', 'Methanization'];
+            const minImpact = Math.min(...data.filter(val => val !== 0));
+            const minImpactType = labels[data.indexOf(minImpact)];
+
+            document.getElementById('lowestImpact').textContent = `The end of life with the lowest carbon impact is: ${minImpactType} with ${minImpact.toFixed(2)} kg éq. CO2.`;
+
+            const ctx = document.getElementById('emissionsChart').getContext('2d');
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Emissions (kg éq. CO2)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        fillMaterialOptions();
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Secondaire</title>
+    <link rel="stylesheet" href="style.css"> <!-- Si tu as un fichier CSS global -->
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bienvenue sur le site web</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="page1.html">Onglet 1</a></li>
+                <li><a href="page2.html">Onglet 2</a></li>
+                <li><a href="page3.html">Onglet 3</a></li>
+                <!-- Ajoute d'autres liens si besoin -->
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Tableau des Matériaux</h2>
+        <p>Ceci est la page principale du site web avec un tableau extrait d'un fichier CSV.</p>
+        <table id="materialsTable">
+            <thead>
+                <!-- Les en-têtes de colonne seront ajoutés ici dynamiquement -->
+            </thead>
+            <tbody>
+                <!-- Les lignes de données seront ajoutées ici dynamiquement -->
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <p>&copy; 2024 Mon Site Web</p>
+    </footer>
+
+    <script>
+        const csvUrl = 'https://github.com/Bapt-Lgr/test-bapt/blob/main/csv/20241014_test.csv'; // Remplace cette URL par l'URL exacte de ton fichier CSV
+
+        // Fonction pour charger le CSV et l'afficher dans le tableau
+        async function loadCsv() {
+            try {
+                const response = await fetch(csvUrl);
+                const csvText = await response.text();
+
+                // Conversion du CSV en tableau de données
+                const rows = csvText.split('\n').map(row => row.split(','));
+
+                // Récupération des éléments du tableau HTML
+                const tableHead = document.querySelector('#materialsTable thead');
+                const tableBody = document.querySelector('#materialsTable tbody');
+
+                // Création des en-têtes de colonne à partir de la première ligne du CSV
+                const headers = rows[0];
+                const headerRow = document.createElement('tr');
+                headers.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText.trim();
+                    headerRow.appendChild(th);
+                });
+                tableHead.appendChild(headerRow);
+
+                // Création des lignes de données
+                rows.slice(1).forEach(row => {
+                    if (row.length > 1) { // Vérifie que la ligne contient des données
+                        const tr = document.createElement('tr');
+                        row.forEach(cellText => {
+                            const td = document.createElement('td');
+                            td.textContent = cellText.trim();
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    }
+                });
+            } catch (error) {
+                console.error('Erreur lors du chargement du fichier CSV:', error);
+            }
+        }
+
+        // Charger les données CSV au chargement de la page
+        window.onload = loadCsv;
+    </script>
+</body>
+</html>

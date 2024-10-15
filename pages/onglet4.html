@@ -1,53 +1,41 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENSAM x Cartier</title>
-    
-    <!-- Polices Google -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    
-    <!-- Bibliothèques externes Plotly et Chart.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Chemin relatif vers script.js et styles.css -->
-    <script src="../script.js" defer></script> 
+    <script src="script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <!-- Image d'en-tête avec un overlay de texte -->
     <div class="header-image">
         <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
     </div>
 
-    <!-- Menu de navigation -->
     <header class="menu">
         <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li> <!-- Correction du chemin vers la page d'accueil -->
-                <li><a href="onglet1.html">Onglet 1</a></li> <!-- Chemin vers onglet 1 -->
-                <li><a href="onglet2.html">Onglet 2</a></li> <!-- Chemin vers onglet 2 -->
-                <li><a href="onglet3.html">Onglet 3</a></li> <!-- Chemin vers onglet 3 -->
-                <li><a href="onglet4.html">Onglet 4</a></li> <!-- Lien actif pour onglet 4 -->
-                <li><a href="contact.html">Contact</a></li> <!-- Chemin vers la page contact -->
-            </ul>
-        </nav>
+             <ul>
+                  <li><a href="../index.html">Accueil</a></li>
+                  <li><a href="onglet1.html">Onglet 1</a></li>
+                  <li><a href="onglet2.html">Onglet 2</a></li>
+    	          <li><a href="onglet3.html">Onglet 3</a></li>
+    	          <li><a href="onglet4.html">Onglet 4</a></li>
+                  <li><a href="contact.html">Contact</a></li>
+             </ul>
+         </nav>
     </header>
 
-    <!-- Contenu principal -->
     <main class="content">
-        <h1>Onglet 4</h1>
-
-        <!-- Correction du chemin vers l'image -->
-        <img src="../static/images/image_about.jpg" alt="About Image">
+        <h1>Bienvenue sur la page de notre projet</h1>
+        <p>Ceci est la page 4.</p>
+        <img src="static/images/image_home.jpg" alt="Home Image">
+        <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
     </main>
-
-    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>
-
 </body>
 </html>

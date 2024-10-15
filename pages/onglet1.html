@@ -1,56 +1,41 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page 1</title>
-
-    <!-- Chemin relatif vers le fichier CSS -->
+    <title>ENSAM x Cartier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
-
-    <!-- Bibliothèque PapaParse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-
-    <!-- Chemin relatif vers ton fichier JavaScript -->
-    <script defer src="../script.js"></script> 
 </head>
 <body>
-
-    <!-- Image d'en-tête avec overlay -->
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div>
+        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
     </div>
 
-    <!-- Menu de navigation -->
     <header class="menu">
         <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="onglet1.html">Onglet 1</a></li>
-                <li><a href="onglet2.html">Onglet 2</a></li>
-                <li><a href="onglet3.html">Onglet 3</a></li>
-                <li><a href="onglet4.html">Onglet 4</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
+             <ul>
+                  <li><a href="../index.html">Accueil</a></li>
+                  <li><a href="onglet1.html">Onglet 1</a></li>
+                  <li><a href="onglet2.html">Onglet 2</a></li>
+    	          <li><a href="onglet3.html">Onglet 3</a></li>
+    	          <li><a href="onglet4.html">Onglet 4</a></li>
+                  <li><a href="contact.html">Contact</a></li>
+             </ul>
+         </nav>
     </header>
 
-    <!-- Contenu principal -->
     <main class="content">
-        <h1>Bienvenue sur Page 1</h1>
-        <p>Ceci est la page 1 du site web.</p>
-
-        <!-- Sélection dans la liste -->
-        <label for="item-select">Choisissez un élément :</label>
-        <select id="item-select">
-            <option value="">Sélectionnez un élément</option>
-        </select>
+        <h1>Bienvenue sur la page de notre projet</h1>
+        <p>Ceci est la page 1.</p>
+        <img src="static/images/image_home.jpg" alt="Home Image">
+        <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
     </main>
-
-    <!-- Pied de page -->
-    <footer>
-        <p>&copy; 2024 Mon Site Web</p>
-    </footer>
-
+    <div class="footer">
+        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
+    </div>
 </body>
 </html>

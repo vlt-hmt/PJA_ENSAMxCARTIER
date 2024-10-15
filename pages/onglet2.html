@@ -8,26 +8,30 @@
     <!-- Chemin relatif vers le fichier CSS global -->
     <link rel="stylesheet" href="../styles.css"> 
 
-
 </head>
 <body>
 
-    <!-- En-tête de la page -->
-    <header>
-        <h1>Bienvenue sur le site web</h1>
+    <!-- Image d'en-tête avec overlay -->
+    <div class="header-image">
+        <div class="header-overlay">ENSAM x Cartier</div>
+    </div>
+
+    <!-- Menu de navigation -->
+    <header class="menu">
         <nav>
             <ul>
-                <li><a href="../index.html">Accueil</a></li> <!-- Chemin correct vers l'accueil -->
-                <li><a href="onglet1.html">Onglet 1</a></li> <!-- Lien vers onglet 1 -->
-                <li><a href="onglet2.html">Onglet 2</a></li> <!-- Lien vers onglet 2 -->
-                <li><a href="onglet3.html">Onglet 3</a></li> <!-- Lien vers onglet 3 -->
-                <!-- Ajoute d'autres liens si besoin -->
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="onglet1.html">Onglet 1</a></li>
+                <li><a href="onglet2.html">Onglet 2</a></li>
+                <li><a href="onglet3.html">Onglet 3</a></li>
+                <li><a href="onglet4.html">Onglet 4</a></li>
+                <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
     </header>
 
     <!-- Contenu principal -->
-    <main>
+    <main class="content">
         <h2>Tableau des Matériaux</h2>
         <p>Ceci est la page principale du site web avec un tableau extrait d'un fichier CSV.</p>
         <table id="materialsTable">

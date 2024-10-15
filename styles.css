@@ -6,6 +6,37 @@ body {
     color: #333333; /* Dark gray text color */
     transition: all 0.3s ease;
 }
+/* Menu principal - Configuration pour un affichage horizontal */
+.menu nav ul {
+    display: flex; /* Affichage en ligne avec Flexbox */
+    justify-content: center; /* Centre les éléments horizontalement */
+    list-style: none; /* Supprime les puces de la liste */
+    padding: 0; /* Retire le padding par défaut */
+    margin: 0; /* Retire la marge par défaut */
+}
+
+/* Style des éléments du menu */
+.menu nav ul li {
+    margin: 0 15px; /* Espace horizontal entre les éléments */
+}
+
+/* Style des liens du menu */
+.menu nav ul li a {
+    font-family: 'Montserrat', sans-serif;
+    color: #333333; /* Couleur du texte gris foncé */
+    padding: 10px 15px; /* Espace intérieur pour agrandir la zone cliquable */
+    text-decoration: none; /* Retire le soulignement */
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Effet au survol du menu */
+.menu nav ul li a:hover {
+    background-color: #b0b0b0; /* Couleur de fond gris foncé au survol */
+    border-radius: 5px; /* Coins arrondis pour un effet moderne */
+}
+
 .menu {
     display: flex;
     justify-content: center;

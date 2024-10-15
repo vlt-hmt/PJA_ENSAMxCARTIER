@@ -1,41 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENSAM x Cartier</title>
+    
+    <!-- Polices et bibliothèques externes -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Fichiers locaux -->
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <!-- Image d'en-tête avec un overlay de texte -->
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+        <div class="header-overlay">ENSAM x Cartier</div>
     </div>
 
+    <!-- Menu de navigation -->
     <header class="menu">
         <nav>
-             <ul>
-                  <li><a href="index.html">Accueil</a></li>
-                  <li><a href="pages/onglet1.html">Onglet 1</a></li>
-                  <li><a href="pages/onglet2.html">Onglet 2</a></li>
-    	          <li><a href="pages/onglet3.html">Onglet 3</a></li>
-    	          <li><a href="pages/onglet4.html">Onglet 4</a></li>
-                  <li><a href="pages/contact.html">Contact</a></li>
-             </ul>
-         </nav>
+            <ul>
+                <li><a href="../index.html">Accueil</a></li> <!-- Corrigé pour revenir à la racine -->
+                <li><a href="onglet1.html">Onglet 1</a></li> <!-- Chemin relatif à la page actuelle -->
+                <li><a href="onglet2.html">Onglet 2</a></li>
+                <li><a href="onglet3.html">Onglet 3</a></li>
+                <li><a href="onglet4.html">Onglet 4</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
+    <!-- Contenu principal -->
     <main class="content">
         <h1>Bienvenue sur la page 3 de notre projet</h1>
         <p>Ceci est la page numéro 3 de notre site web.</p>
-        <img src="static/images/image_home.jpg" alt="Home Image">
-        <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
+
+        <!-- Image locale, corrigé le chemin vers l'image -->
+        <img src="../static/images/image_home.jpg" alt="Image d'accueil">
+
+        <div class="dropdown-description">
+            Si jamais il y a besoin d'un sous-titre pour faire stylé sur la page d'accueil, le voilà.
+        </div>
     </main>
+
+    <!-- Footer -->
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>
+
 </body>
 </html>

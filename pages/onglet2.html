@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Secondaire</title>
-    <link rel="stylesheet" href="../styles.css"> <!-- Si tu as un fichier CSS global -->
+
+    <!-- Chemin relatif vers le fichier CSS global -->
+    <link rel="stylesheet" href="../styles.css"> 
+
+    <!-- Style pour le tableau -->
     <style>
         table {
             width: 100%;
@@ -20,18 +24,22 @@
     </style>
 </head>
 <body>
+
+    <!-- En-tête de la page -->
     <header>
         <h1>Bienvenue sur le site web</h1>
         <nav>
             <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="../pages/onglet1.html">Onglet 1</a></li>
-                <li><a href="../pages/onglet2.html">Onglet 2</a></li>
-                <li><a href="../pages/onglet3.html">Onglet 3</a></li>
+                <li><a href="../index.html">Accueil</a></li> <!-- Chemin correct vers l'accueil -->
+                <li><a href="onglet1.html">Onglet 1</a></li> <!-- Lien vers onglet 1 -->
+                <li><a href="onglet2.html">Onglet 2</a></li> <!-- Lien vers onglet 2 -->
+                <li><a href="onglet3.html">Onglet 3</a></li> <!-- Lien vers onglet 3 -->
                 <!-- Ajoute d'autres liens si besoin -->
             </ul>
         </nav>
     </header>
+
+    <!-- Contenu principal -->
     <main>
         <h2>Tableau des Matériaux</h2>
         <p>Ceci est la page principale du site web avec un tableau extrait d'un fichier CSV.</p>
@@ -44,8 +52,11 @@
             </tbody>
         </table>
     </main>
+
+    <!-- Pied de page -->
     <footer>
         <p>&copy; 2024 Mon Site Web</p>
     </footer>
+
 </body>
 </html>

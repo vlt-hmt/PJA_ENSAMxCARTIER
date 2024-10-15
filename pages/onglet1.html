@@ -4,14 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page 1</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- Lien vers PapaParse -->
-    <script defer src="script.js"></script> <!-- Lien vers ton fichier JavaScript -->
+
+    <!-- Chemin relatif vers le fichier CSS -->
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Bibliothèque PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <!-- Chemin relatif vers ton fichier JavaScript -->
+    <script defer src="../script.js"></script> 
 </head>
 <body>
+    <!-- En-tête de la page -->
     <header>
         <h1>Bienvenue sur Page 1</h1>
     </header>
+
+    <!-- Contenu principal -->
     <main>
         <p>Ceci est la page 1 du site web.</p>
 
@@ -21,6 +30,8 @@
             <option value="">Sélectionnez un élément</option>
         </select>
     </main>
+
+    <!-- Pied de page -->
     <footer>
         <p>&copy; 2024 Mon Site Web</p>
     </footer>

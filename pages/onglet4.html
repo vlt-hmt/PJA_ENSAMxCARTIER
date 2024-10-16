@@ -51,25 +51,7 @@
         <div id="materialInfo">
             <p>Sélectionnez un matériau pour voir les informations.</p>
         </div>
-    </main>
-    <div>
-    <label for="countrySelector">Sélectionnez un pays :</label>
-    <select id="countrySelector">
-        <option value="Germany">Allemagne</option>
-        <option value="France">France</option>
-        <option value="Italy">Italie</option>
-        <option value="Holland">Pays-Bas</option>
-        <option value="Spain">Espagne</option>
-        <option value="Switzerland">Suisse</option>
-        <option value="UK">Royaume-Uni</option>
-        <option value="China">Chine</option>
-        <option value="USA">États-Unis</option>
-        <!-- Ajoutez d'autres options de pays si nécessaire -->
-    </select>
-</div>
-<div id="pieChartMass"></div>
-<div id="pieChartCO2"></div>
-    
+    </main>   
     <!-- Pied de page -->
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
@@ -138,53 +120,6 @@ function convertData(data) {
         return convertedCountryData;
     });
 }
-
-// Charger les données JSON
-fetch('../static/json/pays_mat_co2.json')
-    .then(response => response.json())
-    .then(data => {
-        const convertedData = convertData(data);
-
-        // Initialisation du sélecteur
-        const countrySelector = document.getElementById('countrySelector');
-        const uniqueCountries = convertedData.map(d => d.Pays);
-        uniqueCountries.forEach(country => {
-            const option = document.createElement('option');
-            option.value = country;
-            option.text = country;
-            countrySelector.appendChild(option);
-        });
-
-        // Écouteur pour le changement de pays
-        countrySelector.addEventListener('change', () => {
-            const selectedCountry = countrySelector.value;
-            const countryData = convertedData.find(d => d.Pays === selectedCountry);
-
-            if (countryData) {
-                // Filtrer les matériaux et leurs valeurs
-                const materialNames = Object.keys(countryData).filter(key => key !== "Pays");
-                const materialValues = materialNames.map(name => countryData[name]);
-
-                // Mise à jour des graphiques
-                updateBarChart(materialNames, materialValues);
-                updatePieChart(materialNames, materialValues);
-            }
-        });
-    })
-    .catch(error => console.error('Erreur lors du chargement des données JSON:', error));
-
-// Fonction pour mettre à jour l'histogramme
-function updateBarChart(materialNames, materialValues) {
-    // Code pour générer un histogramme avec Chart.js ou autre bibliothèque
-    console.log('Histogramme mis à jour avec:', materialNames, materialValues);
-}
-
-// Fonction pour mettre à jour le graphique circulaire
-function updatePieChart(materialNames, materialValues) {
-    // Code pour générer un graphique circulaire avec Chart.js ou autre bibliothèque
-    console.log('Graphique circulaire mis à jour avec:', materialNames, materialValues);
-}
-
     </script>
 
 </body>

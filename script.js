@@ -74,7 +74,7 @@ function displayInfo(selectedValue, outputDivId, csvFilePath, keyMapping, column
 
 // Exemple d'utilisation dans votre projet spécifique
 // Appel pour charger les matériaux et remplir le menu déroulant dans l'onglet 4
-populateDropdown('static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown', ';');
+populateDropdown('/static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown', ';');
 
 // Ajout d'un écouteur d'événement pour afficher les informations lorsqu'un matériau est sélectionné
 document.getElementById('materialDropdown').addEventListener('change', function() {

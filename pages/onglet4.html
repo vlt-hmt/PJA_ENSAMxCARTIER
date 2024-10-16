@@ -12,6 +12,24 @@
     <!-- Script générique -->
     <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
+    
+    <!-- Styles CSS pour limiter la taille du graphique -->
+    <style>
+        #emissionsChart {
+            max-width: 600px; /* Limiter la largeur */
+            max-height: 400px; /* Limiter la hauteur */
+            width: 100%; /* S'adapte à la largeur disponible */
+            height: auto; /* Conserver le ratio */
+            margin: 0 auto; /* Centrer */
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <!-- Image d'en-tête -->
@@ -66,7 +84,7 @@
         </div>
 
         <!-- Élément canvas pour le graphique -->
-        <canvas id="emissionsChart" width="400" height="200"></canvas>
+        <canvas id="emissionsChart"></canvas>
 
         <!-- Affichage de la méthode avec le moins d'émissions -->
         <div id="lowestMethod"></div>
@@ -96,9 +114,9 @@
               dropdown.add(option);
             });
 
-            // Écouter les changements du menu déroulant
-            dropdown.addEventListener('change', function() {
-              const selectedMaterial = this.value;
+            // Fonction pour mettre à jour le graphique et les informations
+            document.getElementById('calculate').addEventListener('click', function() {
+              const selectedMaterial = dropdown.value;
               const materialInfoDiv = document.getElementById('materialInfo');
               const chartCanvas = document.getElementById('emissionsChart');
               const allocation = parseFloat(document.getElementById('allocation').value);
@@ -111,6 +129,7 @@
                 if (emissionsChart) {
                   emissionsChart.destroy();
                 }
+                lowestMethodDiv.innerHTML = '';
                 return;
               }
 
@@ -187,19 +206,12 @@
                     }]
                   },
                   options: {
+                    responsive: true, // Le graphique s'adapte à la taille de l'écran
+                    maintainAspectRatio: true, // Maintenir le ratio largeur/hauteur
                     plugins: {
                       title: {
                         display: true,
                         text: `Émissions pour ${materialData['Matériau']}`
-                      },
-                      tooltip: {
-                        callbacks: {
-                          label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.formattedValue;
-                            return `${label}: ${value} kg éq. CO2/tonne`;
-                          }
-                        }
                       }
                     },
                     scales: {
@@ -222,7 +234,6 @@
                 lowestMethodDiv.innerHTML = '';
               }
             });
-
           })
           .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
     });

@@ -52,7 +52,24 @@
             <p>Sélectionnez un matériau pour voir les informations.</p>
         </div>
     </main>
-
+    <div>
+    <label for="countrySelector">Sélectionnez un pays :</label>
+    <select id="countrySelector">
+        <option value="Germany">Allemagne</option>
+        <option value="France">France</option>
+        <option value="Italy">Italie</option>
+        <option value="Holland">Pays-Bas</option>
+        <option value="Spain">Espagne</option>
+        <option value="Switzerland">Suisse</option>
+        <option value="UK">Royaume-Uni</option>
+        <option value="China">Chine</option>
+        <option value="USA">États-Unis</option>
+        <!-- Ajoutez d'autres options de pays si nécessaire -->
+    </select>
+</div>
+<div id="pieChartMass"></div>
+<div id="pieChartCO2"></div>
+    
     <!-- Pied de page -->
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
@@ -108,6 +125,81 @@
           })
           .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
     });
+    // Charger les données JSON
+const data = [
+    {
+        "STAINLESS STEEL": "Germany",
+        "MDF LIGHT": "209.2",
+        "RECYCLED CARDBOARD": "40.6",
+        "RECYCLED POLYESTER": "32.1",
+        "MICROFIBER": "14.7",
+        "ALUMINIUM": "4.6",
+        "PAPER": "0.2",
+        "RECYCLED PMMA": "2.7",
+        "RECYCLED PP": "6.7",
+        "PVA": "4.8",
+        "PET": "0.1"
+    },
+    // Ajoutez les autres pays ici...
+];
+
+// Fonction pour obtenir les données d'un pays sélectionné
+function getCountryData(country) {
+    return data.find(item => item["STAINLESS STEEL"] === country);
+}
+
+// Fonction pour créer les graphiques circulaires
+function createPieCharts(country) {
+    const countryData = getCountryData(country);
+    if (!countryData) return;
+
+    const labels = Object.keys(countryData).slice(1); // Exclure le pays
+    const masses = Object.values(countryData).slice(1).map(val => parseFloat(val.replace(",", ".")));
+
+    // Calculer le total pourcentage pour chaque graphique
+    const totalMass = masses.reduce((acc, val) => acc + val, 0);
+    const massPercentages = masses.map(mass => (mass / totalMass) * 100);
+
+    // Configuration du graphique de masse
+    const massConfig = {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: massPercentages,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Pourcentage de masse par matériau'
+                }
+            }
+        }
+    };
+
+    // Dessiner les graphiques
+    const ctxMass = document.getElementById('pieChartMass').getContext('2d');
+    new Chart(ctxMass, massConfig);
+}
+
+// Mettre à jour les graphiques lors de la sélection d'un pays
+document.getElementById('countrySelector').addEventListener('change', (event) => {
+    const selectedCountry = event.target.value;
+    createPieCharts(selectedCountry);
+});
+
+// Charger les graphiques initiaux avec le premier pays sélectionné
+window.onload = function () {
+    const initialCountry = document.getElementById('countrySelector').value;
+    createPieCharts(initialCountry);
+};
     </script>
 
 </body>

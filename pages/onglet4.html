@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -6,12 +7,8 @@
     
     <!-- Polices et bibliothèques externes -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Supprimez les scripts non utilisés -->
-    <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
-    <!-- Supprimez PapaParse -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> -->
-
+    <!-- Inclure Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Script générique -->
     <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
@@ -51,7 +48,11 @@
         <div id="materialInfo">
             <p>Sélectionnez un matériau pour voir les informations.</p>
         </div>
-    </main>   
+
+        <!-- Élément canvas pour le graphique -->
+        <canvas id="emissionsChart" width="400" height="200"></canvas>
+    </main>
+
     <!-- Pied de page -->
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
@@ -66,7 +67,8 @@
           .then(data => {
             const materials = data['Feuil1'];
             const dropdown = document.getElementById('materialDropdown');
-            
+            let emissionsChart; // Variable pour stocker le graphique
+
             // Peupler le menu déroulant
             materials.forEach(material => {
               const option = document.createElement('option');
@@ -79,28 +81,108 @@
             dropdown.addEventListener('change', function() {
               const selectedMaterial = this.value;
               const materialInfoDiv = document.getElementById('materialInfo');
+              const chartCanvas = document.getElementById('emissionsChart');
 
               if (selectedMaterial === "") {
                 materialInfoDiv.innerHTML = '<p>Sélectionnez un matériau pour voir les informations.</p>';
+                // Supprimer le graphique s'il existe
+                if (emissionsChart) {
+                  emissionsChart.destroy();
+                }
                 return;
               }
 
               // Trouver les données du matériau sélectionné
               const materialData = materials.find(item => item['Matériau'] === selectedMaterial);
-              
+
               if (materialData) {
                 // Construire le HTML pour afficher les informations du matériau
                 materialInfoDiv.innerHTML = `
                   <h2>${materialData['Matériau']}</h2>
-                  <p><strong>Incinération - Impact (kg éq. CO2/tonne) :</strong> ${materialData['Incinération - Impact (kg éq. CO2/tonne)']}</p>
-                  <p><strong>Recyclage - Impact (kg éq. CO2/tonne) :</strong> ${materialData['Recyclage - Impact (kg éq. CO2/tonne)']}</p>
-                  <p><strong>Méthanisation - Impact (kg éq. CO2/tonne) :</strong> ${materialData['Méthanisation - Impact (kg éq. CO2/tonne)']}</p>
-                  <p><strong>Incinération - Émissions Évitées (kg éq. CO2/tonne) :</strong> ${materialData['Incinération - Émissions Évitées (kg éq. CO2/tonne)']}</p>
-                  <p><strong>Recyclage - Émissions Évitées (kg éq. CO2/tonne) :</strong> ${materialData['Recyclage - Émissions Évitées (kg éq. CO2/tonne)']}</p>
-                  <p><strong>Méthanisation - Émissions Évitées (kg éq. CO2/tonne) :</strong> ${materialData['Méthanisation - Émissions Évitées (kg éq. CO2/tonne)']}</p>
+                  <!-- Afficher les informations si nécessaire -->
                 `;
+
+                // Préparer les données pour le graphique
+                const methods = [];
+                const emissions = [];
+
+                ['Incinération', 'Recyclage', 'Méthanisation'].forEach(method => {
+                  const impactKey = `${method} - Impact (kg éq. CO2/tonne)`;
+                  const avoidedEmissionsKey = `${method} - Émissions Évitées (kg éq. CO2/tonne)`;
+
+                  let impactValue = parseFloat(materialData[impactKey]);
+                  let avoidedEmissionsValue = parseFloat(materialData[avoidedEmissionsKey]);
+
+                  // Gérer les valeurs "N/A" ou non numériques
+                  if (isNaN(impactValue) && isNaN(avoidedEmissionsValue)) {
+                    return;
+                  }
+                  if (isNaN(impactValue)) impactValue = 0;
+                  if (isNaN(avoidedEmissionsValue)) avoidedEmissionsValue = 0;
+
+                  const totalEmissions = impactValue + avoidedEmissionsValue;
+                  methods.push(method);
+                  emissions.push(totalEmissions);
+                });
+
+                // Créer le graphique
+                if (emissionsChart) {
+                  emissionsChart.destroy(); // Détruire le graphique précédent s'il existe
+                }
+
+                emissionsChart = new Chart(chartCanvas, {
+                  type: 'bar',
+                  data: {
+                    labels: methods,
+                    datasets: [{
+                      label: 'Émissions totales (kg éq. CO2/tonne)',
+                      data: emissions,
+                      backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(75, 192, 192, 0.6)'
+                      ],
+                      borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                      ],
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: `Émissions pour ${materialData['Matériau']}`
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.formattedValue;
+                            return `${label}: ${value} kg éq. CO2/tonne`;
+                          }
+                        }
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        title: {
+                          display: true,
+                          text: 'kg éq. CO2/tonne'
+                        }
+                      }
+                    }
+                  }
+                });
+
               } else {
                 materialInfoDiv.innerHTML = '<p>Aucune donnée disponible pour ce matériau.</p>';
+                if (emissionsChart) {
+                  emissionsChart.destroy();
+                }
               }
             });
 

@@ -22,13 +22,6 @@
             height: auto; /* Conserver le ratio */
             margin: 0 auto; /* Centrer */
         }
-
-        button {
-            padding: 10px 20px;
-            margin-top: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -55,13 +48,14 @@
     <main class="content">
         <h1>Analyse des impacts environnementaux par matériau</h1>
         <p>Sélectionnez un matériau pour voir les détails de son impact environnemental selon différentes méthodes de traitement de fin de vie.</p>
-<br>
-        <!-- Menu déroulant des matériaux --><p align="center">
+        <br>
+        <!-- Menu déroulant des matériaux -->
+        <p align="center">
         <label for="materialDropdown">Choisissez un matériau :</label>
         <select id="materialDropdown">
             <option value="">Sélectionnez un matériau</option>
         </select>
-<br>
+        <br>
         <!-- Allocation de coefficient uniquement pour le recyclage -->
         <label for="allocation">Coefficient d'allocation :</label>
         <select id="allocation">
@@ -71,14 +65,12 @@
             <option value="0.8">80%</option>
             <option value="1">100%</option>
         </select>
-<br>
+        <br>
         <!-- Poids -->
         <label for="weight">Poids (kg) :</label>
         <input type="number" id="weight" value="1" min="0">
-<br>
-<br>
-        <button id="calculate">Calculer les émissions</button>
-	</p>
+        </p>
+        
         <!-- Division pour afficher les informations du matériau sélectionné -->
         <div id="materialInfo">
             <p>Sélectionnez un matériau pour voir les informations.</p>
@@ -116,7 +108,7 @@
             });
 
             // Fonction pour mettre à jour le graphique et les informations
-            document.getElementById('calculate').addEventListener('click', function() {
+            function updateChart() {
               const selectedMaterial = dropdown.value;
               const materialInfoDiv = document.getElementById('materialInfo');
               const chartCanvas = document.getElementById('emissionsChart');
@@ -234,7 +226,12 @@
                 }
                 lowestMethodDiv.innerHTML = '';
               }
-            });
+            }
+
+            // Ajouter les écouteurs d'événements pour mettre à jour automatiquement le graphique
+            document.getElementById('materialDropdown').addEventListener('change', updateChart);
+            document.getElementById('allocation').addEventListener('change', updateChart);
+            document.getElementById('weight').addEventListener('input', updateChart);
           })
           .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
     });

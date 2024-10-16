@@ -3,199 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onglet 4 - Sélection du Matériau</title>
+    <title>Calcul des Émissions</title>
     
-    <!-- Polices et bibliothèques externes -->
+    <!-- Polices externes -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Inclure Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <!-- Votre fichier CSS -->
-    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Inclure Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Styles CSS -->
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        h1 {
+            font-family: 'Libre Bodoni', serif;
+            font-weight: 400;
+        }
+
+        select, input {
+            font-size: 16px;
+            padding: 5px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            background-color: #ccc;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #result {
+            margin-top: 30px;
+        }
+
+        #chartContainer {
+            margin-top: 40px;
+        }
+
+        #lowestMethod {
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        #emissionsChart {
+            max-width: 50%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <!-- Image d'en-tête -->
-    <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div> <!-- Texte superposé -->
+    <h1>Calcul des Émissions</h1>
+
+    <label for="material">Matériau:</label>
+    <select id="material">
+        <option value="">Sélectionnez un matériau</option>
+    </select>
+
+    <br>
+
+    <label for="allocation">Coefficient d'allocation (% pour le recyclage):</label>
+    <select id="allocation">
+        <option value="0">0%</option>
+        <option value="0.2">20%</option>
+        <option value="0.5">50%</option>
+        <option value="0.8">80%</option>
+        <option value="1">100%</option>
+    </select>
+
+    <br>
+
+    <label for="weight">Poids (kg):</label>
+    <input type="number" id="weight" value="1" min="0">
+
+    <br>
+
+    <button id="calculate">Calculer les émissions</button>
+
+    <!-- Conteneur pour le graphique -->
+    <div id="chartContainer">
+        <canvas id="emissionsChart"></canvas>
     </div>
 
-    <!-- Menu de navigation -->
-    <header class="menu">
-        <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="onglet1.html">Onglet 1</a></li>
-                <li><a href="onglet2.html">Onglet 2</a></li>
-                <li><a href="onglet3.html">Onglet 3</a></li>
-                <li><a href="onglet4.html">Onglet 4</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Affichage de la méthode avec le moins d'émissions -->
+    <div id="lowestMethod"></div>
 
-    <!-- Contenu principal -->
-    <main class="content">
-        <h1>Analyse des impacts environnementaux par matériau</h1>
-        <p>Sélectionnez un matériau pour voir les détails de son impact environnemental selon différentes méthodes de traitement de fin de vie.</p>
-
-        <!-- Menu déroulant des matériaux -->
-        <label for="materialDropdown">Choisissez un matériau :</label>
-        <select id="materialDropdown">
-            <option value="">Sélectionnez un matériau</option>
-        </select>
-
-        <!-- Division pour afficher les informations du matériau sélectionné -->
-        <div id="materialInfo">
-            <p>Sélectionnez un matériau pour voir les informations.</p>
-        </div>
-
-        <!-- Division pour le graphique Plotly -->
-        <div id="plotlyChart"></div>
-
-        <!-- Division pour afficher la recommandation -->
-        <div id="recommendation"></div>
-    </main>
-
-    <!-- Pied de page -->
-    <div class="footer">
-        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
-    </div>
-
-    <!-- Script pour charger le fichier JSON et gérer l'interaction -->
+    <!-- Script JavaScript -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Charger les données JSON
-        fetch('../static/json/impactfdvmat.json')
-          .then(response => response.json())
-          .then(data => {
-            const materials = data['Feuil1'];
-            const dropdown = document.getElementById('materialDropdown');
-            let plotlyChartDiv = document.getElementById('plotlyChart'); // Division pour le graphique Plotly
+        let emissionsChart;
 
-            // Peupler le menu déroulant
-            materials.forEach(material => {
-                const option = document.createElement('option');
-                option.value = material['Matériau'];
-                option.text = material['Matériau'];
-                dropdown.add(option);
-            });
-
-            // Écouter les changements du menu déroulant
-            dropdown.addEventListener('change', function() {
-                const selectedMaterial = this.value;
-                const materialInfoDiv = document.getElementById('materialInfo');
-                const recommendationDiv = document.getElementById('recommendation');
-
-                if (selectedMaterial === "") {
-                    materialInfoDiv.innerHTML = '<p>Sélectionnez un matériau pour voir les informations.</p>';
-                    // Effacer le graphique Plotly
-                    Plotly.purge('plotlyChart');
-                    // Effacer la recommandation
-                    recommendationDiv.innerHTML = '';
-                    return;
-                }
-
-                // Trouver les données du matériau sélectionné
-                const materialData = materials.find(item => item['Matériau'] === selectedMaterial);
-
-                if (materialData) {
-                    // Afficher les informations du matériau
-                    materialInfoDiv.innerHTML = `
-                        <h2>${materialData['Matériau']}</h2>
-                        <!-- Vous pouvez ajouter plus d'informations ici si nécessaire -->
-                    `;
-
-                    // Préparer les données pour le graphique 3D
-                    const methods = [];
-                    const emissions = [];
-                    const emissionsByMethod = {};
-
-                    ['Incinération', 'Recyclage', 'Méthanisation'].forEach(method => {
-                        const impactKey = `${method} - Impact (kg éq. CO2/tonne)`;
-                        const avoidedEmissionsKey = `${method} - Émissions Évitées (kg éq. CO2/tonne)`;
-
-                        let impactValue = parseFloat(materialData[impactKey]);
-                        let avoidedEmissionsValue = parseFloat(materialData[avoidedEmissionsKey]);
-
-                        // Gérer les valeurs "N/A" ou non numériques
-                        if (isNaN(impactValue) && isNaN(avoidedEmissionsValue)) {
-                            return;
-                        }
-                        if (isNaN(impactValue)) impactValue = 0;
-                        if (isNaN(avoidedEmissionsValue)) avoidedEmissionsValue = 0;
-
-                        const totalEmissions = impactValue + avoidedEmissionsValue;
-
-                        methods.push(method);
-                        emissions.push(totalEmissions);
-                        emissionsByMethod[method] = totalEmissions;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données JSON
+            fetch('../static/json/impactfdvmat.json')
+                .then(response => response.json())
+                .then(data => {
+                    const materials = data['Feuil1'];
+                    const dropdown = document.getElementById('material');
+                    
+                    // Remplir le menu déroulant avec les matériaux
+                    materials.forEach(material => {
+                        const option = document.createElement('option');
+                        option.value = material['Matériau'];
+                        option.text = material['Matériau'];
+                        dropdown.add(option);
                     });
 
-                    // Afficher la recommandation
-                    let recommendedMethod = null;
-                    let minEmissions = null;
+                    // Écouter le clic sur le bouton de calcul
+                    document.getElementById('calculate').addEventListener('click', function() {
+                        const selectedMaterial = document.getElementById('material').value;
+                        const allocation = parseFloat(document.getElementById('allocation').value);
+                        const weight = parseFloat(document.getElementById('weight').value);
 
-                    for (const method in emissionsByMethod) {
-                        const emission = emissionsByMethod[method];
-                        if (minEmissions === null || emission < minEmissions) {
-                            minEmissions = emission;
-                            recommendedMethod = method;
+                        // Trouver le matériau sélectionné
+                        const materialData = materials.find(item => item['Matériau'] === selectedMaterial);
+
+                        if (materialData) {
+                            // Extraire les impacts pour chaque méthode de fin de vie
+                            const incinerationImpact = parseFloat(materialData["Incinération - Impact (kg éq. CO2/tonne)"]);
+                            const recyclingImpact = parseFloat(materialData["Recyclage - Impact (kg éq. CO2/tonne)"]);
+                            const methanisationImpact = parseFloat(materialData["Méthanisation - Impact (kg éq. CO2/tonne)"]);
+
+                            const incinerationAvoided = parseFloat(materialData["Incinération - Émissions Évitées (kg éq. CO2/tonne)"]);
+                            const recyclingAvoided = parseFloat(materialData["Recyclage - Émissions Évitées (kg éq. CO2/tonne)"]);
+                            const methanisationAvoided = parseFloat(materialData["Méthanisation - Émissions Évitées (kg éq. CO2/tonne)"]);
+
+                            // Calculer les émissions totales
+                            const totalEmissions = {
+                                "Incinération": (incinerationImpact + incinerationAvoided) * weight,
+                                "Recyclage": (recyclingImpact + recyclingAvoided) * allocation * weight,
+                                "Méthanisation": (methanisationImpact + methanisationAvoided) * weight
+                            };
+
+                            // Trouver la méthode avec les émissions les plus faibles
+                            const lowestMethod = Object.keys(totalEmissions).reduce((a, b) => totalEmissions[a] < totalEmissions[b] ? a : b);
+
+                            // Afficher la méthode avec le moins d'émissions
+                            document.getElementById('lowestMethod').textContent = `Le processus de fin de vie avec le plus faible impact carbone est: ${lowestMethod} avec ${totalEmissions[lowestMethod].toFixed(2)} kg éq. CO2.`;
+
+                            // Données pour le graphique
+                            const labels = ["Incinération", "Recyclage", "Méthanisation"];
+                            const data = {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Émissions totales (kg éq. CO2)',
+                                    data: [totalEmissions.Incinération, totalEmissions.Recyclage, totalEmissions.Méthanisation],
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(75, 192, 192, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            };
+
+                            const config = {
+                                type: 'bar',
+                                data: data,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            };
+
+                            // Si un graphique existe déjà, le détruire avant d'en créer un nouveau
+                            if (emissionsChart) {
+                                emissionsChart.destroy();
+                            }
+
+                            // Créer le graphique
+                            const ctx = document.getElementById('emissionsChart').getContext('2d');
+                            emissionsChart = new Chart(ctx, config);
                         }
-                    }
-
-                    if (recommendedMethod) {
-                        recommendationDiv.innerHTML = `
-                            <p>Le processus de fin de vie le plus approprié pour <strong>${materialData['Matériau']}</strong> est : <strong>${recommendedMethod}</strong>.</p>
-                        `;
-                    } else {
-                        recommendationDiv.innerHTML = '';
-                    }
-
-                    // Préparer les données pour le graphique 3D
-                    const xValues = methods;
-                    const yValues = methods.map(() => selectedMaterial); // Le matériau sélectionné répété
-                    const zValues = emissions;
-
-                    const trace = {
-                        x: xValues,
-                        y: yValues,
-                        z: zValues,
-                        type: 'scatter3d',
-                        mode: 'markers',
-                        marker: {
-                            size: 5,
-                            color: zValues,
-                            colorscale: 'Viridis',
-                            showscale: true
-                        }
-                    };
-
-                    const layout = {
-                        title: `Émissions 3D pour ${selectedMaterial}`,
-                        scene: {
-                            xaxis: { title: 'Méthode de traitement' },
-                            yaxis: { title: 'Matériau' },
-                            zaxis: { title: 'Émissions totales (kg éq. CO2/tonne)' }
-                        }
-                    };
-
-                    // Effacer le graphique précédent
-                    Plotly.purge('plotlyChart');
-
-                    // Créer le graphique
-                    Plotly.newPlot('plotlyChart', [trace], layout);
-
-                } else {
-                    materialInfoDiv.innerHTML = '<p>Aucune donnée disponible pour ce matériau.</p>';
-                    // Effacer le graphique Plotly
-                    Plotly.purge('plotlyChart');
-                    recommendationDiv.innerHTML = '';
-                }
-            });
-
-          })
-          .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
-    });
+                    });
+                })
+                .catch(error => console.error('Erreur lors du chargement du fichier JSON:', error));
+        });
     </script>
-
 </body>
 </html>

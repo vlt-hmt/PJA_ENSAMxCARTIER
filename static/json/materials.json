@@ -1,0 +1,47 @@
+[
+  {
+    "Material Family": "WOOD",
+    "Impact CO2 (t CO2e)": 71.28801261,
+    "Material weight (t)": 90.63418407
+  },
+  {
+    "Material Family": "METAL",
+    "Impact CO2 (t CO2e)": 398.8242707,
+    "Material weight (t)": 78.74004892
+  },
+  {
+    "Material Family": "CARDBOARD",
+    "Impact CO2 (t CO2e)": 4.754643258,
+    "Material weight (t)": 6.558128631
+  },
+  {
+    "Material Family": "PLASTIC",
+    "Impact CO2 (t CO2e)": 87.99661157,
+    "Material weight (t)": 14.82479259
+  },
+  {
+    "Material Family": "PAPER",
+    "Impact CO2 (t CO2e)": 12.67794629,
+    "Material weight (t)": 9.524685796
+  },
+  {
+    "Material Family": "TEXTILE",
+    "Impact CO2 (t CO2e)": 96.13205435,
+    "Material weight (t)": 12.25471634
+  },
+  {
+    "Material Family": "OTHER",
+    "Impact CO2 (t CO2e)": 33.8405644,
+    "Material weight (t)": 6.320012565
+  },
+  {
+    "Material Family": "FINISHING MATERIAL",
+    "Impact CO2 (t CO2e)": 0,
+    "Material weight (t)": 0
+  },
+  {
+    "Material Family": "STONES",
+    "Impact CO2 (t CO2e)": 0,
+    "Material weight (t)": 0
+  }
+]

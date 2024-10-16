@@ -41,7 +41,7 @@
     
     <script>
         // Charger le fichier JSON et créer l'histogramme
-        fetch('materials.json') // Remplacez par le chemin correct vers votre fichier JSON
+        fetch('../static/json/materials.json') // Remplacez par le chemin correct vers votre fichier JSON
             .then(response => response.json())
             .then(data => {
                 const labels = data.map(item => item["Material Family"]);

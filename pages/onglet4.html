@@ -7,10 +7,14 @@
     
     <!-- Polices et bibliothèques externes -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- PapaParse -->
-    <script src="../script.js" defer></script> <!-- Script générique -->
+    <!-- Supprimez les scripts non utilisés -->
+    <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <!-- Supprimez PapaParse -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> -->
+
+    <!-- Script générique -->
+    <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
@@ -54,5 +58,58 @@
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
     </div>
+
+    <!-- Script pour charger le fichier JSON et gérer l'interaction -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Charger les données JSON
+        fetch('../static/json/impactfdvmat.json')
+          .then(response => response.json())
+          .then(data => {
+            const materials = data['Feuil1'];
+            const dropdown = document.getElementById('materialDropdown');
+            
+            // Peupler le menu déroulant
+            materials.forEach(material => {
+              const option = document.createElement('option');
+              option.value = material['Matériau'];
+              option.text = material['Matériau'];
+              dropdown.add(option);
+            });
+
+            // Écouter les changements du menu déroulant
+            dropdown.addEventListener('change', function() {
+              const selectedMaterial = this.value;
+              const materialInfoDiv = document.getElementById('materialInfo');
+
+              if (selectedMaterial === "") {
+                materialInfoDiv.innerHTML = '<p>Sélectionnez un matériau pour voir les informations.</p>';
+                return;
+              }
+
+              // Trouver les données du matériau sélectionné
+              const materialData = materials.find(item => item['Matériau'] === selectedMaterial);
+              
+              if (materialData) {
+                // Construire le HTML pour afficher les informations du matériau
+                materialInfoDiv.innerHTML = `
+                  <h2>${materialData['Matériau']}</h2>
+                  <p><strong>Incinération - Impact (kg éq. CO2/tonne) :</strong> ${materialData['Incinération - Impact (kg éq. CO2/tonne)']}</p>
+                  <p><strong>Recyclage - Impact (kg éq. CO2/tonne) :</strong> ${materialData['Recyclage - Impact (kg éq. CO2/tonne)']}</p>
+                  <p><strong>Méthanisation - Impact (kg éq. CO2/tonne) :</strong> ${materialData['Méthanisation - Impact (kg éq. CO2/tonne)']}</p>
+                  <p><strong>Incinération - Émissions Évitées (kg éq. CO2/tonne) :</strong> ${materialData['Incinération - Émissions Évitées (kg éq. CO2/tonne)']}</p>
+                  <p><strong>Recyclage - Émissions Évitées (kg éq. CO2/tonne) :</strong> ${materialData['Recyclage - Émissions Évitées (kg éq. CO2/tonne)']}</p>
+                  <p><strong>Méthanisation - Émissions Évitées (kg éq. CO2/tonne) :</strong> ${materialData['Méthanisation - Émissions Évitées (kg éq. CO2/tonne)']}</p>
+                `;
+              } else {
+                materialInfoDiv.innerHTML = '<p>Aucune donnée disponible pour ce matériau.</p>';
+              }
+            });
+
+          })
+          .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
+    });
+    </script>
+
 </body>
 </html>

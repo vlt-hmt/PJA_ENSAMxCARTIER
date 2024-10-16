@@ -34,5 +34,6 @@ function loadDropdownFromCSV(csvFilePath, columnName, dropdownId) {
     });
 }
 
-// Exemple d'appel : Charger les données du fichier CSV depuis le bon chemin
-loadDropdownFromCSV('../static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown');
+// Exemple d'appel pour n'importe quel fichier CSV et n'importe quelle colonne
+// loadDropdownFromCSV('../../static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown');
+// loadDropdownFromCSV('../../static/csv/autre_fichier.csv', 'Pays', 'countryDropdown');

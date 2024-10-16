@@ -1,30 +1,43 @@
-// Fonction pour charger le fichier CSV et afficher les données dans la liste déroulante
-async function loadCSV() {
-    // Charger le fichier CSV avec fetch
-    const response = await fetch('data.csv');
-    const csvData = await response.text();
-
-    // Utiliser PapaParse pour parser le CSV
-    Papa.parse(csvData, {
-        header: true, // Si la première ligne du fichier CSV est une ligne d'en-tête
+// Fonction générique pour charger un fichier CSV et créer un menu déroulant à partir d'une colonne spécifique
+function loadDropdownFromCSV(csvFilePath, columnName, dropdownId) {
+    // Utilisation de PapaParse pour lire le fichier CSV
+    Papa.parse(csvFilePath, {
+        download: true,
+        header: true,  // Assure que la première ligne du CSV est utilisée comme en-tête
         complete: function(results) {
-            const items = results.data;
-
-            // Récupérer l'élément select dans le DOM
-            const select = document.getElementById('item-select');
-
-            // Parcourir les données CSV et ajouter les options à la liste déroulante
-            items.forEach(item => {
-                if (item.name) { // S'assurer que l'élément a une valeur
-                    const option = document.createElement('option');
-                    option.value = item.name;
-                    option.textContent = item.name;
-                    select.appendChild(option);
+            const uniqueValues = [];
+            
+            // Parcours des lignes du CSV et extraction des valeurs uniques de la colonne spécifiée
+            results.data.forEach(row => {
+                if (row[columnName] && !uniqueValues.includes(row[columnName])) {
+                    uniqueValues.push(row[columnName]);  // Ajouter uniquement les valeurs uniques
                 }
             });
+
+            // Sélectionne le menu déroulant dans lequel insérer les options
+            const dropdown = document.getElementById(dropdownId);
+
+            // Efface les anciennes options si besoin
+            dropdown.innerHTML = "";
+
+            // Crée et insère chaque option dans le menu déroulant
+            uniqueValues.forEach(value => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = value;
+                dropdown.appendChild(option);
+            });
+        },
+        error: function(error) {
+            console.error("Erreur lors du chargement du fichier CSV :", error);
         }
     });
 }
 
-// Appel de la fonction au chargement de la page
-window.onload = loadCSV;
+// Exemple d'appel pour la colonne "Matériau"
+// loadDropdownFromCSV('../csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown');
+
+// Exemple d'appel pour une autre colonne, comme "Pays"
+// loadDropdownFromCSV('../csv/impact_benefices_fdv.csv', 'Pays', 'countryDropdown');
+// ...............................................................................................................................
+

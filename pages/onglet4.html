@@ -47,16 +47,9 @@
         <option value="">Sélectionnez un matériau</option>
     </select>
 
-    <!-- Menu déroulant des pays -->
-    <label for="countryDropdown">Choisissez un pays :</label>
-    <select id="countryDropdown">
-        <option value="">Sélectionnez un pays</option>
-    </select>
-
-    <!-- Appel au script pour charger les menus déroulants à partir du CSV -->
+    <!-- Appel au script pour charger le menu déroulant à partir du CSV -->
     <script>
         loadDropdownFromCSV('../../static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown');
-        loadDropdownFromCSV('../../static/csv/impact_benefices_fdv.csv', 'Pays', 'countryDropdown');
     </script>
 
     <!-- Pied de page -->

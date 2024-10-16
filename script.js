@@ -1,14 +1,13 @@
-// script.js
-
 // Variable globale pour stocker les données du CSV
 let csvData = {};
 
 // Fonction générique pour charger un fichier CSV et stocker ses données
-function loadCSV(csvFilePath, callback) {
+function loadCSV(csvFilePath, callback, delimiter = ',') {
     Papa.parse(csvFilePath, {
         download: true,
         header: true,  // Utilise la première ligne comme en-tête
         skipEmptyLines: true,
+        delimiter: delimiter,  // Permet de spécifier le séparateur
         complete: function(results) {
             // Stocker les données dans la variable globale
             csvData[csvFilePath] = results.data;
@@ -23,105 +22,74 @@ function loadCSV(csvFilePath, callback) {
 }
 
 // Fonction générique pour remplir un menu déroulant à partir d'une colonne spécifique d'un fichier CSV
-function populateDropdown(csvFilePath, columnName, dropdownId) {
-    // Vérifier si les données du CSV sont déjà chargées
+function populateDropdown(csvFilePath, columnName, dropdownId, delimiter = ',') {
+    // Charger les données CSV si elles ne sont pas déjà chargées
     if (csvData[csvFilePath]) {
         createDropdownOptions(csvData[csvFilePath], columnName, dropdownId);
     } else {
-        // Charger le CSV puis remplir le menu déroulant
         loadCSV(csvFilePath, function(data) {
             createDropdownOptions(data, columnName, dropdownId);
-        });
+        }, delimiter);
     }
 }
 
 // Fonction pour créer les options du menu déroulant
 function createDropdownOptions(data, columnName, dropdownId) {
-    // Extraire les valeurs uniques de la colonne spécifiée
-    const uniqueValues = [...new Set(data.map(row => row[columnName]).filter(value => value && value.trim() !== 'N/A'))];
-    
-    // Sélectionner le menu déroulant
     const dropdown = document.getElementById(dropdownId);
-    if (!dropdown) {
-        console.error(`Élément dropdown avec l'ID "${dropdownId}" non trouvé.`);
-        return;
-    }
-
-    // Réinitialiser les options du menu déroulant
-    dropdown.innerHTML = `<option value="">Sélectionnez un ${columnName.toLowerCase()}</option>`;
-
-    // Créer et ajouter les options
-    uniqueValues.forEach(value => {
+    dropdown.innerHTML = ''; // Vider les options existantes
+    data.forEach(function(row) {
         const option = document.createElement('option');
-        option.value = value;
-        option.textContent = value;
+        option.value = row[columnName];
+        option.text = row[columnName];
         dropdown.appendChild(option);
     });
 }
 
-// Fonction pour afficher les informations du matériau sélectionné
-function displayMaterialInfo(materialName, outputDivId, csvFilePath, keyMapping) {
+// Fonction générique pour afficher des informations basées sur une sélection
+function displayInfo(selectedValue, outputDivId, csvFilePath, keyMapping, columnKey, delimiter = ',') {
     const data = csvData[csvFilePath];
     if (!data) {
         console.error(`Les données du fichier CSV (${csvFilePath}) ne sont pas chargées.`);
         return;
     }
 
-    const material = data.find(row => row['Matériau'] === materialName);
-    if (!material) {
-        document.getElementById(outputDivId).innerHTML = `<p>Aucune information disponible pour le matériau sélectionné.</p>`;
+    const selectedData = data.find(row => row[columnKey] === selectedValue);
+    if (!selectedData) {
+        console.error(`Donnée non trouvée : ${selectedValue}`);
         return;
     }
 
-    // Créer le contenu HTML pour afficher les informations
-    let content = `<h2>Informations pour : ${material['Matériau']}</h2>`;
-    content += `<table>
-        <thead>
-            <tr>
-                <th>Type de traitement</th>
-                <th>Impact (kg éq. CO2/tonne)</th>
-                <th>Émissions évitées (kg éq. CO2/tonne)</th>
-            </tr>
-        </thead>
-        <tbody>`;
+    const outputDiv = document.getElementById(outputDivId);
+    outputDiv.innerHTML = ''; // Vider les informations précédentes
 
-    // Parcourir les types de traitement
-    ['Incinération', 'Recyclage', 'Méthanisation'].forEach(type => {
-        content += `<tr>
-            <td>${type}</td>
-            <td>${material[`${type} - Impact (kg éq. CO2/tonne)`] || 'N/A'}</td>
-            <td>${material[`${type} - Émissions Évitées (kg éq. CO2/tonne)`] || 'N/A'}</td>
-        </tr>`;
-    });
-
-    content += `</tbody></table>`;
-
-    // Afficher le contenu dans la division spécifiée
-    document.getElementById(outputDivId).innerHTML = content;
+    // Afficher les données correspondantes à partir du keyMapping
+    for (let key in keyMapping) {
+        const value = selectedData[key];
+        const displayText = `${keyMapping[key]} : ${value || 'N/A'}`;
+        const p = document.createElement('p');
+        p.textContent = displayText;
+        outputDiv.appendChild(p);
+    }
 }
 
-// Initialisation des dropdowns et autres fonctionnalités après le chargement du DOM
-document.addEventListener('DOMContentLoaded', function() {
-    // Définir les chemins relatifs vers les fichiers CSV
-    const csvFilePath = '../../static/csv/impact_benefices_fdv.csv';
+// Exemple d'utilisation dans votre projet spécifique
+// Appel pour charger les matériaux et remplir le menu déroulant dans l'onglet 4
+populateDropdown('../../static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown', ';');
 
-    // Définir les mappings de colonnes aux IDs des dropdowns
-    const dropdownConfigs = [
-        { column: 'Matériau', id: 'materialDropdown' }
-        // Tu peux ajouter d'autres configurations ici si nécessaire
-    ];
-
-    // Charger et remplir les dropdowns
-    dropdownConfigs.forEach(config => {
-        populateDropdown(csvFilePath, config.column, config.id);
-    });
-
-    // Ajouter un écouteur d'événement pour le dropdown des matériaux
-    const materialDropdown = document.getElementById('materialDropdown');
-    if (materialDropdown) {
-        materialDropdown.addEventListener('change', function() {
-            const selectedMaterial = this.value;
-            displayMaterialInfo(selectedMaterial, 'materialInfo', csvFilePath);
-        });
+// Ajout d'un écouteur d'événement pour afficher les informations lorsqu'un matériau est sélectionné
+document.getElementById('materialDropdown').addEventListener('change', function() {
+    const selectedMaterial = this.value;
+    if (selectedMaterial) {
+        // Exemple de keyMapping dans un projet spécifique
+        const keyMapping = {
+            'Incinération - Impact (kg éq. CO2/tonne)': 'Impact de l\'incinération',
+            'Recyclage - Impact (kg éq. CO2/tonne)': 'Impact du recyclage',
+            'Méthanisation - Impact (kg éq. CO2/tonne)': 'Impact de la méthanisation',
+            'Incinération - Émissions Évitées (kg éq. CO2/tonne)': 'Émissions évitées par l\'incinération',
+            'Recyclage - Émissions Évitées (kg éq. CO2/tonne)': 'Émissions évitées par le recyclage',
+            'Méthanisation - Émissions Évitées (kg éq. CO2/tonne)': 'Émissions évitées par la méthanisation'
+        };
+        displayInfo(selectedMaterial, 'materialInfo', '../../static/csv/impact_benefices_fdv.csv', keyMapping, 'Matériau', ';');
     }
 });
+// aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

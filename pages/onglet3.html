@@ -29,42 +29,50 @@
         </nav>
     </header>
 
+
     <main class="content">
-        <h1>Graphiques un pays spécifique</h1>
-        <p>Sélectionnez un pays pour voir les matériaux utilisés en poids, en volume et en impact CO2, d'après le coefficient donné dans le fichier de CARTIER.</p>
-
-        <div id="table-container"></div> <!-- Conteneur pour le tableau -->
-
-        <h2>Sélectionnez un Pays</h2>
-        <select id="country-select">
-            <option value="" disabled selected>Choisissez un pays</option>
-            <option value="France">France</option>
-            <option value="Allemagne">Allemagne</option>
-            <option value="Espagne">Espagne</option>
-            <option value="Italie">Italie</option>
-            <option value="Belgique">Belgique</option>
-            <option value="Suisse">Suisse</option>
-            <!-- Ajoutez d'autres pays ici si nécessaire -->
-        </select>
+        <h1>Histogramme des Matériaux</h1>
+        <canvas id="materialsChart" width="800" height="400"></canvas>
     </main>
 
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>
-
+    
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const countries = ["France", "Allemagne", "Espagne", "Italie", "Belgique", "Suisse"]; // Liste des pays
+        // Charger le fichier JSON et créer l'histogramme
+        fetch('materials.json') // Remplacez par le chemin correct vers votre fichier JSON
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(item => item["Material Family"]);
+                const co2Data = data.map(item => item["Impact CO2 (t CO2e)"]);
+                const weightData = data.map(item => item["Material weight (t)"]);
 
-            const select = document.getElementById('country-select');
-
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                select.appendChild(option);
-            });
-        });
+                const ctx = document.getElementById('materialsChart').getContext('2d');
+                const materialsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Impact CO2 (t CO2e)',
+                            data: co2Data,
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        }, {
+                            label: 'Material Weight (t)',
+                            data: weightData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Erreur lors du chargement du JSON:', error));
     </script>
 </body>
 </html>

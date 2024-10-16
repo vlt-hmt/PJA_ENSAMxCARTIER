@@ -140,7 +140,7 @@ function convertData(data) {
 }
 
 // Charger les données JSON
-fetch('../static/json/data.json')
+fetch('../static/json/pays_mat_co2.json')
     .then(response => response.json())
     .then(data => {
         const convertedData = convertData(data);

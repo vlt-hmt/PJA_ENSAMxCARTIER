@@ -107,19 +107,6 @@
           })
           .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
     });
-// Fonction pour convertir les données JSON en format utilisable
-function convertData(data) {
-    return data.map(countryData => {
-        const convertedCountryData = { Pays: countryData.Pays };
-        Object.keys(countryData).forEach(key => {
-            if (key !== "Pays") {
-                // Convertir les valeurs en nombres en remplaçant la virgule par un point
-                convertedCountryData[key] = parseFloat(countryData[key].replace(',', '.'));
-            }
-        });
-        return convertedCountryData;
-    });
-}
     </script>
 
 </body>

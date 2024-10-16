@@ -35,6 +35,23 @@
         <img src="static/images/image_home.jpg" alt="Home Image">
         <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
     </main>
+    <label for="materialDropdown">Choisissez un matériau :</label>
+<select id="materialDropdown">
+    <option value="">Sélectionnez un matériau</option>
+</select>
+
+<label for="countryDropdown">Choisissez un pays :</label>
+<select id="countryDropdown">
+    <option value="">Sélectionnez un pays</option>
+</select>
+
+<script>
+    // Charger les options pour le menu déroulant des matériaux
+    loadDropdownFromCSV('../csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown');
+
+    // Charger les options pour le menu déroulant des pays
+    loadDropdownFromCSV('../csv/impact_benefices_fdv.csv', 'Pays', 'countryDropdown');
+</script>
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>

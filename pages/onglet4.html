@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENSAM x Cartier</title>
+    <title>Onglet 4 - Sélection du Matériau</title>
     
     <!-- Polices et bibliothèques externes -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="../script.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- PapaParse -->
+    <script src="../script.js" defer></script> <!-- Script générique -->
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
     <!-- Image d'en-tête -->
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+        <div class="header-overlay">ENSAM x Cartier</div> <!-- Texte superposé -->
     </div>
 
     <!-- Menu de navigation -->
@@ -35,22 +35,20 @@
 
     <!-- Contenu principal -->
     <main class="content">
-        <h1>Bienvenue sur la page de notre projet</h1>
-        <p>Ceci est la page 4.</p>
-        <img src="../static/images/image_home.jpg" alt="Home Image">
-        <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur la page d'accueil le voilà.</div>
+        <h1>Analyse des impacts environnementaux par matériau</h1>
+        <p>Sélectionnez un matériau pour voir les détails de son impact environnemental selon différentes méthodes de traitement de fin de vie.</p>
+
+        <!-- Menu déroulant des matériaux -->
+        <label for="materialDropdown">Choisissez un matériau :</label>
+        <select id="materialDropdown">
+            <option value="">Sélectionnez un matériau</option>
+        </select>
+
+        <!-- Division pour afficher les informations du matériau sélectionné -->
+        <div id="materialInfo">
+            <p>Sélectionnez un matériau pour voir les informations.</p>
+        </div>
     </main>
-
-    <!-- Menu déroulant des matériaux -->
-    <label for="materialDropdown">Choisissez un matériau :</label>
-    <select id="materialDropdown">
-        <option value="">Sélectionnez un matériau</option>
-    </select>
-
-    <!-- Appel au script pour charger le menu déroulant à partir du CSV -->
-    <script>
-        loadDropdownFromCSV('../../static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown');
-    </script>
 
     <!-- Pied de page -->
     <div class="footer">

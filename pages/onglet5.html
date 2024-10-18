@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Adresses avec Coordonnées GPS</title>
+    <title>Gestion des Adresses avec Coordonnées GPS et Itinéraires Dynamiques</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -56,12 +56,12 @@
     </div>
 
     <main class="content">
-        <h1>Gestion des lieux avec coordonnées GPS</h1>
+        <h1>Gestion des lieux avec coordonnées GPS et itinéraires</h1>
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="large-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
+                    <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
                     <input type="text" class="small-input latitude-input" placeholder="Lat" oninput="manualCoords(this)">
                     <input type="text" class="small-input longitude-input" placeholder="Lon" oninput="manualCoords(this)">
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
@@ -72,7 +72,7 @@
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="large-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
+                    <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
                     <input type="text" class="small-input latitude-input" placeholder="Lat" oninput="manualCoords(this)">
                     <input type="text" class="small-input longitude-input" placeholder="Lon" oninput="manualCoords(this)">
                     <select class="treatment-option">
@@ -100,6 +100,8 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
+        let routeControl = null;
+
         function addStorageInput() {
             const container = document.getElementById("storage-container");
             const inputGroup = document.createElement("div");
@@ -107,7 +109,7 @@
 
             const addressInput = document.createElement("input");
             addressInput.type = "text";
-            addressInput.className = "large-input";
+            addressInput.className = "large-input storage-input";
             addressInput.placeholder = "Entrez une autre adresse complète";
             addressInput.oninput = function() { autocompleteAddress(addressInput); };
 
@@ -131,6 +133,52 @@
             inputGroup.appendChild(addressInput);
             inputGroup.appendChild(latInput);
             inputGroup.appendChild(lonInput);
+            inputGroup.appendChild(removeButton);
+
+            container.insertBefore(inputGroup, container.querySelector(".button-add"));
+        }
+
+        function addTreatmentInput() {
+            const container = document.getElementById("treatment-container");
+            const inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+
+            const addressInput = document.createElement("input");
+            addressInput.type = "text";
+            addressInput.className = "large-input treatment-input";
+            addressInput.placeholder = "Entrez une autre adresse complète";
+            addressInput.oninput = function() { autocompleteAddress(addressInput); };
+
+            const latInput = document.createElement("input");
+            latInput.type = "text";
+            latInput.className = "small-input latitude-input";
+            latInput.placeholder = "Lat";
+            latInput.oninput = function() { manualCoords(latInput); };
+
+            const lonInput = document.createElement("input");
+            lonInput.type = "text";
+            lonInput.className = "small-input longitude-input";
+            lonInput.placeholder = "Lon";
+            lonInput.oninput = function() { manualCoords(lonInput); };
+
+            const selectOption = document.createElement("select");
+            selectOption.className = "treatment-option";
+            selectOption.innerHTML = `
+                <option value="recycling">Recyclage</option>
+                <option value="methanation">Méthanisation</option>
+                <option value="incineration">Incinération</option>
+                <option value="landfill">Enfouissement</option>
+            `;
+
+            const removeButton = document.createElement("button");
+            removeButton.className = "remove-button";
+            removeButton.textContent = "Supprimer";
+            removeButton.onclick = function() { removeInput(removeButton); };
+
+            inputGroup.appendChild(addressInput);
+            inputGroup.appendChild(latInput);
+            inputGroup.appendChild(lonInput);
+            inputGroup.appendChild(selectOption);
             inputGroup.appendChild(removeButton);
 
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
@@ -179,7 +227,6 @@
             const latInput = inputGroup.querySelector(".latitude-input");
             const lonInput = inputGroup.querySelector(".longitude-input");
 
-            // If both latitude and longitude are manually entered, store them as dataset
             if (latInput.value && lonInput.value) {
                 inputGroup.dataset.coords = `${latInput.value},${lonInput.value}`;
             }
@@ -193,20 +240,24 @@
         }
 
         function compareRoutes() {
-            const storageInputs = document.querySelectorAll(".input-group");
-            const treatmentInputs = document.querySelectorAll(".input-group");
+            if (routeControl) {
+                map.removeControl(routeControl);
+            }
+
+            const storageInputs = document.querySelectorAll(".storage-input");
+            const treatmentInputs = document.querySelectorAll(".treatment-input");
 
             storageInputs.forEach(storageGroup => {
-                const storageLat = storageGroup.querySelector(".latitude-input").value;
-                const storageLon = storageGroup.querySelector(".longitude-input").value;
+                const storageLat = storageGroup.parentElement.querySelector(".latitude-input").value;
+                const storageLon = storageGroup.parentElement.querySelector(".longitude-input").value;
                 
                 if (storageLat && storageLon) {
                     treatmentInputs.forEach(treatmentGroup => {
-                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
-                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
+                        const treatmentLat = treatmentGroup.parentElement.querySelector(".latitude-input").value;
+                        const treatmentLon = treatmentGroup.parentElement.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
-                            L.Routing.control({
+                            routeControl = L.Routing.control({
                                 waypoints: [
                                     L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
                                     L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))

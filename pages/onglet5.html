@@ -3,38 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onglet 5 - Calcul d'Itinéraires Gratuits avec Leaflet</title>
+    <title>Onglet 5 - Livrable ENSAM x Cartier</title>
+    
+    <!-- Polices et bibliothèques externes -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
-        #map { height: 500px; width: 100%; }
+        #map { height: 400px; width: 100%; margin-top: 20px; }
+        .route-section { margin: 30px 0; }
     </style>
 </head>
 <body>
-    <h1>Calcul des itinéraires avec Leaflet et OpenStreetMap</h1>
-    <div>
-        <label for="start">Adresse de départ :</label>
-        <input type="text" id="start" placeholder="Entrez une adresse">
-        <label for="end">Adresse de destination :</label>
-        <input type="text" id="end" placeholder="Entrez une adresse">
-        <button onclick="calculateRoute()">Afficher les itinéraires</button>
+    <!-- Image d'en-tête -->
+    <div class="header-image">
+        <div class="header-overlay">ENSAM x Cartier</div>
     </div>
-    <div id="map"></div>
 
-    <!-- Inclure les bibliothèques Leaflet et Leaflet Routing Machine -->
+    <!-- Menu de navigation -->
+    <header class="menu">
+        <nav>
+            <ul>
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="onglet1.html">Onglet 1</a></li>
+                <li><a href="onglet2.html">Onglet 2</a></li>
+                <li><a href="onglet3.html">Onglet 3</a></li>
+                <li><a href="onglet4.html">Onglet 4</a></li>
+                <li><a href="onglet5.html">Onglet 5</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="content">
+        <h1>Étude de l’optimisation de l’impact CO2 de la fin de vie des Publicités sur le Lieu de Vente (PLV)</h1>
+        
+        <!-- Nouvelle section pour les itinéraires -->
+        <section class="route-section">
+            <h2>Calcul des itinéraires vers les points de traitement de déchets</h2>
+            <div>
+                <label for="start">Adresse de départ :</label>
+                <input type="text" id="start" placeholder="Entrez une adresse">
+                <label for="end">Adresse de destination :</label>
+                <input type="text" id="end" placeholder="Entrez une adresse">
+                <button onclick="calculateRoute()">Afficher les itinéraires</button>
+            </div>
+            <div id="map"></div>
+        </section>
+
+        <!-- Autres sections existantes comme Remerciements, Conclusion, etc. -->
+        <section>
+            <h2>Remerciements</h2>
+            <p>Nous remercions la Maison Cartier...</p>
+            <!-- Texte existant -->
+        </section>
+
+        <section>
+            <h2>Conclusion générale</h2>
+            <p>Notre projet a permis de mettre en place un outil décisionnel...</p>
+            <!-- Texte existant -->
+        </section>
+    </main>
+
+    <!-- Pied de page -->
+    <div class="footer">
+        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
+    </div>
+
+    <!-- Scripts Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js"></script>
 
     <script>
-        // Initialisation de la carte
-        const map = L.map('map').setView([48.8566, 2.3522], 13); // Centré sur Paris (ajustable)
+        const map = L.map('map').setView([48.8566, 2.3522], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Fonction pour utiliser le géocodage Nominatim
         function geocodeAddress(address, callback) {
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
                 .then(response => response.json())
@@ -48,12 +97,10 @@
                 });
         }
 
-        // Fonction pour calculer et afficher l'itinéraire
         function calculateRoute() {
             const startAddress = document.getElementById("start").value;
             const endAddress = document.getElementById("end").value;
 
-            // Géocoder les adresses
             geocodeAddress(startAddress, (startCoords) => {
                 geocodeAddress(endAddress, (endCoords) => {
                     L.Routing.control({

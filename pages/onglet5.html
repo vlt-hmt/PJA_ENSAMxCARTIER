@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.1</title>
+    <title>Gestion des Adresses avec Coordonnées GPS et Itinéraires Dynamiques - Version 1.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -18,7 +18,7 @@
         input { padding: 8px; margin-bottom: 10px; flex-grow: 1; margin-right: 10px; }
         .small-input { width: 90px; }
         .autocomplete-suggestions {
-            position: absolute;
+            position: absolute; 
             background: white; 
             border: 1px solid #ccc; 
             max-height: 150px; 
@@ -34,6 +34,31 @@
         }
         .autocomplete-suggestion:hover {
             background-color: #f0f0f0;
+        }
+        .header-overlay {
+            position: relative;
+            color: white;
+            padding: 10px;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .version-number {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        #distance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #distance-table th, #distance-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #distance-table th {
+            background-color: #f4f4f4;
         }
     </style>
 </head>
@@ -52,7 +77,9 @@
                 </ul>
             </nav>
         </header>
-        <div class="header-overlay">ENSAM x Cartier</div>
+        <div class="header-overlay">
+            Version 1.2
+        </div>
     </div>
 
     <main class="content">
@@ -88,6 +115,17 @@
 
             <button onclick="compareRoutes()">Comparer les itinéraires</button>
             <div id="map"></div>
+            <table id="distance-table">
+                <thead>
+                    <tr>
+                        <th>Lieu de Stockage</th>
+                        <th>Lieu de Traitement</th>
+                        <th>Distance (km)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </section>
     </main>
 
@@ -101,24 +139,6 @@
         }).addTo(map);
 
         let routeControls = [];
-
-        // Couleurs de base pour chaque lieu de stockage (peut être modifié)
-        const baseColors = [
-            { r: 0, g: 0, b: 255 }, // Bleu
-            { r: 0, g: 255, b: 0 }, // Vert
-            { r: 255, g: 0, b: 0 }  // Rouge
-        ];
-
-        // Fonction pour obtenir une couleur dégradée
-        function getGradientColor(baseColor, index, total) {
-            const ratio = index / total;
-            const color = `rgb(
-                ${Math.floor(baseColor.r * (1 - ratio) + 255 * ratio)},
-                ${Math.floor(baseColor.g * (1 - ratio) + 255 * ratio)},
-                ${Math.floor(baseColor.b * (1 - ratio) + 255 * ratio)}
-            )`;
-            return color;
-        }
 
         function addStorageInput() {
             const container = document.getElementById("storage-container");
@@ -263,6 +283,8 @@
                 map.removeControl(control);
             });
             routeControls = [];
+            const distanceTableBody = document.querySelector("#distance-table tbody");
+            distanceTableBody.innerHTML = '';
 
             const storageGroups = document.querySelectorAll(".input-group");
             const storageInputs = Array.from(storageGroups).filter(group => group.querySelector(".storage-input"));
@@ -273,25 +295,29 @@
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
 
                 if (storageLat && storageLon) {
-                    const baseColor = baseColors[storageIndex % baseColors.length];
-                    const total = treatmentInputs.length;
-                    
                     treatmentInputs.forEach((treatmentGroup, tIndex) => {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
-                            const routeColor = getGradientColor(baseColor, tIndex, total);
                             const newRoute = L.Routing.control({
                                 waypoints: [
                                     L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
                                     L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
                                 ],
-                                routeWhileDragging: true,
-                                lineOptions: {
-                                    styles: [{ color: routeColor, weight: 4 }]
-                                }
+                                routeWhileDragging: true
                             }).addTo(map);
+
+                            newRoute.on('routesfound', function(e) {
+                                const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
+                                const row = `<tr>
+                                    <td>${storageGroup.querySelector(".large-input").value}</td>
+                                    <td>${treatmentGroup.querySelector(".large-input").value}</td>
+                                    <td>${distance} km</td>
+                                </tr>`;
+                                distanceTableBody.innerHTML += row;
+                            });
+
                             routeControls.push(newRoute);
                         }
                     });

@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onglet 5 - Livrable ENSAM x Cartier</title>
-    
-    <!-- Polices et bibliothèques externes -->
+    <title>Onglet 5 - Optimisation des Itinéraires</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -13,15 +11,14 @@
     <style>
         #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
+        .checkboxes { margin-top: 10px; }
     </style>
 </head>
 <body>
-    <!-- Image d'en-tête -->
     <div class="header-image">
         <div class="header-overlay">ENSAM x Cartier</div>
     </div>
 
-    <!-- Menu de navigation -->
     <header class="menu">
         <nav>
             <ul>
@@ -36,49 +33,51 @@
         </nav>
     </header>
 
-    <!-- Contenu principal -->
     <main class="content">
-        <h1>Étude de l’optimisation de l’impact CO2 de la fin de vie des Publicités sur le Lieu de Vente (PLV)</h1>
-        
-        <!-- Nouvelle section pour les itinéraires -->
+        <h1>Optimisation des itinéraires de fin de vie des déchets</h1>
         <section class="route-section">
-            <h2>Calcul des itinéraires vers les points de traitement de déchets</h2>
+            <h2>Sélection des lieux et options de traitement</h2>
             <div>
-                <label for="start">Adresse de départ :</label>
-                <input type="text" id="start" placeholder="Entrez une adresse">
-                <label for="end">Adresse de destination :</label>
-                <input type="text" id="end" placeholder="Entrez une adresse">
-                <button onclick="calculateRoute()">Afficher les itinéraires</button>
+                <label for="storage">Lieu de stockage :</label>
+                <input type="text" id="storage" placeholder="Entrez une adresse de stockage">
             </div>
+
+            <div>
+                <label for="treatment">Lieux de traitement :</label>
+                <select id="treatment" multiple>
+                    <option value="48.858844,2.294351" data-name="Site A">Site A (Paris)</option>
+                    <option value="48.856613,2.352222" data-name="Site B">Site B (Paris Centre)</option>
+                    <option value="48.864716,2.349014" data-name="Site C">Site C (Montmartre)</option>
+                </select>
+            </div>
+
+            <div class="checkboxes">
+                <label>Options de fin de vie associées :</label><br>
+                <input type="checkbox" id="recycling" value="Recyclage">
+                <label for="recycling">Recyclage</label><br>
+                <input type="checkbox" id="methanation" value="Méthanisation">
+                <label for="methanation">Méthanisation</label><br>
+                <input type="checkbox" id="incineration" value="Incinération">
+                <label for="incineration">Incinération</label><br>
+                <input type="checkbox" id="landfill" value="Enfouissement">
+                <label for="landfill">Enfouissement</label>
+            </div>
+
+            <button onclick="calculateMultipleRoutes()">Afficher les itinéraires</button>
             <div id="map"></div>
-        </section>
-
-        <!-- Autres sections existantes comme Remerciements, Conclusion, etc. -->
-        <section>
-            <h2>Remerciements</h2>
-            <p>Nous remercions la Maison Cartier...</p>
-            <!-- Texte existant -->
-        </section>
-
-        <section>
-            <h2>Conclusion générale</h2>
-            <p>Notre projet a permis de mettre en place un outil décisionnel...</p>
-            <!-- Texte existant -->
         </section>
     </main>
 
-    <!-- Pied de page -->
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
     </div>
 
-    <!-- Scripts Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js"></script>
 
     <script>
-        const map = L.map('map').setView([48.8566, 2.3522], 13);
+        const map = L.map('map').setView([48.8566, 2.3522], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '© OpenStreetMap contributors'
@@ -97,16 +96,23 @@
                 });
         }
 
-        function calculateRoute() {
-            const startAddress = document.getElementById("start").value;
-            const endAddress = document.getElementById("end").value;
+        function calculateMultipleRoutes() {
+            const storageAddress = document.getElementById("storage").value;
+            const treatmentSelect = document.getElementById("treatment");
+            const selectedTreatment = Array.from(treatmentSelect.selectedOptions);
+            
+            // Géocodage de l'adresse de stockage
+            geocodeAddress(storageAddress, (storageCoords) => {
+                selectedTreatment.forEach(option => {
+                    const [lat, lng] = option.value.split(',');
+                    const name = option.getAttribute('data-name');
+                    const destinationCoords = [parseFloat(lat), parseFloat(lng)];
 
-            geocodeAddress(startAddress, (startCoords) => {
-                geocodeAddress(endAddress, (endCoords) => {
+                    // Tracer les itinéraires
                     L.Routing.control({
                         waypoints: [
-                            L.latLng(startCoords[0], startCoords[1]),
-                            L.latLng(endCoords[0], endCoords[1])
+                            L.latLng(storageCoords[0], storageCoords[1]),
+                            L.latLng(destinationCoords[0], destinationCoords[1])
                         ],
                         routeWhileDragging: true
                     }).addTo(map);

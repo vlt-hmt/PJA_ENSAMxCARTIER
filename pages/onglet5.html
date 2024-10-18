@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.3</title>
+    <title>Version 1.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -66,7 +66,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.3
+            Version 1.4
         </div>
     </div>
 
@@ -288,15 +288,13 @@
             headerRow += '</tr>';
             distanceTable.querySelector("thead").innerHTML = headerRow;
 
-            // Promises array to ensure all calculations complete
-            const promises = [];
-
-            storageInputs.forEach((storageGroup) => {
+            storageInputs.forEach((storageGroup, storageIndex) => {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
                 const storageName = storageGroup.querySelector(".large-input").value;
 
                 let rowContent = `<tr><td>${storageName}</td>`;
+                let completedRoutes = 0;
 
                 if (storageLat && storageLon) {
                     treatmentInputs.forEach((treatmentGroup) => {
@@ -304,30 +302,27 @@
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
-                            const promise = new Promise((resolve) => {
-                                const newRoute = L.Routing.control({
-                                    waypoints: [
-                                        L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
-                                        L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
-                                    ],
-                                    routeWhileDragging: true
-                                }).addTo(map);
+                            const newRoute = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
+                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
+                                ],
+                                routeWhileDragging: true
+                            }).addTo(map);
 
-                                newRoute.on('routesfound', function(e) {
-                                    const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
-                                    rowContent += `<td>${distance} km</td>`;
-                                    resolve();
-                                });
+                            newRoute.on('routesfound', function(e) {
+                                const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
+                                rowContent += `<td>${distance} km</td>`;
+                                completedRoutes++;
 
-                                routeControls.push(newRoute);
+                                if (completedRoutes === treatmentInputs.length) {
+                                    rowContent += '</tr>';
+                                    distanceTableBody.innerHTML += rowContent;
+                                }
                             });
-                            promises.push(promise);
-                        }
-                    });
 
-                    Promise.all(promises).then(() => {
-                        rowContent += '</tr>';
-                        distanceTableBody.innerHTML += rowContent;
+                            routeControls.push(newRoute);
+                        }
                     });
                 }
             });

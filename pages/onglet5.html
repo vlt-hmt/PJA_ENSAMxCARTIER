@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onglet 5 - Optimisation des Itinéraires</title>
+    <title>Comparaison des lieux de traitement des déchets</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -11,70 +11,44 @@
     <style>
         #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
-        .checkboxes { margin-top: 10px; }
+        .input-group { margin-bottom: 10px; }
+        .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .button-add { margin-top: 5px; }
     </style>
 </head>
 <body>
-    <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div>
-    </div>
-
-    <header class="menu">
-        <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="onglet1.html">Onglet 1</a></li>
-                <li><a href="onglet2.html">Onglet 2</a></li>
-                <li><a href="onglet3.html">Onglet 3</a></li>
-                <li><a href="onglet4.html">Onglet 4</a></li>
-                <li><a href="onglet5.html">Onglet 5</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <main class="content">
-        <h1>Optimisation des itinéraires de fin de vie des déchets</h1>
+        <h1>Comparaison des lieux de traitement des déchets</h1>
         <section class="route-section">
-            <h2>Sélection des lieux et options de traitement</h2>
-            <div>
-                <label for="storage">Lieu de stockage :</label>
-                <input type="text" id="storage" placeholder="Entrez une adresse de stockage">
+            <h2>Ajouter des lieux de stockage</h2>
+            <div id="storage-container" class="input-container">
+                <div class="input-group">
+                    <input type="text" class="storage-input" placeholder="Entrez une adresse de stockage">
+                </div>
+                <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
             </div>
 
-            <div>
-                <label for="treatment">Lieux de traitement :</label>
-                <select id="treatment" multiple>
-                    <option value="48.858844,2.294351" data-name="Site A">Site A (Paris)</option>
-                    <option value="48.856613,2.352222" data-name="Site B">Site B (Paris Centre)</option>
-                    <option value="48.864716,2.349014" data-name="Site C">Site C (Montmartre)</option>
-                </select>
+            <h2>Ajouter des lieux de traitement</h2>
+            <div id="treatment-container" class="input-container">
+                <div class="input-group">
+                    <input type="text" class="treatment-input" placeholder="Entrez une adresse de traitement">
+                    <select class="treatment-option">
+                        <option value="recycling">Recyclage</option>
+                        <option value="methanation">Méthanisation</option>
+                        <option value="incineration">Incinération</option>
+                        <option value="landfill">Enfouissement</option>
+                    </select>
+                </div>
+                <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
             </div>
 
-            <div class="checkboxes">
-                <label>Options de fin de vie associées :</label><br>
-                <input type="checkbox" id="recycling" value="Recyclage">
-                <label for="recycling">Recyclage</label><br>
-                <input type="checkbox" id="methanation" value="Méthanisation">
-                <label for="methanation">Méthanisation</label><br>
-                <input type="checkbox" id="incineration" value="Incinération">
-                <label for="incineration">Incinération</label><br>
-                <input type="checkbox" id="landfill" value="Enfouissement">
-                <label for="landfill">Enfouissement</label>
-            </div>
-
-            <button onclick="calculateMultipleRoutes()">Afficher les itinéraires</button>
+            <button onclick="compareRoutes()">Comparer les itinéraires</button>
             <div id="map"></div>
         </section>
     </main>
 
-    <div class="footer">
-        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
-    </div>
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-    <script src="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js"></script>
 
     <script>
         const map = L.map('map').setView([48.8566, 2.3522], 11);
@@ -82,6 +56,39 @@
             maxZoom: 18,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
+
+        function addStorageInput() {
+            const container = document.getElementById("storage-container");
+            const newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.className = "storage-input";
+            newInput.placeholder = "Entrez une autre adresse de stockage";
+            container.insertBefore(newInput, container.querySelector(".button-add"));
+        }
+
+        function addTreatmentInput() {
+            const container = document.getElementById("treatment-container");
+            const inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+
+            const newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.className = "treatment-input";
+            newInput.placeholder = "Entrez une autre adresse de traitement";
+
+            const selectOption = document.createElement("select");
+            selectOption.className = "treatment-option";
+            selectOption.innerHTML = `
+                <option value="recycling">Recyclage</option>
+                <option value="methanation">Méthanisation</option>
+                <option value="incineration">Incinération</option>
+                <option value="landfill">Enfouissement</option>
+            `;
+
+            inputGroup.appendChild(newInput);
+            inputGroup.appendChild(selectOption);
+            container.insertBefore(inputGroup, container.querySelector(".button-add"));
+        }
 
         function geocodeAddress(address, callback) {
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
@@ -96,27 +103,37 @@
                 });
         }
 
-        function calculateMultipleRoutes() {
-            const storageAddress = document.getElementById("storage").value;
-            const treatmentSelect = document.getElementById("treatment");
-            const selectedTreatment = Array.from(treatmentSelect.selectedOptions);
-            
-            // Géocodage de l'adresse de stockage
-            geocodeAddress(storageAddress, (storageCoords) => {
-                selectedTreatment.forEach(option => {
-                    const [lat, lng] = option.value.split(',');
-                    const name = option.getAttribute('data-name');
-                    const destinationCoords = [parseFloat(lat), parseFloat(lng)];
+        function compareRoutes() {
+            const storageInputs = document.querySelectorAll(".storage-input");
+            const treatmentInputs = document.querySelectorAll(".treatment-input");
+            const treatmentOptions = document.querySelectorAll(".treatment-option");
 
-                    // Tracer les itinéraires
-                    L.Routing.control({
-                        waypoints: [
-                            L.latLng(storageCoords[0], storageCoords[1]),
-                            L.latLng(destinationCoords[0], destinationCoords[1])
-                        ],
-                        routeWhileDragging: true
-                    }).addTo(map);
-                });
+            storageInputs.forEach(storage => {
+                const storageAddress = storage.value;
+                if (storageAddress) {
+                    geocodeAddress(storageAddress, (storageCoords) => {
+                        treatmentInputs.forEach((treatment, index) => {
+                            const treatmentAddress = treatment.value;
+                            const treatmentType = treatmentOptions[index].value;
+
+                            if (treatmentAddress) {
+                                geocodeAddress(treatmentAddress, (treatmentCoords) => {
+                                    L.Routing.control({
+                                        waypoints: [
+                                            L.latLng(storageCoords[0], storageCoords[1]),
+                                            L.latLng(treatmentCoords[0], treatmentCoords[1])
+                                        ],
+                                        routeWhileDragging: true,
+                                        createMarker: function(i, waypoint, n) {
+                                            let label = i === 0 ? "Stockage" : treatmentType;
+                                            return L.marker(waypoint.latLng).bindPopup(label);
+                                        }
+                                    }).addTo(map);
+                                });
+                            }
+                        });
+                    });
+                }
             });
         }
     </script>

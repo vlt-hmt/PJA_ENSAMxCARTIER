@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Adresses avec Autocomplétion</title>
+    <title>Gestion des Adresses Séparées</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css"> <!-- Utilisation du CSS existant -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -11,30 +11,24 @@
     <style>
         #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
-        .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; }
+        .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; flex-wrap: wrap; }
         .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
         .button-add { margin-top: 5px; }
-        .remove-button { margin-left: 10px; background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
-        input.storage-input, input.treatment-input {
+        .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
+        input {
             padding: 8px;
             margin-bottom: 10px;
             flex-grow: 1;
+            margin-right: 10px;
         }
-        .autocomplete-suggestions { 
-            position: absolute; 
-            background: white; 
-            border: 1px solid #ccc; 
-            max-height: 150px; 
-            overflow-y: auto; 
-            width: calc(100% - 20px); 
-            z-index: 1000; 
+        .small-input {
+            width: 60px;
         }
-        .autocomplete-suggestion {
-            padding: 5px; 
-            cursor: pointer; 
+        .medium-input {
+            width: 140px;
         }
-        .autocomplete-suggestion:hover {
-            background-color: #f0f0f0;
+        .large-input {
+            width: 200px;
         }
     </style>
 </head>
@@ -57,12 +51,15 @@
     </div>
 
     <main class="content">
-        <h1>Gestion des lieux avec autocomplétion</h1>
+        <h1>Gestion des lieux avec adresses séparées</h1>
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="storage-input" placeholder="Entrez une adresse de stockage" oninput="autocompleteAddress(this)">
+                    <input type="text" class="small-input" placeholder="N°" oninput="clearValidation(this)">
+                    <input type="text" class="large-input" placeholder="Rue" oninput="clearValidation(this)">
+                    <input type="text" class="medium-input" placeholder="Ville" oninput="clearValidation(this)">
+                    <input type="text" class="small-input" placeholder="Code postal" oninput="clearValidation(this)">
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
                 </div>
                 <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
@@ -71,7 +68,10 @@
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="treatment-input" placeholder="Entrez une adresse de traitement" oninput="autocompleteAddress(this)">
+                    <input type="text" class="small-input" placeholder="N°" oninput="clearValidation(this)">
+                    <input type="text" class="large-input" placeholder="Rue" oninput="clearValidation(this)">
+                    <input type="text" class="medium-input" placeholder="Ville" oninput="clearValidation(this)">
+                    <input type="text" class="small-input" placeholder="Code postal" oninput="clearValidation(this)">
                     <select class="treatment-option">
                         <option value="recycling">Recyclage</option>
                         <option value="methanation">Méthanisation</option>
@@ -103,19 +103,41 @@
             const inputGroup = document.createElement("div");
             inputGroup.className = "input-group";
 
-            const newInput = document.createElement("input");
-            newInput.type = "text";
-            newInput.className = "storage-input";
-            newInput.placeholder = "Entrez une autre adresse de stockage";
-            newInput.oninput = function() { autocompleteAddress(newInput); };
+            const numberInput = document.createElement("input");
+            numberInput.type = "text";
+            numberInput.className = "small-input";
+            numberInput.placeholder = "N°";
+            numberInput.oninput = function() { clearValidation(numberInput); };
+
+            const streetInput = document.createElement("input");
+            streetInput.type = "text";
+            streetInput.className = "large-input";
+            streetInput.placeholder = "Rue";
+            streetInput.oninput = function() { clearValidation(streetInput); };
+
+            const cityInput = document.createElement("input");
+            cityInput.type = "text";
+            cityInput.className = "medium-input";
+            cityInput.placeholder = "Ville";
+            cityInput.oninput = function() { clearValidation(cityInput); };
+
+            const postalInput = document.createElement("input");
+            postalInput.type = "text";
+            postalInput.className = "small-input";
+            postalInput.placeholder = "Code postal";
+            postalInput.oninput = function() { clearValidation(postalInput); };
 
             const removeButton = document.createElement("button");
             removeButton.className = "remove-button";
             removeButton.textContent = "Supprimer";
             removeButton.onclick = function() { removeInput(removeButton); };
 
-            inputGroup.appendChild(newInput);
+            inputGroup.appendChild(numberInput);
+            inputGroup.appendChild(streetInput);
+            inputGroup.appendChild(cityInput);
+            inputGroup.appendChild(postalInput);
             inputGroup.appendChild(removeButton);
+
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
@@ -124,11 +146,29 @@
             const inputGroup = document.createElement("div");
             inputGroup.className = "input-group";
 
-            const newInput = document.createElement("input");
-            newInput.type = "text";
-            newInput.className = "treatment-input";
-            newInput.placeholder = "Entrez une autre adresse de traitement";
-            newInput.oninput = function() { autocompleteAddress(newInput); };
+            const numberInput = document.createElement("input");
+            numberInput.type = "text";
+            numberInput.className = "small-input";
+            numberInput.placeholder = "N°";
+            numberInput.oninput = function() { clearValidation(numberInput); };
+
+            const streetInput = document.createElement("input");
+            streetInput.type = "text";
+            streetInput.className = "large-input";
+            streetInput.placeholder = "Rue";
+            streetInput.oninput = function() { clearValidation(streetInput); };
+
+            const cityInput = document.createElement("input");
+            cityInput.type = "text";
+            cityInput.className = "medium-input";
+            cityInput.placeholder = "Ville";
+            cityInput.oninput = function() { clearValidation(cityInput); };
+
+            const postalInput = document.createElement("input");
+            postalInput.type = "text";
+            postalInput.className = "small-input";
+            postalInput.placeholder = "Code postal";
+            postalInput.oninput = function() { clearValidation(postalInput); };
 
             const selectOption = document.createElement("select");
             selectOption.className = "treatment-option";
@@ -144,9 +184,13 @@
             removeButton.textContent = "Supprimer";
             removeButton.onclick = function() { removeInput(removeButton); };
 
-            inputGroup.appendChild(newInput);
+            inputGroup.appendChild(numberInput);
+            inputGroup.appendChild(streetInput);
+            inputGroup.appendChild(cityInput);
+            inputGroup.appendChild(postalInput);
             inputGroup.appendChild(selectOption);
             inputGroup.appendChild(removeButton);
+
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
@@ -155,41 +199,8 @@
             inputGroup.remove();
         }
 
-        function autocompleteAddress(input) {
-            const query = input.value;
-            if (query.length < 3) {
-                clearSuggestions(input);
-                return;
-            }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
-                .then(response => response.json())
-                .then(data => {
-                    clearSuggestions(input); // Nettoyer les anciennes suggestions
-                    const suggestions = document.createElement("div");
-                    suggestions.className = "autocomplete-suggestions";
-
-                    data.slice(0, 5).forEach(place => { // Limiter à 5 résultats
-                        const suggestion = document.createElement("div");
-                        suggestion.className = "autocomplete-suggestion";
-                        suggestion.textContent = place.display_name;
-                        suggestion.onclick = function() {
-                            input.value = place.display_name;
-                            input.dataset.coords = `${place.lat},${place.lon}`;
-                            clearSuggestions(input);
-                        };
-                        suggestions.appendChild(suggestion);
-                    });
-
-                    input.parentElement.appendChild(suggestions);
-                });
-        }
-
-        function clearSuggestions(input) {
-            const suggestions = input.parentElement.querySelector(".autocomplete-suggestions");
-            if (suggestions) {
-                suggestions.remove();
-            }
+        function clearValidation(input) {
+            // Pour gérer les validations ultérieurement
         }
 
         function compareRoutes() {

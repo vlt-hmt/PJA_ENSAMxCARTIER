@@ -3,150 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onglet 5 - Livrable ENSAM x Cartier</title>
-    
-    <!-- Polices et bibliothèques externes -->
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
+    <title>Onglet 5 - Calcul d'Itinéraires Gratuits avec Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
 </head>
 <body>
-    <!-- Image d'en-tête -->
-    <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div> <!-- Texte superposé -->
+    <h1>Calcul des itinéraires avec Leaflet et OpenStreetMap</h1>
+    <div>
+        <label for="start">Adresse de départ :</label>
+        <input type="text" id="start" placeholder="Entrez une adresse">
+        <label for="end">Adresse de destination :</label>
+        <input type="text" id="end" placeholder="Entrez une adresse">
+        <button onclick="calculateRoute()">Afficher les itinéraires</button>
     </div>
+    <div id="map"></div>
 
-    <!-- Menu de navigation -->
-    <header class="menu">
-        <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="onglet1.html">Onglet 1</a></li>
-                <li><a href="onglet2.html">Onglet 2</a></li>
-                <li><a href="onglet3.html">Onglet 3</a></li>
-                <li><a href="onglet4.html">Onglet 4</a></li>
-                <li><a href="onglet5.html">Onglet 5</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Inclure les bibliothèques Leaflet et Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js"></script>
 
-    <!-- Contenu principal -->
-    <main class="content">
-        <h1>Étude de l’optimisation de l’impact CO2 de la fin de vie des Publicités sur le Lieu de Vente (PLV)</h1>
-        <h2>Pierre-Vincent ARCADE, Valentin HYAUMET, Baptiste LÉGIER</h2>
-        <h3>PGE 2A - Parcours IGDC</h3>
+    <script>
+        // Initialisation de la carte
+        const map = L.map('map').setView([48.8566, 2.3522], 13); // Centré sur Paris (ajustable)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-        <section>
-            <h2>Remerciements</h2>
-            <p>Nous remercions la Maison Cartier, en particulier Madame ORLOVA et Madame MILLET, pour leur aide précieuse tout au long de notre projet. Nous remercions également Monsieur Guillaume GRAMPEIX, notre professeur, pour son soutien ainsi que pour avoir rendu cette collaboration possible. Nous tenons également à remercier Madame Carole CHARBUILLET pour ses précieuses explications sur l’analyse du cycle de vie.</p>
-        </section>
+        // Fonction pour utiliser le géocodage Nominatim
+        function geocodeAddress(address, callback) {
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const latLng = [data[0].lat, data[0].lon];
+                        callback(latLng);
+                    } else {
+                        alert("Adresse non trouvée !");
+                    }
+                });
+        }
 
-        <section>
-            <h2>Abstract</h2>
-            <p>Dans le cadre de notre collaboration avec la Maison Cartier, nous avons développé un outil d'aide à la décision pour optimiser la gestion de la fin de vie des Publicités sur Lieu de Vente (PLV), dans le but de minimiser les émissions de CO2 associées. Notre étude a permis de mettre en évidence l’importance de la conception initiale des produits et nous avons élaboré trois modules principaux :</p>
-            <ul>
-                <li>Un module d'analyse de la répartition des matériaux par pays</li>
-                <li>Un module d'optimisation des choix de fin de vie</li>
-                <li>Un module d'optimisation du transport</li>
-            </ul>
-        </section>
+        // Fonction pour calculer et afficher l'itinéraire
+        function calculateRoute() {
+            const startAddress = document.getElementById("start").value;
+            const endAddress = document.getElementById("end").value;
 
-        <section>
-            <h2>Introduction</h2>
-            <p>Le dioxyde de carbone (CO2) est l'un des principaux gaz à effet de serre émis par les activités humaines. Ce gaz contribue au réchauffement climatique en piégeant la chaleur dans l'atmosphère, provoquant des phénomènes météorologiques extrêmes, la montée du niveau de la mer et des perturbations écologiques.</p>
-            <p>La Maison Cartier a fait appel à des groupes de travail pour optimiser la fin de vie de ses PLV dans une optique de réduction de l'impact carbone. Notre projet s'inscrit dans cette démarche avec pour objectif de minimiser les émissions de CO2 en fin de vie.</p>
-        </section>
-
-        <section>
-            <h2>Contexte et Problématique</h2>
-            <p>Face aux pressions environnementales croissantes, de nombreuses entreprises se sont engagées à réduire leur empreinte carbone. Dans ce cadre, la Maison Cartier s'intéresse à l'optimisation de la fin de vie des PLV. En effet, ces dispositifs, souvent présents dans les points de vente, sont fabriqués à partir de divers matériaux qui génèrent des émissions de CO2 au moment de leur recyclage, incinération ou mise en décharge.</p>
-            <p>La problématique centrale de notre étude est donc la suivante : comment optimiser la fin de vie des PLV afin de réduire au maximum l'impact environnemental en termes d'émissions de CO2 ?</p>
-        </section>
-
-        <section>
-            <h2>Objectifs de l'étude</h2>
-            <p>L'objectif principal de ce projet est de développer un outil d'aide à la décision permettant d'identifier les meilleures solutions de gestion en fin de vie des PLV. Plus spécifiquement, nous cherchons à :</p>
-            <ul>
-                <li>Analyser l'empreinte carbone des PLV en fonction des matériaux utilisés</li>
-                <li>Évaluer les différentes options de fin de vie (recyclage, incinération, etc.)</li>
-                <li>Optimiser la logistique et le transport des PLV vers les centres de traitement</li>
-                <li>Formuler des recommandations pour une meilleure gestion des PLV</li>
-            </ul>
-        </section>
-        
-        <section>
-            <h2>Méthodologie</h2>
-            <p>Notre méthodologie repose sur une analyse comparative des différents matériaux composant les PLV et de leurs impacts environnementaux en fin de vie. Nous avons utilisé des outils d'analyse du cycle de vie (ACV) pour quantifier les émissions de CO2 associées à chaque matériau et chaque mode de traitement en fin de vie.</p>
-            <p>Nous avons également pris en compte les spécificités logistiques telles que le transport des PLV depuis les points de vente jusqu'aux centres de traitement des déchets, ainsi que l'impact des différentes options de transport (routier, ferroviaire, maritime).</p>
-        </section>
-
-        <section>
-            <h2>Analyse des matériaux utilisés dans les PLV</h2>
-            <p>Les Publicités sur Lieu de Vente (PLV) sont fabriquées à partir d'une large gamme de matériaux, chacun ayant des propriétés spécifiques et des impacts environnementaux différents en fin de vie. Notre étude a porté sur les principaux matériaux suivants :</p>
-            <ul>
-                <li><strong>Carton :</strong> Matériau largement utilisé pour sa légèreté et sa recyclabilité. Le carton est facilement recyclable dans la plupart des pays.</li>
-                <li><strong>Plastique :</strong> Divers types de plastiques sont utilisés dans les PLV. Les plastiques posent des défis en termes de recyclage et de gestion des déchets, notamment à cause des additifs.</li>
-                <li><strong>Métaux :</strong> Les métaux, tels que l'aluminium et l'acier, sont couramment utilisés pour renforcer les structures des PLV. Ils ont l'avantage d'être hautement recyclables.</li>
-                <li><strong>Verre :</strong> Rarement utilisé, mais parfois présent dans certaines PLV pour des éléments spécifiques. Le verre est recyclable mais coûteux à transporter.</li>
-                <li><strong>Bois :</strong> Utilisé pour certaines structures de PLV, le bois peut être recyclé ou incinéré avec un impact environnemental relativement faible.</li>
-            </ul>
-            <p>L’analyse comparative de ces matériaux nous a permis de quantifier les émissions de CO2 associées à chaque type de matériau, en fonction des méthodes de gestion en fin de vie disponibles (recyclage, incinération, mise en décharge).</p>
-        </section>
-
-        <section>
-            <h2>Choix des méthodes de fin de vie</h2>
-            <p>Nous avons évalué plusieurs scénarios de fin de vie pour les PLV en fonction des matériaux et des infrastructures disponibles dans les différents pays étudiés. Les principales méthodes de gestion en fin de vie considérées sont :</p>
-            <ul>
-                <li><strong>Recyclage :</strong> Le recyclage est une méthode privilégiée lorsque des infrastructures adéquates sont disponibles. Cependant, tous les matériaux ne peuvent pas être recyclés efficacement, ce qui limite son impact positif.</li>
-                <li><strong>Incinération :</strong> L'incinération est souvent utilisée lorsque le recyclage n'est pas possible. Elle permet de réduire le volume des déchets, mais elle est associée à des émissions importantes de CO2.</li>
-                <li><strong>Méthanisation :</strong> Cette méthode est applicable aux matériaux organiques, comme le bois. Elle permet de récupérer du biogaz, mais son application est limitée aux matériaux biodégradables.</li>
-            </ul>
-            <p>Chaque méthode a été analysée en termes d'émissions de CO2 générées et d'émissions évitées grâce à la récupération de matériaux ou d'énergie. Nous avons également pris en compte les contraintes géographiques et logistiques qui influencent la faisabilité de chaque méthode dans les différents pays étudiés.</p>
-        </section>
-
-        <section>
-            <h2>Résultats et recommandations</h2>
-            <p>Notre analyse a montré que le recyclage reste la méthode la plus efficace en termes de réduction des émissions de CO2, à condition que les infrastructures adéquates soient disponibles. Pour les plastiques, en particulier, le recyclage est souvent limité par la présence d'additifs ou la complexité des matériaux, ce qui rend l'incinération parfois inévitable.</p>
-            <p>Les résultats de notre étude nous ont permis de formuler les recommandations suivantes :</p>
-            <ul>
-                <li>Favoriser l'utilisation de matériaux recyclables dès la conception des PLV afin de maximiser les bénéfices environnementaux en fin de vie.</li>
-                <li>Optimiser le tri et la collecte des déchets pour améliorer les taux de recyclage, en particulier pour les plastiques complexes.</li>
-                <li>Éviter autant que possible l'incinération, sauf lorsque les autres options ne sont pas disponibles ou viables économiquement.</li>
-                <li>Promouvoir la méthanisation pour les matériaux biodégradables, tels que le bois ou les cartons spéciaux, dans les régions disposant des infrastructures adéquates.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Optimisation du transport des PLV</h2>
-            <p>Outre les choix de fin de vie des matériaux, le transport des PLV jusqu'aux centres de traitement a un impact considérable sur les émissions de CO2. Nous avons étudié plusieurs scénarios de transport pour évaluer leur impact environnemental :</p>
-            <ul>
-                <li><strong>Transport routier :</strong> Il est couramment utilisé, mais il génère des émissions importantes, surtout pour les longues distances.</li>
-                <li><strong>Transport ferroviaire :</strong> Moins utilisé pour le transport des PLV, mais il présente un impact carbone réduit par rapport au transport routier.</li>
-                <li><strong>Transport maritime :</strong> Utilisé pour les longues distances internationales, il présente un impact carbone faible par tonne transportée, mais reste coûteux et lent.</li>
-            </ul>
-            <p>Nos recommandations incluent une optimisation des trajets pour réduire les distances parcourues et l'encouragement à utiliser des modes de transport à plus faible émission de carbone lorsque cela est possible (ferroviaire ou maritime).</p>
-        </section>
-
-        <section>
-            <h2>Conclusion générale</h2>
-            <p>Notre projet a permis de mettre en place un outil décisionnel complet pour la gestion de la fin de vie des PLV, permettant à la Maison Cartier d'optimiser ses émissions de CO2. En se concentrant à la fois sur les choix de matériaux, les méthodes de gestion en fin de vie et les aspects logistiques, nous avons proposé des recommandations concrètes et opérationnelles pour réduire l'empreinte carbone des PLV.</p>
-            <p>Les perspectives futures de ce projet incluent une extension de l'outil pour prendre en compte d'autres types de PLV et matériaux, ainsi qu'une intégration des données en temps réel sur les infrastructures de gestion des déchets disponibles dans chaque pays.</p>
-        </section>
-
-        <section>
-            <h2>Bibliographie</h2>
-            <p>Nous avons basé notre analyse sur de nombreuses sources académiques et rapports industriels concernant l'analyse du cycle de vie, la gestion des déchets et les stratégies de réduction des émissions de CO2. Les références complètes de ces sources sont listées ci-dessous :</p>
-            <ul>
-                <li>ACV et gestion des déchets : études comparatives internationales (2023)</li>
-                <li>Réduction des émissions de CO2 dans le secteur du recyclage (Rapport 2022)</li>
-                <li>Stratégies d'optimisation logistique et transport durable (Thèse ENSAM, 2021)</li>
-            </ul>
-        </section>
-    </main>
-
-    <!-- Pied de page -->
-    <div class="footer">
-        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
-    </div>
+            // Géocoder les adresses
+            geocodeAddress(startAddress, (startCoords) => {
+                geocodeAddress(endAddress, (endCoords) => {
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(startCoords[0], startCoords[1]),
+                            L.latLng(endCoords[0], endCoords[1])
+                        ],
+                        routeWhileDragging: true
+                    }).addTo(map);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

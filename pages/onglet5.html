@@ -9,35 +9,35 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
+        /* Minimiser les styles ajoutés et respecter les styles du fichier CSS existant */
         #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
         .input-group { margin-bottom: 10px; position: relative; }
         .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
         .button-add { margin-top: 5px; }
         .validation-message { color: red; font-size: 0.9em; position: absolute; top: 40px; left: 0; }
-        header.menu { background-color: #f8f8f8; padding: 10px; }
-        header.menu ul { list-style: none; padding: 0; display: flex; justify-content: center; }
-        header.menu li { margin: 0 15px; }
-        header.menu a { text-decoration: none; color: #333; font-weight: bold; }
-        header.menu a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <!-- Menu de navigation restauré -->
-    <header class="menu">
-        <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="onglet1.html">Onglet 1</a></li>
-                <li><a href="onglet2.html">Onglet 2</a></li>
-                <li><a href="onglet3.html">Onglet 3</a></li>
-                <li><a href="onglet4.html">Onglet 4</a></li>
-                <li><a href="onglet5.html">Onglet 5</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Image d'en-tête et texte superposé -->
+    <div class="header-image">
+        <header class="menu">
+            <nav>
+                <ul>
+                    <li><a href="../index.html">Accueil</a></li>
+                    <li><a href="onglet1.html">Onglet 1</a></li>
+                    <li><a href="onglet2.html">Onglet 2</a></li>
+                    <li><a href="onglet3.html">Onglet 3</a></li>
+                    <li><a href="onglet4.html">Onglet 4</a></li>
+                    <li><a href="onglet5.html">Onglet 5</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="header-overlay">ENSAM x Cartier</div>
+    </div>
 
+    <!-- Contenu principal -->
     <main class="content">
         <h1>Comparaison des lieux de traitement des déchets</h1>
         <section class="route-section">

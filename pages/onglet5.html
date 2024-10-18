@@ -19,13 +19,13 @@
         .small-input { width: 90px; }
         .autocomplete-suggestions {
             position: absolute;
-            background: white;
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
+            background: white; 
+            border: 1px solid #ccc; 
+            max-height: 150px; 
+            overflow-y: auto; 
             width: calc(100% - 20px); 
-            z-index: 1000;
-            top: 110%; /* Ajusté pour apparaître sous le champ d'entrée */
+            z-index: 1000; 
+            top: 110%;
             left: 0;
         }
         .autocomplete-suggestion {
@@ -97,7 +97,7 @@
         const map = L.map('map').setView([48.8566, 2.3522], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
-            attribution: 'Pv le gros bg de la street'
+            attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         let routeControls = [];
@@ -240,23 +240,24 @@
         }
 
         function compareRoutes() {
-            // Supprimez les routes précédentes de la carte
+            // Supprimer les itinéraires précédents
             routeControls.forEach(control => {
                 map.removeControl(control);
             });
             routeControls = [];
 
-            const storageInputs = document.querySelectorAll(".storage-input");
-            const treatmentInputs = document.querySelectorAll(".treatment-input");
+            const storageGroups = document.querySelectorAll(".input-group");
+            const storageInputs = Array.from(storageGroups).filter(group => group.querySelector(".storage-input"));
+            const treatmentInputs = Array.from(storageGroups).filter(group => group.querySelector(".treatment-input"));
 
-            storageInputs.forEach(storageGroup => {
-                const storageLat = storageGroup.parentElement.querySelector(".latitude-input").value;
-                const storageLon = storageGroup.parentElement.querySelector(".longitude-input").value;
+            storageInputs.forEach((storageGroup, index) => {
+                const storageLat = storageGroup.querySelector(".latitude-input").value;
+                const storageLon = storageGroup.querySelector(".longitude-input").value;
                 
                 if (storageLat && storageLon) {
-                    treatmentInputs.forEach(treatmentGroup => {
-                        const treatmentLat = treatmentGroup.parentElement.querySelector(".latitude-input").value;
-                        const treatmentLon = treatmentGroup.parentElement.querySelector(".longitude-input").value;
+                    treatmentInputs.forEach((treatmentGroup, tIndex) => {
+                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
+                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
                             const newRoute = L.Routing.control({
@@ -264,7 +265,12 @@
                                     L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
                                     L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
                                 ],
-                                routeWhileDragging: true
+                                routeWhileDragging: true,
+                                createMarker: function(i, waypoint, n) {
+                                    return L.marker(waypoint.latLng, {
+                                        draggable: true
+                                    }).bindPopup(`Itinéraire ${index + 1}-${tIndex + 1}`);
+                                }
                             }).addTo(map);
                             routeControls.push(newRoute);
                         }

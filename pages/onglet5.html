@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Adresses avec Coordonnées GPS et Itinéraires Dynamiques - Version 1.2</title>
+    <title>Version 1.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
-        #map { height: 400px; width: 70%; margin-top: 20px; }
+        #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
         .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; flex-wrap: wrap; }
         .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
@@ -35,27 +35,15 @@
         .autocomplete-suggestion:hover {
             background-color: #f0f0f0;
         }
-        .header-overlay {
-            position: relative;
-            color: white;
-            padding: 10px;
-            font-size: 18px;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        .version-number {
-            font-size: 14px;
-            color: #aaa;
-            margin-top: 5px;
-        }
         #distance-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            text-align: center;
         }
         #distance-table th, #distance-table td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: left;
         }
         #distance-table th {
             background-color: #f4f4f4;
@@ -78,7 +66,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.2
+            Version 1.3
         </div>
     </div>
 
@@ -118,9 +106,7 @@
             <table id="distance-table">
                 <thead>
                     <tr>
-                        <th>Lieu de Stockage</th>
-                        <th>Lieu de Traitement</th>
-                        <th>Distance (km)</th>
+                        <th>Lieu de Stockage / Lieu de Traitement</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -278,24 +264,40 @@
         }
 
         function compareRoutes() {
-            // Supprimer les itinéraires précédents
+            // Supprimer les itinéraires précédents et réinitialiser le tableau
             routeControls.forEach(control => {
                 map.removeControl(control);
             });
             routeControls = [];
-            const distanceTableBody = document.querySelector("#distance-table tbody");
+            
+            const distanceTable = document.querySelector("#distance-table");
+            const distanceTableBody = distanceTable.querySelector("tbody");
             distanceTableBody.innerHTML = '';
 
             const storageGroups = document.querySelectorAll(".input-group");
             const storageInputs = Array.from(storageGroups).filter(group => group.querySelector(".storage-input"));
             const treatmentInputs = Array.from(storageGroups).filter(group => group.querySelector(".treatment-input"));
 
-            storageInputs.forEach((storageGroup, storageIndex) => {
+            // Créer la première ligne d'en-tête
+            let headerRow = '<tr><th>Stockage \\ Traitement</th>';
+            treatmentInputs.forEach((treatmentGroup) => {
+                const treatmentName = treatmentGroup.querySelector(".large-input").value;
+                const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
+                headerRow += `<th>${treatmentName} (${treatmentOption})</th>`;
+            });
+            headerRow += '</tr>';
+            distanceTable.querySelector("thead").innerHTML = headerRow;
+
+            // Remplir le tableau avec les distances calculées
+            storageInputs.forEach((storageGroup) => {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
+                const storageName = storageGroup.querySelector(".large-input").value;
+
+                let rowContent = `<tr><td>${storageName}</td>`;
 
                 if (storageLat && storageLon) {
-                    treatmentInputs.forEach((treatmentGroup, tIndex) => {
+                    treatmentInputs.forEach((treatmentGroup) => {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
@@ -310,18 +312,15 @@
 
                             newRoute.on('routesfound', function(e) {
                                 const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
-                                const row = `<tr>
-                                    <td>${storageGroup.querySelector(".large-input").value}</td>
-                                    <td>${treatmentGroup.querySelector(".large-input").value}</td>
-                                    <td>${distance} km</td>
-                                </tr>`;
-                                distanceTableBody.innerHTML += row;
+                                rowContent += `<td>${distance} km</td>`;
                             });
 
                             routeControls.push(newRoute);
                         }
                     });
                 }
+                rowContent += '</tr>';
+                distanceTableBody.innerHTML += rowContent;
             });
         }
     </script>

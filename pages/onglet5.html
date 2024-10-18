@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Adresses avec Autocomplétion Séparée</title>
+    <title>Gestion des Adresses avec Autocomplétion</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -15,17 +15,16 @@
         .button-add { margin-top: 5px; }
         .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
         input { padding: 8px; margin-bottom: 10px; flex-grow: 1; margin-right: 10px; }
-        .small-input { width: 60px; }
-        .medium-input { width: 140px; }
-        .large-input { width: 200px; }
         .autocomplete-suggestions {
             position: absolute;
             background: white;
             border: 1px solid #ccc;
             max-height: 150px;
             overflow-y: auto;
-            width: 100%;
+            width: calc(100% - 20px); 
             z-index: 1000;
+            top: 110%; /* Ajusté pour apparaître sous le champ d'entrée */
+            left: 0;
         }
         .autocomplete-suggestion {
             padding: 5px;
@@ -55,15 +54,12 @@
     </div>
 
     <main class="content">
-        <h1>Gestion des lieux avec adresses séparées et autocomplétion</h1>
+        <h1>Gestion des lieux avec adresses complètes et autocomplétion</h1>
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="small-input" placeholder="N°" oninput="clearValidation(this)">
-                    <input type="text" class="large-input" placeholder="Rue" oninput="autocompleteStreet(this)">
-                    <input type="text" class="medium-input" placeholder="Ville" oninput="autocompleteCity(this)">
-                    <input type="text" class="small-input" placeholder="Code postal" oninput="clearValidation(this)">
+                    <input type="text" class="large-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
                 </div>
                 <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
@@ -72,10 +68,7 @@
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="small-input" placeholder="N°" oninput="clearValidation(this)">
-                    <input type="text" class="large-input" placeholder="Rue" oninput="autocompleteStreet(this)">
-                    <input type="text" class="medium-input" placeholder="Ville" oninput="autocompleteCity(this)">
-                    <input type="text" class="small-input" placeholder="Code postal" oninput="clearValidation(this)">
+                    <input type="text" class="large-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
                     <select class="treatment-option">
                         <option value="recycling">Recyclage</option>
                         <option value="methanation">Méthanisation</option>
@@ -99,39 +92,18 @@
             const inputGroup = document.createElement("div");
             inputGroup.className = "input-group";
 
-            const numberInput = document.createElement("input");
-            numberInput.type = "text";
-            numberInput.className = "small-input";
-            numberInput.placeholder = "N°";
-            numberInput.oninput = function() { clearValidation(numberInput); };
-
-            const streetInput = document.createElement("input");
-            streetInput.type = "text";
-            streetInput.className = "large-input";
-            streetInput.placeholder = "Rue";
-            streetInput.oninput = function() { autocompleteStreet(streetInput); };
-
-            const cityInput = document.createElement("input");
-            cityInput.type = "text";
-            cityInput.className = "medium-input";
-            cityInput.placeholder = "Ville";
-            cityInput.oninput = function() { autocompleteCity(cityInput); };
-
-            const postalInput = document.createElement("input");
-            postalInput.type = "text";
-            postalInput.className = "small-input";
-            postalInput.placeholder = "Code postal";
-            postalInput.oninput = function() { clearValidation(postalInput); };
+            const addressInput = document.createElement("input");
+            addressInput.type = "text";
+            addressInput.className = "large-input";
+            addressInput.placeholder = "Entrez une autre adresse complète";
+            addressInput.oninput = function() { autocompleteAddress(addressInput); };
 
             const removeButton = document.createElement("button");
             removeButton.className = "remove-button";
             removeButton.textContent = "Supprimer";
             removeButton.onclick = function() { removeInput(removeButton); };
 
-            inputGroup.appendChild(numberInput);
-            inputGroup.appendChild(streetInput);
-            inputGroup.appendChild(cityInput);
-            inputGroup.appendChild(postalInput);
+            inputGroup.appendChild(addressInput);
             inputGroup.appendChild(removeButton);
 
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
@@ -142,11 +114,14 @@
             inputGroup.remove();
         }
 
-        function autocompleteCity(input) {
+        function autocompleteAddress(input) {
             const query = input.value;
-            if (query.length < 3) return;
+            if (query.length < 3) {
+                clearSuggestions(input);
+                return;
+            }
 
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&city=${encodeURIComponent(query)}&addressdetails=1`)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
                 .then(response => response.json())
                 .then(data => {
                     clearSuggestions(input);
@@ -158,33 +133,8 @@
                         suggestion.className = "autocomplete-suggestion";
                         suggestion.textContent = place.display_name;
                         suggestion.onclick = function() {
-                            input.value = place.display_name.split(",")[0];
-                            clearSuggestions(input);
-                        };
-                        suggestions.appendChild(suggestion);
-                    });
-
-                    input.parentElement.appendChild(suggestions);
-                });
-        }
-
-        function autocompleteStreet(input) {
-            const query = input.value;
-            if (query.length < 3) return;
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&street=${encodeURIComponent(query)}&addressdetails=1`)
-                .then(response => response.json())
-                .then(data => {
-                    clearSuggestions(input);
-                    const suggestions = document.createElement("div");
-                    suggestions.className = "autocomplete-suggestions";
-
-                    data.slice(0, 5).forEach(place => {
-                        const suggestion = document.createElement("div");
-                        suggestion.className = "autocomplete-suggestion";
-                        suggestion.textContent = place.display_name;
-                        suggestion.onclick = function() {
-                            input.value = place.address.road || place.display_name.split(",")[0];
+                            input.value = place.display_name;
+                            input.dataset.coords = `${place.lat},${place.lon}`;
                             clearSuggestions(input);
                         };
                         suggestions.appendChild(suggestion);

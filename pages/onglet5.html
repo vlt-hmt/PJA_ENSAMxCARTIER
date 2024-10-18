@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validation Instantanée des Adresses</title>
+    <title>Validation et Traçage des Itinéraires</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -137,10 +137,18 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.length > 0) {
-                        callback(true, [data[0].lat, data[0].lon]);
+                        // Vérification supplémentaire : s'assurer que l'adresse contient des éléments spécifiques pour éviter les résultats ambigus.
+                        if (data[0].display_name && data[0].lat && data[0].lon) {
+                            callback(true, [data[0].lat, data[0].lon]);
+                        } else {
+                            callback(false);
+                        }
                     } else {
                         callback(false);
                     }
+                })
+                .catch(() => {
+                    callback(false);
                 });
         }
 
@@ -149,13 +157,15 @@
             const validationMessage = inputElement.parentElement.querySelector(".validation-message");
             
             if (address) {
-                geocodeAddress(address, (isValid) => {
+                geocodeAddress(address, (isValid, coords) => {
                     if (isValid) {
                         validationMessage.textContent = "Adresse valide.";
                         validationMessage.className = "correct-message";
+                        inputElement.dataset.coords = coords; // Stocker les coordonnées pour un usage ultérieur
                     } else {
                         validationMessage.textContent = "Adresse invalide. Veuillez corriger.";
                         validationMessage.className = "validation-message";
+                        delete inputElement.dataset.coords; // Supprimer les coordonnées si non valide
                     }
                 });
             } else {
@@ -169,7 +179,36 @@
         }
 
         function compareRoutes() {
-            // Fonction pour comparer les itinéraires (inchangée)
+            // Effacer les itinéraires existants avant de tracer de nouveaux itinéraires
+            map.eachLayer((layer) => {
+                if (layer instanceof L.Routing.Control) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            const storageInputs = document.querySelectorAll(".storage-input");
+            const treatmentInputs = document.querySelectorAll(".treatment-input");
+
+            storageInputs.forEach(storageInput => {
+                const storageCoords = storageInput.dataset.coords;
+                if (storageCoords) {
+                    const [storageLat, storageLng] = storageCoords.split(',');
+                    
+                    treatmentInputs.forEach(treatmentInput => {
+                        const treatmentCoords = treatmentInput.dataset.coords;
+                        if (treatmentCoords) {
+                            const [treatmentLat, treatmentLng] = treatmentCoords.split(',');
+                            L.Routing.control({
+                                waypoints: [
+                                    L.latLng(parseFloat(storageLat), parseFloat(storageLng)),
+                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLng))
+                                ],
+                                routeWhileDragging: true
+                            }).addTo(map);
+                        }
+                    });
+                }
+            });
         }
     </script>
 </body>

@@ -11,11 +11,15 @@
     <style>
         #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
-        .input-group { margin-bottom: 10px; position: relative; }
+        .input-group { margin-bottom: 20px; position: relative; }
         .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
         .button-add { margin-top: 5px; }
         .validation-message { color: red; font-size: 0.9em; position: absolute; top: 40px; left: 0; }
         .correct-message { color: green; font-size: 0.9em; position: absolute; top: 40px; left: 0; }
+        input.storage-input, input.treatment-input {
+            padding: 8px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -160,7 +164,7 @@
         }
 
         function clearValidationMessage(inputElement) {
-            const validationMessage = inputElement.parentElement.querySelector(".validation-message");
+            const validationMessage = inputElement.parentElement.querySelector(".validation-message, .correct-message");
             validationMessage.textContent = "";
         }
 

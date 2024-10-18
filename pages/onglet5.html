@@ -242,19 +242,20 @@
         function compareRoutes() {
             if (routeControl) {
                 map.removeControl(routeControl);
+                routeControl = null;
             }
 
-            const storageInputs = document.querySelectorAll(".storage-input");
-            const treatmentInputs = document.querySelectorAll(".treatment-input");
+            const storageInputs = document.querySelectorAll(".input-group");
+            const treatmentInputs = document.querySelectorAll(".input-group");
 
             storageInputs.forEach(storageGroup => {
-                const storageLat = storageGroup.parentElement.querySelector(".latitude-input").value;
-                const storageLon = storageGroup.parentElement.querySelector(".longitude-input").value;
+                const storageLat = storageGroup.querySelector(".latitude-input").value;
+                const storageLon = storageGroup.querySelector(".longitude-input").value;
                 
                 if (storageLat && storageLon) {
                     treatmentInputs.forEach(treatmentGroup => {
-                        const treatmentLat = treatmentGroup.parentElement.querySelector(".latitude-input").value;
-                        const treatmentLon = treatmentGroup.parentElement.querySelector(".longitude-input").value;
+                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
+                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
                             routeControl = L.Routing.control({

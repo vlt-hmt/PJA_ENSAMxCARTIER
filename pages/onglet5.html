@@ -100,7 +100,7 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        let routeControl = null;
+        let routeControls = [];
 
         function addStorageInput() {
             const container = document.getElementById("storage-container");
@@ -240,31 +240,33 @@
         }
 
         function compareRoutes() {
-            if (routeControl) {
-                map.removeControl(routeControl);
-                routeControl = null;
-            }
+            // Supprimez les routes précédentes de la carte
+            routeControls.forEach(control => {
+                map.removeControl(control);
+            });
+            routeControls = [];
 
-            const storageInputs = document.querySelectorAll(".input-group");
-            const treatmentInputs = document.querySelectorAll(".input-group");
+            const storageInputs = document.querySelectorAll(".storage-input");
+            const treatmentInputs = document.querySelectorAll(".treatment-input");
 
             storageInputs.forEach(storageGroup => {
-                const storageLat = storageGroup.querySelector(".latitude-input").value;
-                const storageLon = storageGroup.querySelector(".longitude-input").value;
+                const storageLat = storageGroup.parentElement.querySelector(".latitude-input").value;
+                const storageLon = storageGroup.parentElement.querySelector(".longitude-input").value;
                 
                 if (storageLat && storageLon) {
                     treatmentInputs.forEach(treatmentGroup => {
-                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
-                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
+                        const treatmentLat = treatmentGroup.parentElement.querySelector(".latitude-input").value;
+                        const treatmentLon = treatmentGroup.parentElement.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
-                            routeControl = L.Routing.control({
+                            const newRoute = L.Routing.control({
                                 waypoints: [
                                     L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
                                     L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
                                 ],
                                 routeWhileDragging: true
                             }).addTo(map);
+                            routeControls.push(newRoute);
                         }
                     });
                 }

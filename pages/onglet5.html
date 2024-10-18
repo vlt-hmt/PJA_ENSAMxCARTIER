@@ -3,14 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onglet 5 - Gestion des Adresses avec Autocomplétion</title>
+    <title>Gestion des Adresses avec Autocomplétion</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css"> <!-- Utilisation du CSS existant -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <style>
+        #map { height: 400px; width: 100%; margin-top: 20px; }
+        .route-section { margin: 30px 0; }
+        .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; }
+        .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .button-add { margin-top: 5px; }
+        .remove-button { margin-left: 10px; background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
+        input.storage-input, input.treatment-input {
+            padding: 8px;
+            margin-bottom: 10px;
+            flex-grow: 1;
+        }
+        .autocomplete-suggestions { 
+            position: absolute; 
+            background: white; 
+            border: 1px solid #ccc; 
+            max-height: 150px; 
+            overflow-y: auto; 
+            width: calc(100% - 20px); 
+            z-index: 1000; 
+        }
+        .autocomplete-suggestion {
+            padding: 5px; 
+            cursor: pointer; 
+        }
+        .autocomplete-suggestion:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
-    <!-- En-tête avec image de fond et menu de navigation -->
     <div class="header-image">
         <header class="menu">
             <nav>
@@ -28,9 +56,8 @@
         <div class="header-overlay">ENSAM x Cartier</div>
     </div>
 
-    <!-- Contenu Principal -->
     <main class="content">
-        <h1>Comparaison des lieux de traitement des déchets</h1>
+        <h1>Gestion des lieux avec autocomplétion</h1>
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
@@ -61,11 +88,10 @@
         </section>
     </main>
 
-    <!-- Scripts pour la carte et les fonctionnalités -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
     <script>
-        // Fonctions JavaScript pour la gestion des adresses et des itinéraires
         const map = L.map('map').setView([48.8566, 2.3522], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -131,22 +157,26 @@
 
         function autocompleteAddress(input) {
             const query = input.value;
-            if (query.length < 3) return;
+            if (query.length < 3) {
+                clearSuggestions(input);
+                return;
+            }
 
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
                 .then(response => response.json())
                 .then(data => {
-                    let suggestions = document.createElement("div");
+                    clearSuggestions(input); // Nettoyer les anciennes suggestions
+                    const suggestions = document.createElement("div");
                     suggestions.className = "autocomplete-suggestions";
 
-                    data.forEach(place => {
-                        let suggestion = document.createElement("div");
+                    data.slice(0, 5).forEach(place => { // Limiter à 5 résultats
+                        const suggestion = document.createElement("div");
                         suggestion.className = "autocomplete-suggestion";
                         suggestion.textContent = place.display_name;
                         suggestion.onclick = function() {
                             input.value = place.display_name;
                             input.dataset.coords = `${place.lat},${place.lon}`;
-                            suggestions.remove();
+                            clearSuggestions(input);
                         };
                         suggestions.appendChild(suggestion);
                     });
@@ -155,8 +185,15 @@
                 });
         }
 
+        function clearSuggestions(input) {
+            const suggestions = input.parentElement.querySelector(".autocomplete-suggestions");
+            if (suggestions) {
+                suggestions.remove();
+            }
+        }
+
         function compareRoutes() {
-            // Comparaison des itinéraires
+            // Comparaison des itinéraires basée sur les coordonnées
         }
     </script>
 </body>

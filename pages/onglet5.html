@@ -288,7 +288,9 @@
             headerRow += '</tr>';
             distanceTable.querySelector("thead").innerHTML = headerRow;
 
-            // Remplir le tableau avec les distances calculées
+            // Promises array to ensure all calculations complete
+            const promises = [];
+
             storageInputs.forEach((storageGroup) => {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
@@ -302,25 +304,32 @@
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
-                            const newRoute = L.Routing.control({
-                                waypoints: [
-                                    L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
-                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
-                                ],
-                                routeWhileDragging: true
-                            }).addTo(map);
+                            const promise = new Promise((resolve) => {
+                                const newRoute = L.Routing.control({
+                                    waypoints: [
+                                        L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
+                                        L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
+                                    ],
+                                    routeWhileDragging: true
+                                }).addTo(map);
 
-                            newRoute.on('routesfound', function(e) {
-                                const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
-                                rowContent += `<td>${distance} km</td>`;
+                                newRoute.on('routesfound', function(e) {
+                                    const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
+                                    rowContent += `<td>${distance} km</td>`;
+                                    resolve();
+                                });
+
+                                routeControls.push(newRoute);
                             });
-
-                            routeControls.push(newRoute);
+                            promises.push(promise);
                         }
                     });
+
+                    Promise.all(promises).then(() => {
+                        rowContent += '</tr>';
+                        distanceTableBody.innerHTML += rowContent;
+                    });
                 }
-                rowContent += '</tr>';
-                distanceTableBody.innerHTML += rowContent;
             });
         }
     </script>

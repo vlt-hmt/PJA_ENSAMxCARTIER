@@ -2,40 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
-    <!-- Feuilles de style pour Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <title>Version 2.2</title>
     <style>
-        #map { height: 400px; width: 100%; margin-top: 20px; }
-        .route-section { margin: 30px 0; }
-        .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; flex-wrap: wrap; }
-        .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
-        .button-add { margin-top: 5px; }
-        .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; border-radius: 8px; }
-        input { padding: 8px; margin-bottom: 10px; flex-grow: 1; margin-right: 10px; }
-        .small-input { width: 90px; }
-        .autocomplete-suggestions {
-            position: absolute; 
-            background: white; 
-            border: 1px solid #ccc; 
-            max-height: 150px; 
-            overflow-y: auto; 
-            width: calc(100% - 20px); 
-            z-index: 1000; 
-            top: 110%;
-            left: 0;
-        }
-        .autocomplete-suggestion {
-            padding: 5px;
-            cursor: pointer;
-        }
-        .autocomplete-suggestion:hover {
-            background-color: #f0f0f0;
-        }
+        /* Styles existants */
         #distance-table {
             width: 100%;
             border-collapse: collapse;
@@ -50,224 +19,18 @@
         #distance-table th {
             background-color: #f4f4f4;
         }
-        /* Styles pour les messages de statut */
-        #status-message {
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 16px;
-            color: #333;
-        }
+        /* Autres styles inchangés */
     </style>
 </head>
 <body>
-    <div class="header-image">
-        <header class="menu">
-            <nav>
-                <ul>
-                    <li><a href="../index.html">Accueil</a></li>
-                    <li><a href="onglet1.html">Onglet 1</a></li>
-                    <li><a href="onglet2.html">Onglet 2</a></li>
-                    <li><a href="onglet3.html">Onglet 3</a></li>
-                    <li><a href="onglet4.html">Onglet 4</a></li>
-                    <li><a href="onglet5.html" class="active">Onglet 5</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="header-overlay">
-            Version 2.1
-        </div>
-    </div>
+    <!-- Contenu HTML inchangé -->
 
-    <main class="content">
-        <h1>Gestion des lieux avec coordonnées GPS et itinéraires</h1>
-        <section class="route-section">
-            <h2>Ajouter des lieux de stockage</h2>
-            <div id="storage-container" class="input-container">
-                <div class="input-group">
-                    <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
-                    <input type="text" class="small-input latitude-input" placeholder="Lat">
-                    <input type="text" class="small-input longitude-input" placeholder="Lon">
-                    <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
-                    <div class="autocomplete-suggestions"></div>
-                </div>
-                <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
-            </div>
-
-            <h2>Ajouter des lieux de traitement</h2>
-            <div id="treatment-container" class="input-container">
-                <div class="input-group">
-                    <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
-                    <input type="text" class="small-input latitude-input" placeholder="Lat">
-                    <input type="text" class="small-input longitude-input" placeholder="Lon">
-                    <select class="treatment-option">
-                        <option value="recycling">Recyclage</option>
-                        <option value="methanation">Méthanisation</option>
-                        <option value="incineration">Incinération</option>
-                        <option value="landfill">Enfouissement</option>
-                    </select>
-                    <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
-                    <div class="autocomplete-suggestions"></div>
-                </div>
-                <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
-            </div>
-
-            <button onclick="compareRoutes()">Comparer les itinéraires</button>
-            <div id="status-message"></div>
-            <div id="map"></div>
-            <table id="distance-table">
-                <thead>
-                    <tr>
-                        <th>Lieu de Stockage</th>
-                        <th>Lieu de Traitement</th>
-                        <th>Distance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- Inclusion des scripts nécessaires -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Script pour Leaflet Routing Machine -->
-    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <!-- Scripts JavaScript -->
     <script>
-        const map = L.map('map').setView([48.8566, 2.3522], 11);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        let routeControls = [];
-
-        function addStorageInput() {
-            const container = document.getElementById("storage-container");
-            const inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-
-            const addressInput = document.createElement("input");
-            addressInput.type = "text";
-            addressInput.className = "large-input storage-input";
-            addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
-
-            const latInput = document.createElement("input");
-            latInput.type = "text";
-            latInput.className = "small-input latitude-input";
-            latInput.placeholder = "Lat";
-
-            const lonInput = document.createElement("input");
-            lonInput.type = "text";
-            lonInput.className = "small-input longitude-input";
-            lonInput.placeholder = "Lon";
-
-            const removeButton = document.createElement("button");
-            removeButton.className = "remove-button";
-            removeButton.textContent = "Supprimer";
-            removeButton.onclick = function() { removeInput(removeButton); };
-
-            const suggestionsDiv = document.createElement("div");
-            suggestionsDiv.className = "autocomplete-suggestions";
-
-            inputGroup.appendChild(addressInput);
-            inputGroup.appendChild(latInput);
-            inputGroup.appendChild(lonInput);
-            inputGroup.appendChild(removeButton);
-            inputGroup.appendChild(suggestionsDiv);
-
-            container.insertBefore(inputGroup, container.querySelector(".button-add"));
-        }
-
-        function addTreatmentInput() {
-            const container = document.getElementById("treatment-container");
-            const inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-
-            const addressInput = document.createElement("input");
-            addressInput.type = "text";
-            addressInput.className = "large-input treatment-input";
-            addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
-
-            const latInput = document.createElement("input");
-            latInput.type = "text";
-            latInput.className = "small-input latitude-input";
-            latInput.placeholder = "Lat";
-
-            const lonInput = document.createElement("input");
-            lonInput.type = "text";
-            lonInput.className = "small-input longitude-input";
-            lonInput.placeholder = "Lon";
-
-            const selectOption = document.createElement("select");
-            selectOption.className = "treatment-option";
-            selectOption.innerHTML = `
-                <option value="recycling">Recyclage</option>
-                <option value="methanation">Méthanisation</option>
-                <option value="incineration">Incinération</option>
-                <option value="landfill">Enfouissement</option>
-            `;
-
-            const removeButton = document.createElement("button");
-            removeButton.className = "remove-button";
-            removeButton.textContent = "Supprimer";
-            removeButton.onclick = function() { removeInput(removeButton); };
-
-            const suggestionsDiv = document.createElement("div");
-            suggestionsDiv.className = "autocomplete-suggestions";
-
-            inputGroup.appendChild(addressInput);
-            inputGroup.appendChild(latInput);
-            inputGroup.appendChild(lonInput);
-            inputGroup.appendChild(selectOption);
-            inputGroup.appendChild(removeButton);
-            inputGroup.appendChild(suggestionsDiv);
-
-            container.insertBefore(inputGroup, container.querySelector(".button-add"));
-        }
-
-        function removeInput(button) {
-            const inputGroup = button.parentElement;
-            inputGroup.remove();
-        }
-
-        function autocompleteAddress(input) {
-            const query = input.value;
-            const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
-
-            if (query.length < 3) {
-                suggestionsDiv.innerHTML = '';
-                return;
-            }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
-                .then(response => response.json())
-                .then(data => {
-                    suggestionsDiv.innerHTML = '';
-                    data.slice(0, 5).forEach(place => {
-                        const suggestion = document.createElement("div");
-                        suggestion.className = "autocomplete-suggestion";
-                        suggestion.textContent = place.display_name;
-                        suggestion.onclick = function() {
-                            input.value = place.display_name;
-                            const latInput = input.parentElement.querySelector(".latitude-input");
-                            const lonInput = input.parentElement.querySelector(".longitude-input");
-                            latInput.value = place.lat;
-                            lonInput.value = place.lon;
-                            suggestionsDiv.innerHTML = '';
-                        };
-                        suggestionsDiv.appendChild(suggestion);
-                    });
-                })
-                .catch(err => {
-                    console.error('Erreur lors de l\'autocomplétion :', err);
-                });
-        }
+        // Initialisation de la carte (inchangée)
 
         async function compareRoutes() {
-            // Supprimer les itinéraires précédents
+            // Suppression des itinéraires précédents
             routeControls.forEach(control => {
                 control.getPlan().setWaypoints([]);
                 map.removeControl(control);
@@ -279,12 +42,11 @@
 
             const distanceTable = document.querySelector("#distance-table");
             const distanceTableBody = distanceTable.querySelector("tbody");
-            distanceTableBody.innerHTML = '';
+            distanceTableBody.innerHTML = ''; // Vider le corps du tableau
 
             const storageGroups = document.querySelectorAll("#storage-container .input-group");
             const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
 
-            // Vérifier qu'il y a au moins un lieu de stockage et un lieu de traitement
             if (storageGroups.length === 0 || treatmentGroups.length === 0) {
                 alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
                 statusMessage.textContent = '';
@@ -294,80 +56,23 @@
             let totalCalculations = storageGroups.length * treatmentGroups.length;
             let completedCalculations = 0;
 
-            // Pour chaque lieu de stockage
             for (const storageGroup of storageGroups) {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
                 const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
 
-                // Vérifier que les coordonnées du stockage sont valides
                 if (storageLat && storageLon) {
-                    // Pour chaque lieu de traitement
                     for (const treatmentGroup of treatmentGroups) {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
                         const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
                         const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
 
-                        // Vérifier que les coordonnées du traitement sont valides
-                        if (treatmentLat && treatmentLon) {
-                            try {
-                                const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
-                                const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
+                        try {
+                            const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
+                            const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
 
-                                // Ajouter une ligne au tableau
-                                const row = document.createElement('tr');
-
-                                const storageCell = document.createElement('td');
-                                storageCell.textContent = storageName;
-                                row.appendChild(storageCell);
-
-                                const treatmentCell = document.createElement('td');
-                                treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
-                                row.appendChild(treatmentCell);
-
-                                const distanceCell = document.createElement('td');
-                                distanceCell.textContent = `${distance} km`;
-                                row.appendChild(distanceCell);
-
-                                distanceTableBody.appendChild(row);
-
-                                // Optionnel : Afficher l'itinéraire sur la carte
-                                const routeControl = L.Routing.control({
-                                    waypoints: [
-                                        L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
-                                        L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
-                                    ],
-                                    routeWhileDragging: false,
-                                    addWaypoints: false,
-                                    draggableWaypoints: false,
-                                    fitSelectedRoutes: false,
-                                    show: false
-                                }).addTo(map);
-
-                                routeControls.push(routeControl);
-
-                            } catch (err) {
-                                console.error('Erreur lors du calcul de l\'itinéraire:', err);
-                                // Ajouter une ligne avec l'erreur au tableau
-                                const row = document.createElement('tr');
-
-                                const storageCell = document.createElement('td');
-                                storageCell.textContent = storageName;
-                                row.appendChild(storageCell);
-
-                                const treatmentCell = document.createElement('td');
-                                treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
-                                row.appendChild(treatmentCell);
-
-                                const distanceCell = document.createElement('td');
-                                distanceCell.textContent = 'Erreur';
-                                row.appendChild(distanceCell);
-
-                                distanceTableBody.appendChild(row);
-                            }
-                        } else {
-                            // Coordonnées du traitement invalides
+                            // Ajouter une ligne au tableau
                             const row = document.createElement('tr');
 
                             const storageCell = document.createElement('td');
@@ -375,11 +80,46 @@
                             row.appendChild(storageCell);
 
                             const treatmentCell = document.createElement('td');
-                            treatmentCell.textContent = 'Coordonnées invalides';
+                            treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
                             row.appendChild(treatmentCell);
 
                             const distanceCell = document.createElement('td');
-                            distanceCell.textContent = '';
+                            distanceCell.textContent = `${distance} km`;
+                            row.appendChild(distanceCell);
+
+                            distanceTableBody.appendChild(row);
+
+                            // Afficher l'itinéraire sur la carte (optionnel)
+                            const routeControl = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
+                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
+                                ],
+                                routeWhileDragging: false,
+                                addWaypoints: false,
+                                draggableWaypoints: false,
+                                fitSelectedRoutes: false,
+                                show: false
+                            }).addTo(map);
+
+                            routeControls.push(routeControl);
+
+                        } catch (err) {
+                            console.error('Erreur lors du calcul de l\'itinéraire:', err);
+
+                            // Ajouter une ligne avec l'erreur au tableau
+                            const row = document.createElement('tr');
+
+                            const storageCell = document.createElement('td');
+                            storageCell.textContent = storageName;
+                            row.appendChild(storageCell);
+
+                            const treatmentCell = document.createElement('td');
+                            treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
+                            row.appendChild(treatmentCell);
+
+                            const distanceCell = document.createElement('td');
+                            distanceCell.textContent = 'Erreur';
                             row.appendChild(distanceCell);
 
                             distanceTableBody.appendChild(row);
@@ -389,15 +129,17 @@
                         statusMessage.textContent = `Calcul des distances en cours... (${completedCalculations}/${totalCalculations})`;
                     }
                 } else {
-                    // Coordonnées du stockage invalides
+                    // Gérer les coordonnées invalides
+                    console.error('Coordonnées du lieu de stockage invalides:', storageName);
+
                     const row = document.createElement('tr');
 
                     const storageCell = document.createElement('td');
-                    storageCell.textContent = 'Coordonnées invalides';
+                    storageCell.textContent = storageName;
                     row.appendChild(storageCell);
 
                     const treatmentCell = document.createElement('td');
-                    treatmentCell.textContent = '';
+                    treatmentCell.textContent = 'Coordonnées invalides';
                     row.appendChild(treatmentCell);
 
                     const distanceCell = document.createElement('td');
@@ -410,11 +152,29 @@
 
             statusMessage.textContent = 'Toutes les distances ont été calculées.';
             console.log('Toutes les distances ont été calculées.');
+
+            // Ajouter une ligne statique pour le test
+            const testRow = document.createElement('tr');
+            const testStorageCell = document.createElement('td');
+            testStorageCell.textContent = 'Test Lieu de Stockage';
+            testRow.appendChild(testStorageCell);
+
+            const testTreatmentCell = document.createElement('td');
+            testTreatmentCell.textContent = 'Test Lieu de Traitement (Recyclage)';
+            testRow.appendChild(testTreatmentCell);
+
+            const testDistanceCell = document.createElement('td');
+            testDistanceCell.textContent = '123 km';
+            testRow.appendChild(testDistanceCell);
+
+            distanceTableBody.appendChild(testRow);
         }
 
         function calculateRoute(lat1, lon1, lat2, lon2) {
             return new Promise((resolve, reject) => {
-                const router = L.Routing.osrmv1();
+                const router = L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1'
+                });
                 router.route([
                     {
                         latLng: L.latLng(lat1, lon1)

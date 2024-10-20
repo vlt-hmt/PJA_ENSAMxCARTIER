@@ -141,12 +141,6 @@
         }).addTo(map);
 
         let routeControls = [];
-        const colors = ['#0000FF', '#008000', '#FF0000', '#800080']; // Blue, Green, Red, Purple
-
-        function getShade(baseColor, totalRoutes, routeIndex) {
-            const opacity = 0.3 + 0.7 * (1 - (routeIndex / totalRoutes));
-            return `rgba(${parseInt(baseColor.slice(1, 3), 16)}, ${parseInt(baseColor.slice(3, 5), 16)}, ${parseInt(baseColor.slice(5, 7), 16)}, ${opacity})`;
-        }
 
         function addStorageInput() {
             const container = document.getElementById("storage-container");
@@ -186,6 +180,92 @@
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
+        function addTreatmentInput() {
+            const container = document.getElementById("treatment-container");
+            const inputGroup = document.createElement("div");
+            inputGroup.className = "input-group";
+
+            const addressInput = document.createElement("input");
+            addressInput.type = "text";
+            addressInput.className = "large-input treatment-input";
+            addressInput.placeholder = "Entrez une autre adresse complète";
+            addressInput.oninput = function() { autocompleteAddress(addressInput); };
+
+            const latInput = document.createElement("input");
+            latInput.type = "text";
+            latInput.className = "small-input latitude-input";
+            latInput.placeholder = "Lat";
+
+            const lonInput = document.createElement("input");
+            lonInput.type = "text";
+            lonInput.className = "small-input longitude-input";
+            lonInput.placeholder = "Lon";
+
+            const selectOption = document.createElement("select");
+            selectOption.className = "treatment-option";
+            selectOption.innerHTML = `
+                <option value="recycling">Recyclage</option>
+                <option value="methanation">Méthanisation</option>
+                <option value="incineration">Incinération</option>
+                <option value="landfill">Enfouissement</option>
+            `;
+
+            const removeButton = document.createElement("button");
+            removeButton.className = "remove-button";
+            removeButton.textContent = "Supprimer";
+            removeButton.onclick = function() { removeInput(removeButton); };
+
+            const suggestionsDiv = document.createElement("div");
+            suggestionsDiv.className = "autocomplete-suggestions";
+
+            inputGroup.appendChild(addressInput);
+            inputGroup.appendChild(latInput);
+            inputGroup.appendChild(lonInput);
+            inputGroup.appendChild(selectOption);
+            inputGroup.appendChild(removeButton);
+            inputGroup.appendChild(suggestionsDiv);
+
+            container.insertBefore(inputGroup, container.querySelector(".button-add"));
+        }
+
+        function removeInput(button) {
+            const inputGroup = button.parentElement;
+            inputGroup.remove();
+        }
+
+        function autocompleteAddress(input) {
+            const query = input.value;
+            const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
+
+            if (query.length < 3) {
+                suggestionsDiv.innerHTML = '';
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsDiv.innerHTML = '';
+                    data.slice(0, 5).forEach(place => {
+                        const suggestion = document.createElement("div");
+                        suggestion.className = "autocomplete-suggestion";
+                        suggestion.textContent = place.display_name;
+                        suggestion.onclick = function() {
+                            input.value = place.display_name;
+                            const latInput = input.parentElement.querySelector(".latitude-input");
+                            const lonInput = input.parentElement.querySelector(".longitude-input");
+                            latInput.value = place.lat;
+                            lonInput.value = place.lon;
+                            suggestionsDiv.innerHTML = '';
+                        };
+                        suggestionsDiv.appendChild(suggestion);
+                    });
+                })
+                .catch(err => {
+                    console.error('Erreur lors de l\'autocomplétion :', err);
+                });
+        }
+
         async function compareRoutes() {
             routeControls.forEach(control => {
                 control.getPlan().setWaypoints([]);
@@ -203,7 +283,14 @@
             const storageGroups = document.querySelectorAll("#storage-container .input-group");
             const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
 
-            let colorIndex = 0;
+            if (storageGroups.length === 0 || treatmentGroups.length === 0) {
+                alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
+                statusMessage.textContent = '';
+                return;
+            }
+
+            let totalCalculations = storageGroups.length * treatmentGroups.length;
+            let completedCalculations = 0;
 
             for (const storageGroup of storageGroups) {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
@@ -211,9 +298,6 @@
                 const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
 
                 if (storageLat && storageLon) {
-                    const baseColor = colors[colorIndex % colors.length];
-                    colorIndex++;
-                    let routeIndex = 0;
                     for (const treatmentGroup of treatmentGroups) {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
@@ -222,14 +306,22 @@
 
                         try {
                             const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
-                            const distance = (route.summary.totalDistance / 1000).toFixed(2);
+                            const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
 
                             const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${storageName}</td>
-                                <td>${treatmentName} (${treatmentOption})</td>
-                                <td>${distance} km</td>
-                            `;
+
+                            const storageCell = document.createElement('td');
+                            storageCell.textContent = storageName;
+                            row.appendChild(storageCell);
+
+                            const treatmentCell = document.createElement('td');
+                            treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
+                            row.appendChild(treatmentCell);
+
+                            const distanceCell = document.createElement('td');
+                            distanceCell.textContent = `${distance} km`;
+                            row.appendChild(distanceCell);
+
                             distanceTableBody.appendChild(row);
 
                             const routeControl = L.Routing.control({
@@ -241,16 +333,32 @@
                                 addWaypoints: false,
                                 draggableWaypoints: false,
                                 fitSelectedRoutes: false,
-                                lineOptions: {
-                                    styles: [{ color: getShade(baseColor, treatmentGroups.length, routeIndex), opacity: 0.7, weight: 5 }]
-                                }
+                                show: false
                             }).addTo(map);
+
                             routeControls.push(routeControl);
-                            routeIndex++;
 
                         } catch (err) {
                             console.error('Erreur lors du calcul de l\'itinéraire:', err);
+                            const row = document.createElement('tr');
+
+                            const storageCell = document.createElement('td');
+                            storageCell.textContent = storageName;
+                            row.appendChild(storageCell);
+
+                            const treatmentCell = document.createElement('td');
+                            treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
+                            row.appendChild(treatmentCell);
+
+                            const distanceCell = document.createElement('td');
+                            distanceCell.textContent = 'Erreur';
+                            row.appendChild(distanceCell);
+
+                            distanceTableBody.appendChild(row);
                         }
+
+                        completedCalculations++;
+                        statusMessage.textContent = `Calcul des distances en cours... (${completedCalculations}/${totalCalculations})`;
                     }
                 }
             }

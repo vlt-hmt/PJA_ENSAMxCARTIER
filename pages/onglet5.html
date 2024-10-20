@@ -3,31 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.7 - Onglet 5</title>
+    <title>Version 1.8 - Onglet 5</title>
+    <!-- Lien vers votre fichier CSS global -->
     <link href="../styles.css" rel="stylesheet">
+    <!-- Feuilles de style pour Leaflet -->
     <link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet">
     <link href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" rel="stylesheet">
+    <!-- Styles spécifiques à onglet5.html -->
     <style>
-        #map { height: 400px; width: 100%; margin-top: 20px; }
-        .route-section { margin: 30px 0; }
-        .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; flex-wrap: wrap; }
-        .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
-        .button-add { margin-top: 5px; }
-        .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
-        input { padding: 8px; margin-bottom: 10px; flex-grow: 1; margin-right: 10px; }
-        .small-input { width: 90px; }
-        #distance-table {
+        /* Styles spécifiques pour onglet5.html */
+        .onglet5-container #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .onglet5-container .route-section {
+            margin: 30px 0;
+        }
+
+        .onglet5-container .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .onglet5-container .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .onglet5-container .button-add {
+            margin-top: 5px;
+        }
+
+        .onglet5-container .remove-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .onglet5-container input {
+            padding: 8px;
+            margin-bottom: 10px;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .onglet5-container .large-input {
+            flex: 1;
+        }
+
+        .onglet5-container .small-input {
+            width: 90px;
+        }
+
+        .onglet5-container #distance-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             text-align: center;
         }
-        #distance-table th, #distance-table td {
+
+        .onglet5-container #distance-table th,
+        .onglet5-container #distance-table td {
             border: 1px solid #ddd;
             padding: 8px;
         }
-        #distance-table th {
+
+        .onglet5-container #distance-table th {
             background-color: #f4f4f4;
+        }
+
+        /* Style pour l'indicateur "Calcul en cours" */
+        .onglet5-container #loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+            font-family: 'Montserrat', sans-serif;
         }
     </style>
 </head>
@@ -44,55 +112,63 @@
             </ul>
         </nav>
     </header>
-    <div class="header-overlay">Version 1.7</div>
+    <div class="header-overlay">Version 1.8</div>
 
-    <main class="content">
-        <h1>Gestion des lieux avec coordonnées GPS et itinéraires</h1>
-        <section class="route-section">
-            <h2>Ajouter des lieux de stockage</h2>
-            <div id="storage-container" class="input-container">
-                <div class="input-group">
-                    <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète">
-                    <input type="text" class="small-input latitude-input" placeholder="Lat">
-                    <input type="text" class="small-input longitude-input" placeholder="Lon">
-                    <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
+    <div class="onglet5-container">
+        <main class="content">
+            <h1>Gestion des lieux avec coordonnées GPS et itinéraires</h1>
+            <section class="route-section">
+                <h2>Ajouter des lieux de stockage</h2>
+                <div id="storage-container" class="input-container">
+                    <div class="input-group">
+                        <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète">
+                        <input type="text" class="small-input latitude-input" placeholder="Lat">
+                        <input type="text" class="small-input longitude-input" placeholder="Lon">
+                        <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
+                    </div>
+                    <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
                 </div>
-                <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
-            </div>
 
-            <h2>Ajouter des lieux de traitement</h2>
-            <div id="treatment-container" class="input-container">
-                <div class="input-group">
-                    <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète">
-                    <input type="text" class="small-input latitude-input" placeholder="Lat">
-                    <input type="text" class="small-input longitude-input" placeholder="Lon">
-                    <select class="treatment-option">
-                        <option value="recycling">Recyclage</option>
-                        <option value="methanation">Méthanisation</option>
-                        <option value="incineration">Incinération</option>
-                        <option value="landfill">Enfouissement</option>
-                    </select>
-                    <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
+                <h2>Ajouter des lieux de traitement</h2>
+                <div id="treatment-container" class="input-container">
+                    <div class="input-group">
+                        <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète">
+                        <input type="text" class="small-input latitude-input" placeholder="Lat">
+                        <input type="text" class="small-input longitude-input" placeholder="Lon">
+                        <select class="treatment-option">
+                            <option value="recycling">Recyclage</option>
+                            <option value="methanation">Méthanisation</option>
+                            <option value="incineration">Incinération</option>
+                            <option value="landfill">Enfouissement</option>
+                        </select>
+                        <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
+                    </div>
+                    <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
                 </div>
-                <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
-            </div>
 
-            <button onclick="compareRoutes()">Comparer les itinéraires</button>
-            <div id="map"></div>
-            <table id="distance-table">
-                <thead>
-                    <tr>
-                        <th>Lieu de Stockage / Lieu de Traitement</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
-    </main>
+                <button onclick="compareRoutes()">Comparer les itinéraires</button>
+                <div id="map"></div>
+                <table id="distance-table">
+                    <thead>
+                        <tr>
+                            <th>Lieu de Stockage / Lieu de Traitement</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
 
+    <!-- Indicateur "Calcul en cours" -->
+    <div id="loading-indicator">Calcul en cours...</div>
+
+    <!-- Inclusion des scripts nécessaires -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <!-- Script principal -->
     <script>
+        // Initialisation de la carte
         const map = L.map('map').setView([48.8566, 2.3522], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -101,36 +177,150 @@
 
         let routeControls = [];
 
-        function addStorageInput() { /* Code pour ajouter un champ de stockage */ }
-        function addTreatmentInput() { /* Code pour ajouter un champ de traitement */ }
-        function removeInput(button) { /* Code pour supprimer un champ */ }
-        
+        // Fonction pour ajouter un champ de stockage
+        function addStorageInput() {
+            const storageContainer = document.getElementById('storage-container');
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'input-group';
+            inputGroup.innerHTML = `
+                <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète">
+                <input type="text" class="small-input latitude-input" placeholder="Lat">
+                <input type="text" class="small-input longitude-input" placeholder="Lon">
+                <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
+            `;
+            storageContainer.insertBefore(inputGroup, storageContainer.lastElementChild);
+        }
+
+        // Fonction pour ajouter un champ de traitement
+        function addTreatmentInput() {
+            const treatmentContainer = document.getElementById('treatment-container');
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'input-group';
+            inputGroup.innerHTML = `
+                <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète">
+                <input type="text" class="small-input latitude-input" placeholder="Lat">
+                <input type="text" class="small-input longitude-input" placeholder="Lon">
+                <select class="treatment-option">
+                    <option value="recycling">Recyclage</option>
+                    <option value="methanation">Méthanisation</option>
+                    <option value="incineration">Incinération</option>
+                    <option value="landfill">Enfouissement</option>
+                </select>
+                <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
+            `;
+            treatmentContainer.insertBefore(inputGroup, treatmentContainer.lastElementChild);
+        }
+
+        // Fonction pour supprimer un champ
+        function removeInput(button) {
+            const inputGroup = button.parentElement;
+            inputGroup.remove();
+        }
+
+        // Fonction pour comparer les itinéraires avec l'indicateur "Calcul en cours"
         function compareRoutes() {
+            // Afficher l'indicateur "Calcul en cours"
+            document.getElementById('loading-indicator').style.display = 'flex';
+
+            // Supprimer les routes existantes de la carte
             routeControls.forEach(control => map.removeControl(control));
             routeControls = [];
-            
-            const storageInputs = Array.from(document.querySelectorAll(".storage-input"));
-            const treatmentInputs = Array.from(document.querySelectorAll(".treatment-input"));
-            
+
+            // Récupérer les groupes d'entrées pour les stockages et traitements
+            const storageGroups = Array.from(document.querySelectorAll("#storage-container .input-group"));
+            const treatmentGroups = Array.from(document.querySelectorAll("#treatment-container .input-group"));
+
             let distanceTableBody = document.querySelector("#distance-table tbody");
             distanceTableBody.innerHTML = '';
-            
-            if (storageInputs.length && treatmentInputs.length) {
-                storageInputs.forEach((storage) => {
-                    let row = `<tr><td>${storage.value}</td>`;
-                    treatmentInputs.forEach((treatment) => {
-                        const routeControl = L.Routing.control({
-                            waypoints: [
-                                L.latLng(parseFloat(storage.value), parseFloat(treatment.value))
-                            ],
-                            routeWhileDragging: true
-                        }).addTo(map).on('routesfound', (e) => {
-                            const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2);
-                            row += `<td>${distance} km</td>`;
-                        });
-                    });
+
+            if (storageGroups.length && treatmentGroups.length) {
+                // Créer la ligne d'en-tête du tableau
+                let headerRow = '<tr><th>Lieu de Stockage / Lieu de Traitement</th>';
+                treatmentGroups.forEach((treatmentGroup) => {
+                    const treatmentAddress = treatmentGroup.querySelector(".treatment-input").value || 'Lieu de traitement';
+                    headerRow += `<th>${treatmentAddress}</th>`;
                 });
-                distanceTableBody.innerHTML += row + '</tr>';
+                headerRow += '</tr>';
+                distanceTableBody.innerHTML += headerRow;
+
+                // Tableau pour stocker toutes les promesses
+                let allPromises = [];
+
+                // Pour chaque lieu de stockage
+                storageGroups.forEach((storageGroup) => {
+                    const storageAddress = storageGroup.querySelector(".storage-input").value || 'Lieu de stockage';
+                    const storageLat = parseFloat(storageGroup.querySelector(".latitude-input").value);
+                    const storageLon = parseFloat(storageGroup.querySelector(".longitude-input").value);
+
+                    let row = `<tr><td>${storageAddress}</td>`;
+                    let promises = [];
+
+                    // Pour chaque lieu de traitement
+                    treatmentGroups.forEach((treatmentGroup) => {
+                        const treatmentAddress = treatmentGroup.querySelector(".treatment-input").value || 'Lieu de traitement';
+                        const treatmentLat = parseFloat(treatmentGroup.querySelector(".latitude-input").value);
+                        const treatmentLon = parseFloat(treatmentGroup.querySelector(".longitude-input").value);
+
+                        // Vérifier que les coordonnées sont valides
+                        if (isNaN(storageLat) || isNaN(storageLon) || isNaN(treatmentLat) || isNaN(treatmentLon)) {
+                            row += '<td>Coordonnées invalides</td>';
+                        } else {
+                            // Créer une promesse pour le calcul de la distance
+                            const promise = new Promise((resolve, reject) => {
+                                const router = L.Routing.osrmv1();
+                                router.route([
+                                    {
+                                        latLng: L.latLng(storageLat, storageLon)
+                                    },
+                                    {
+                                        latLng: L.latLng(treatmentLat, treatmentLon)
+                                    }
+                                ], (err, routes) => {
+                                    if (err) {
+                                        console.error(err);
+                                        resolve('<td>Erreur</td>');
+                                    } else {
+                                        const distance = (routes[0].summary.totalDistance / 1000).toFixed(2);
+                                        resolve(`<td>${distance} km</td>`);
+
+                                        // Optionnel : Afficher l'itinéraire sur la carte
+                                        const routeControl = L.Routing.control({
+                                            waypoints: [
+                                                L.latLng(storageLat, storageLon),
+                                                L.latLng(treatmentLat, treatmentLon)
+                                            ],
+                                            routeWhileDragging: false,
+                                            addWaypoints: false,
+                                            draggableWaypoints: false,
+                                            fitSelectedRoutes: false,
+                                            show: false
+                                        }).addTo(map);
+                                        routeControls.push(routeControl);
+                                    }
+                                });
+                            });
+                            promises.push(promise);
+                        }
+                    });
+
+                    // Ajouter les promesses de cette ligne au tableau global
+                    const rowPromise = Promise.all(promises).then((cells) => {
+                        row += cells.join('');
+                        row += '</tr>';
+                        distanceTableBody.innerHTML += row;
+                    });
+
+                    allPromises.push(rowPromise);
+                });
+
+                // Une fois que toutes les promesses sont résolues, cacher l'indicateur
+                Promise.all(allPromises).then(() => {
+                    // Cacher l'indicateur "Calcul en cours"
+                    document.getElementById('loading-indicator').style.display = 'none';
+                });
+            } else {
+                // Si aucun lieu n'est saisi, cacher l'indicateur immédiatement
+                document.getElementById('loading-indicator').style.display = 'none';
             }
         }
     </script>

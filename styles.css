@@ -5,6 +5,7 @@ body {
     padding: 0;
     background: linear-gradient(to bottom, #e0e0e0, #ffffff); /* Dégradé de gris clair à blanc */
     color: #333333; /* Couleur du texte gris foncé */
+    transition: all 0.3s ease;
 }
 
 /* Menu principal */
@@ -17,6 +18,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: background-color 0.3s ease;
 }
 
 .menu nav ul {
@@ -37,12 +39,29 @@ body {
     padding: 10px 15px;
     text-decoration: none;
     text-align: center;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .menu a:hover {
     background-color: #b0b0b0; 
     border-radius: 5px;
+}
+
+/* Style des éléments spécifiques du menu */
+.menu a {
+    font-family: 'Montserrat', sans-serif;
+    color: #333333; /* Texte gris foncé */
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Effet au survol du menu */
+.menu a:hover {
+    background-color: #b0b0b0; /* Gris foncé au survol */
 }
 
 /* En-tête avec image */
@@ -82,6 +101,7 @@ body {
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    animation: fadeIn 1.5s ease;
 }
 
 .content h1 {
@@ -96,13 +116,30 @@ body {
     font-size: 1.2em;
     line-height: 1.6;
     text-align: center;
+    margin-bottom: 30px;
     color: #4f4f4f; /* Gris moyen */
+}
+
+.content img {
+    max-width: 40%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Dropdown */
 .dropdown {
     position: relative;
     display: inline-block;
+    margin: 10px 0;
 }
 
 .dropdown-content {
@@ -118,11 +155,16 @@ body {
 }
 
 .dropdown-content a {
-    color: #2b2b2b; 
+    font-family: 'Montserrat', sans-serif;
+    color: #2b2b2b; /* Gris foncé */
     padding: 12px 16px;
     text-decoration: none;
     display: block;
     transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
 }
 
 .dropdown:hover .dropdown-content {
@@ -130,54 +172,37 @@ body {
     opacity: 1;
 }
 
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-
-/* Boutons modernes */
-button, .dropbtn {
+/* Modern button styles */
+.dropbtn, button {
     background-color: #d3d3d3;
     border: none;
     color: black;
     padding: 14px 20px;
     text-align: center;
-    text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 10px;
+    margin: 4px 2px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-button:hover, .dropbtn:hover {
+.dropbtn:hover, button:hover {
     background-color: #b0b0b0;
     transform: translateY(-2px);
 }
 
-/* Images */
-.content img {
-    max-width: 40%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: block;
-    margin: 20px auto;
+.dropbtn:focus, button:focus {
+    outline: none;
 }
 
 /* Pied de page */
 .footer {
-    background-color: #2b2b2b; /* Fond gris foncé */
-    color: #f4f4f4; /* Texte gris clair */
+    background-color: #2b2b2b;
+    color: #f4f4f4;
     text-align: center;
     padding: 10px 0;
-}
-
-/* Sélection et boutons */
-select, button {
-    margin: 10px;
-    padding: 8px;
 }
 
 /* Animations */
@@ -189,4 +214,27 @@ select, button {
 @keyframes zoomIn {
     from { transform: scale(1.1); }
     to { transform: scale(1); }
+}
+
+/* Tableaux */
+table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Divers */
+select, button {
+    margin: 10px;
+    padding: 8px;
 }

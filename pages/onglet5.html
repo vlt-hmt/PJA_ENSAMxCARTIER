@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.5</title>
+    <title>Version 1.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" /> -->
     <style>
         #map { height: 400px; width: 100%; margin-top: 20px; }
         .route-section { margin: 30px 0; }
@@ -18,24 +18,6 @@
         .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
         input { padding: 8px; margin-bottom: 10px; flex-grow: 1; margin-right: 10px; }
         .small-input { width: 90px; }
-        .autocomplete-suggestions {
-            position: absolute; 
-            background: white; 
-            border: 1px solid #ccc; 
-            max-height: 150px; 
-            overflow-y: auto; 
-            width: calc(100% - 20px); 
-            z-index: 1000; 
-            top: 110%;
-            left: 0;
-        }
-        .autocomplete-suggestion {
-            padding: 5px;
-            cursor: pointer;
-        }
-        .autocomplete-suggestion:hover {
-            background-color: #f0f0f0;
-        }
         #distance-table {
             width: 100%;
             border-collapse: collapse;
@@ -67,7 +49,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.5
+            Version 1.6
         </div>
     </div>
 
@@ -77,9 +59,9 @@
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
-                    <input type="text" class="small-input latitude-input" placeholder="Lat" oninput="manualCoords(this)">
-                    <input type="text" class="small-input longitude-input" placeholder="Lon" oninput="manualCoords(this)">
+                    <input type="text" class="large-input storage-input" placeholder="Entrez une adresse complète">
+                    <input type="text" class="small-input latitude-input" placeholder="Lat">
+                    <input type="text" class="small-input longitude-input" placeholder="Lon">
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
                 </div>
                 <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
@@ -88,9 +70,9 @@
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
                 <div class="input-group">
-                    <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète" oninput="autocompleteAddress(this)">
-                    <input type="text" class="small-input latitude-input" placeholder="Lat" oninput="manualCoords(this)">
-                    <input type="text" class="small-input longitude-input" placeholder="Lon" oninput="manualCoords(this)">
+                    <input type="text" class="large-input treatment-input" placeholder="Entrez une adresse complète">
+                    <input type="text" class="small-input latitude-input" placeholder="Lat">
+                    <input type="text" class="small-input longitude-input" placeholder="Lon">
                     <select class="treatment-option">
                         <option value="recycling">Recyclage</option>
                         <option value="methanation">Méthanisation</option>
@@ -118,15 +100,13 @@
 
     <!-- Inclusion des scripts nécessaires -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <!-- <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script> -->
     <script>
         const map = L.map('map').setView([48.8566, 2.3522], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-
-        let routeControls = [];
 
         function addStorageInput() {
             const container = document.getElementById("storage-container");
@@ -137,19 +117,16 @@
             addressInput.type = "text";
             addressInput.className = "large-input storage-input";
             addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
 
             const latInput = document.createElement("input");
             latInput.type = "text";
             latInput.className = "small-input latitude-input";
             latInput.placeholder = "Lat";
-            latInput.oninput = function() { manualCoords(latInput); };
 
             const lonInput = document.createElement("input");
             lonInput.type = "text";
             lonInput.className = "small-input longitude-input";
             lonInput.placeholder = "Lon";
-            lonInput.oninput = function() { manualCoords(lonInput); };
 
             const removeButton = document.createElement("button");
             removeButton.className = "remove-button";
@@ -173,19 +150,16 @@
             addressInput.type = "text";
             addressInput.className = "large-input treatment-input";
             addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
 
             const latInput = document.createElement("input");
             latInput.type = "text";
             latInput.className = "small-input latitude-input";
             latInput.placeholder = "Lat";
-            latInput.oninput = function() { manualCoords(latInput); };
 
             const lonInput = document.createElement("input");
             lonInput.type = "text";
             lonInput.className = "small-input longitude-input";
             lonInput.placeholder = "Lon";
-            lonInput.oninput = function() { manualCoords(lonInput); };
 
             const selectOption = document.createElement("select");
             selectOption.className = "treatment-option";
@@ -215,63 +189,7 @@
             inputGroup.remove();
         }
 
-        function autocompleteAddress(input) {
-            const query = input.value;
-            if (query.length < 3) {
-                clearSuggestions(input);
-                return;
-            }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
-                .then(response => response.json())
-                .then(data => {
-                    clearSuggestions(input);
-                    const suggestions = document.createElement("div");
-                    suggestions.className = "autocomplete-suggestions";
-
-                    data.slice(0, 5).forEach(place => {
-                        const suggestion = document.createElement("div");
-                        suggestion.className = "autocomplete-suggestion";
-                        suggestion.textContent = place.display_name;
-                        suggestion.onclick = function() {
-                            input.value = place.display_name;
-                            const latInput = input.parentElement.querySelector(".latitude-input");
-                            const lonInput = input.parentElement.querySelector(".longitude-input");
-                            latInput.value = place.lat;
-                            lonInput.value = place.lon;
-                            clearSuggestions(input);
-                        };
-                        suggestions.appendChild(suggestion);
-                    });
-
-                    input.parentElement.appendChild(suggestions);
-                });
-        }
-
-        function manualCoords(input) {
-            const inputGroup = input.parentElement;
-            const latInput = inputGroup.querySelector(".latitude-input");
-            const lonInput = inputGroup.querySelector(".longitude-input");
-
-            if (latInput.value && lonInput.value) {
-                inputGroup.dataset.coords = `${latInput.value},${lonInput.value}`;
-            }
-        }
-
-        function clearSuggestions(input) {
-            const suggestions = input.parentElement.querySelector(".autocomplete-suggestions");
-            if (suggestions) {
-                suggestions.remove();
-            }
-        }
-
-        async function compareRoutes() {
-            // Supprimer les itinéraires précédents et réinitialiser le tableau
-            routeControls.forEach(control => {
-                map.removeLayer(control);
-            });
-            routeControls = [];
-            
+        function compareRoutes() {
             const distanceTable = document.querySelector("#distance-table");
             const distanceTableHead = distanceTable.querySelector("thead");
             const distanceTableBody = distanceTable.querySelector("tbody");
@@ -305,9 +223,7 @@
             distanceTableHead.appendChild(headerRow);
 
             // Pour chaque lieu de stockage
-            for (const storageGroup of storageGroups) {
-                const storageLat = storageGroup.querySelector(".latitude-input").value;
-                const storageLon = storageGroup.querySelector(".longitude-input").value;
+            storageGroups.forEach((storageGroup) => {
                 const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
 
                 const row = document.createElement('tr');
@@ -315,65 +231,17 @@
                 storageCell.textContent = storageName;
                 row.appendChild(storageCell);
 
-                // Vérifier que les coordonnées du stockage sont valides
-                if (storageLat && storageLon) {
-                    // Pour chaque lieu de traitement
-                    for (const treatmentGroup of treatmentGroups) {
-                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
-                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
-                        const cell = document.createElement('td');
-
-                        // Vérifier que les coordonnées du traitement sont valides
-                        if (treatmentLat && treatmentLon) {
-                            try {
-                                const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
-                                const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
-                                cell.textContent = `${distance} km`;
-
-                                // Optionnel : Afficher l'itinéraire sur la carte
-                                const routeLine = L.Routing.line(route).addTo(map);
-                                routeControls.push(routeLine);
-                            } catch (err) {
-                                console.error('Erreur lors du calcul de l\'itinéraire:', err);
-                                cell.textContent = 'Erreur';
-                            }
-                        } else {
-                            cell.textContent = 'Coordonnées invalides';
-                        }
-
-                        row.appendChild(cell);
-                    }
-                } else {
+                // Pour chaque lieu de traitement
+                treatmentGroups.forEach((treatmentGroup) => {
                     const cell = document.createElement('td');
-                    cell.setAttribute('colspan', treatmentGroups.length);
-                    cell.textContent = 'Coordonnées invalides';
+                    cell.textContent = '...'; // Placeholder pour la distance
                     row.appendChild(cell);
-                }
+                });
 
                 distanceTableBody.appendChild(row);
-            }
-
-            console.log('Toutes les distances ont été calculées.');
-        }
-
-        function calculateRoute(lat1, lon1, lat2, lon2) {
-            return new Promise((resolve, reject) => {
-                const router = L.Routing.osrmv1();
-                router.route([
-                    {
-                        latLng: L.latLng(lat1, lon1)
-                    },
-                    {
-                        latLng: L.latLng(lat2, lon2)
-                    }
-                ], function(err, routes) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(routes[0]);
-                    }
-                });
             });
+
+            console.log('Tableau généré.');
         }
     </script>
 </body>

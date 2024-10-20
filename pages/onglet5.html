@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENSAM x Cartier - Onglet 5</title>
+    <title>ENSAM x Cartier - Onglet 5</title> <!-- Titre cohérent avec onglet1 -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -62,7 +62,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier - Onglet 5</div>
+        <div class="header-overlay">ENSAM x Cartier - Onglet 5</div> <!-- Overlay text -->
     </div>
 
     <header class="menu">
@@ -141,29 +141,11 @@
         }).addTo(map);
 
         let routeControls = [];
+        const colors = ['#0000FF', '#008000', '#FF0000', '#800080']; // Blue, Green, Red, Purple
 
-        const baseColors = [
-            'blue',
-            'green',
-            'red',
-            'purple'
-        ];
-
-        function getShade(color, factor) {
-            return `hsl(${color}, 100%, ${factor}%)`;
-        }
-
-        function assignRouteColor(storageIndex, totalRoutes, routeIndex) {
-            const hueMap = {
-                blue: 240,
-                green: 120,
-                red: 0,
-                purple: 270
-            };
-            const baseHue = hueMap[baseColors[storageIndex % baseColors.length]];
-            const lightness = 70 - (routeIndex / totalRoutes) * 30;
-
-            return getShade(baseHue, lightness);
+        function getShade(baseColor, totalRoutes, routeIndex) {
+            const opacity = 0.3 + 0.7 * (1 - (routeIndex / totalRoutes));
+            return `${baseColor}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`;
         }
 
         function addStorageInput() {
@@ -204,40 +186,76 @@
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
-        function autocompleteAddress(input) {
-            const query = input.value;
-            const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
+        async function compareRoutes() {
+            routeControls.forEach(control => {
+                control.getPlan().setWaypoints([]);
+                map.removeControl(control);
+            });
+            routeControls = [];
 
-            if (query.length < 3) {
-                suggestionsDiv.innerHTML = '';
-                return;
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.textContent = 'Calcul des distances en cours...';
+
+            const distanceTable = document.querySelector("#distance-table");
+            const distanceTableBody = distanceTable.querySelector("tbody");
+            distanceTableBody.innerHTML = '';
+
+            const storageGroups = document.querySelectorAll("#storage-container .input-group");
+            const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
+
+            let colorIndex = 0;
+
+            for (const storageGroup of storageGroups) {
+                const storageLat = storageGroup.querySelector(".latitude-input").value;
+                const storageLon = storageGroup.querySelector(".longitude-input").value;
+                const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
+
+                if (storageLat && storageLon) {
+                    const baseColor = colors[colorIndex % colors.length];
+                    colorIndex++;
+                    let routeIndex = 0;
+                    for (const treatmentGroup of treatmentGroups) {
+                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
+                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
+                        const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
+                        const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
+
+                        try {
+                            const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
+                            const distance = (route.summary.totalDistance / 1000).toFixed(2);
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${storageName}</td>
+                                <td>${treatmentName} (${treatmentOption})</td>
+                                <td>${distance} km</td>
+                            `;
+                            distanceTableBody.appendChild(row);
+
+                            const routeControl = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
+                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
+                                ],
+                                routeWhileDragging: false,
+                                addWaypoints: false,
+                                draggableWaypoints: false,
+                                fitSelectedRoutes: false,
+                                lineOptions: {
+                                    styles: [{ color: getShade(baseColor, treatmentGroups.length, routeIndex), opacity: 0.7, weight: 5 }]
+                                }
+                            }).addTo(map);
+                            routeControls.push(routeControl);
+                            routeIndex++;
+
+                        } catch (err) {
+                            console.error('Erreur lors du calcul de l\'itinéraire:', err);
+                        }
+                    }
+                }
             }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
-                .then(response => response.json())
-                .then(data => {
-                    suggestionsDiv.innerHTML = '';
-                    data.slice(0, 5).forEach(place => {
-                        const suggestion = document.createElement("div");
-                        suggestion.className = "autocomplete-suggestion";
-                        suggestion.textContent = place.display_name;
-                        suggestion.onclick = function() {
-                            input.value = place.display_name;
-                            const latInput = input.parentElement.querySelector(".latitude-input");
-                            const lonInput = input.parentElement.querySelector(".longitude-input");
-                            latInput.value = place.lat;
-                            lonInput.value = place.lon;
-                            suggestionsDiv.innerHTML = '';
-                        };
-                        suggestionsDiv.appendChild(suggestion);
-                    });
-                })
-                .catch(err => {
-                    console.error('Erreur lors de l\'autocomplétion :', err);
-                });
+            statusMessage.textContent = 'Toutes les distances ont été calculées.';
         }
-
-        // Rest of the script remains the same...
     </script>
 </body>
 </html>

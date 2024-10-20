@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.8</title>
+    <title>Version 1.9</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour Leaflet -->
@@ -56,6 +56,15 @@
             font-size: 16px;
             color: #333;
         }
+        /* Styles pour les résultats en phrases */
+        #text-results {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+        #text-results p {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -74,7 +83,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.8
+            Version 1.9
         </div>
     </div>
 
@@ -114,6 +123,7 @@
             <button onclick="compareRoutes()">Comparer les itinéraires</button>
             <div id="status-message"></div>
             <div id="map"></div>
+            <div id="text-results"></div> <!-- Div pour les résultats en phrases -->
             <table id="distance-table">
                 <thead>
                     <tr>
@@ -266,6 +276,7 @@
         async function compareRoutes() {
             // Supprimer les itinéraires précédents
             routeControls.forEach(control => {
+                control.getPlan().setWaypoints([]);
                 map.removeControl(control);
             });
             routeControls = [];
@@ -277,6 +288,9 @@
             const distanceTableHead = distanceTable.querySelector("thead");
             const distanceTableBody = distanceTable.querySelector("tbody");
             distanceTableBody.innerHTML = '';
+
+            const textResultsDiv = document.getElementById('text-results');
+            textResultsDiv.innerHTML = ''; // Réinitialiser les résultats en phrases
 
             const storageGroups = document.querySelectorAll("#storage-container .input-group");
             const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
@@ -326,6 +340,9 @@
                     for (const treatmentGroup of treatmentGroups) {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
+                        const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
+                        const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
+
                         const cell = document.createElement('td');
 
                         // Vérifier que les coordonnées du traitement sont valides
@@ -349,6 +366,11 @@
                                 }).addTo(map);
 
                                 routeControls.push(routeControl);
+
+                                // Ajouter le résultat en phrase
+                                const resultParagraph = document.createElement('p');
+                                resultParagraph.textContent = `La distance entre "${storageName}" et "${treatmentName} (${treatmentOption})" est de ${distance} km.`;
+                                textResultsDiv.appendChild(resultParagraph);
 
                             } catch (err) {
                                 console.error('Erreur lors du calcul de l\'itinéraire:', err);

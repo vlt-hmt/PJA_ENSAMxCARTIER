@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.5</title>
+    <title>Version 1.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour Leaflet -->
@@ -67,7 +67,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.5
+            Version 1.4
         </div>
     </div>
 
@@ -268,11 +268,12 @@
         function compareRoutes() {
             // Supprimer les itinéraires précédents et réinitialiser le tableau
             routeControls.forEach(control => {
-                map.removeControl(control);
+                map.removeLayer(control);
             });
             routeControls = [];
             
             const distanceTable = document.querySelector("#distance-table");
+            const distanceTableHead = distanceTable.querySelector("thead");
             const distanceTableBody = distanceTable.querySelector("tbody");
             distanceTableBody.innerHTML = '';
 
@@ -280,14 +281,22 @@
             const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
 
             // Créer la première ligne d'en-tête
-            let headerRow = '<tr><th>Lieu de Stockage / Lieu de Traitement</th>';
+            const headerRow = document.createElement('tr');
+            const headerCell = document.createElement('th');
+            headerCell.textContent = 'Lieu de Stockage / Lieu de Traitement';
+            headerRow.appendChild(headerCell);
+
             treatmentGroups.forEach((treatmentGroup) => {
                 const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
                 const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
-                headerRow += `<th>${treatmentName} (${treatmentOption})</th>`;
+                const th = document.createElement('th');
+                th.textContent = `${treatmentName} (${treatmentOption})`;
+                headerRow.appendChild(th);
             });
-            headerRow += '</tr>';
-            distanceTable.querySelector("thead").innerHTML = headerRow;
+
+            // Mettre à jour le thead
+            distanceTableHead.innerHTML = '';
+            distanceTableHead.appendChild(headerRow);
 
             // Tableau pour stocker toutes les promesses
             let allRowPromises = [];
@@ -297,13 +306,19 @@
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
                 const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
 
-                let rowContent = `<tr><td>${storageName}</td>`;
+                const row = document.createElement('tr');
+                const storageCell = document.createElement('td');
+                storageCell.textContent = storageName;
+                row.appendChild(storageCell);
+
                 let routePromises = [];
 
                 if (storageLat && storageLon) {
                     treatmentGroups.forEach((treatmentGroup) => {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
+
+                        const cell = document.createElement('td');
 
                         if (treatmentLat && treatmentLon) {
                             const routePromise = new Promise((resolve, reject) => {
@@ -318,14 +333,17 @@
                                 ], function(err, routes) {
                                     if (err) {
                                         console.error('Erreur lors du calcul de l\'itinéraire:', err);
-                                        resolve('<td>Erreur</td>');
+                                        cell.textContent = 'Erreur';
+                                        resolve();
                                     } else {
                                         const distance = (routes[0].summary.totalDistance / 1000).toFixed(2); // Convertir en km
-                                        resolve(`<td>${distance} km</td>`);
+                                        cell.textContent = `${distance} km`;
 
                                         // Optionnel : Afficher l'itinéraire sur la carte
                                         const routeLine = L.Routing.line(routes[0]).addTo(map);
                                         routeControls.push(routeLine);
+
+                                        resolve();
                                     }
                                 });
                             });
@@ -333,21 +351,25 @@
                             routePromises.push(routePromise);
                         } else {
                             // Si les coordonnées sont manquantes
-                            routePromises.push(Promise.resolve('<td>Coordonnées invalides</td>'));
+                            cell.textContent = 'Coordonnées invalides';
+                            routePromises.push(Promise.resolve());
                         }
+
+                        row.appendChild(cell);
                     });
 
-                    const rowPromise = Promise.all(routePromises).then(cells => {
-                        rowContent += cells.join('');
-                        rowContent += '</tr>';
-                        distanceTableBody.innerHTML += rowContent;
+                    const rowPromise = Promise.all(routePromises).then(() => {
+                        distanceTableBody.appendChild(row);
                     });
 
                     allRowPromises.push(rowPromise);
                 } else {
                     // Si les coordonnées sont manquantes
-                    rowContent += '<td colspan="' + treatmentGroups.length + '">Coordonnées invalides</td></tr>';
-                    distanceTableBody.innerHTML += rowContent;
+                    const cell = document.createElement('td');
+                    cell.setAttribute('colspan', treatmentGroups.length);
+                    cell.textContent = 'Coordonnées invalides';
+                    row.appendChild(cell);
+                    distanceTableBody.appendChild(row);
                 }
             });
 

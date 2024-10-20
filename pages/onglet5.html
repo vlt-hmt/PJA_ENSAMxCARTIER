@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.0</title>
+    <title>Version 2.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour Leaflet -->
@@ -41,7 +41,7 @@
             border-collapse: collapse;
             margin-top: 20px;
             text-align: center;
-            border: 2px solid red; /* Bordure temporaire pour visualiser le tableau */
+            border: 1px solid #ddd;
         }
         #distance-table th, #distance-table td {
             border: 1px solid #ddd;
@@ -56,15 +56,6 @@
             font-weight: bold;
             font-size: 16px;
             color: #333;
-        }
-        /* Styles pour les résultats en phrases */
-        #text-results {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #333;
-        }
-        #text-results p {
-            margin: 5px 0;
         }
     </style>
 </head>
@@ -84,7 +75,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 2.0
+            Version 2.1
         </div>
     </div>
 
@@ -124,11 +115,12 @@
             <button onclick="compareRoutes()">Comparer les itinéraires</button>
             <div id="status-message"></div>
             <div id="map"></div>
-            <div id="text-results"></div> <!-- Div pour les résultats en phrases -->
             <table id="distance-table">
                 <thead>
                     <tr>
-                        <th>Lieu de Stockage / Lieu de Traitement</th>
+                        <th>Lieu de Stockage</th>
+                        <th>Lieu de Traitement</th>
+                        <th>Distance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -286,12 +278,8 @@
             statusMessage.textContent = 'Calcul des distances en cours...';
 
             const distanceTable = document.querySelector("#distance-table");
-            const distanceTableHead = distanceTable.querySelector("thead");
             const distanceTableBody = distanceTable.querySelector("tbody");
             distanceTableBody.innerHTML = '';
-
-            const textResultsDiv = document.getElementById('text-results');
-            textResultsDiv.innerHTML = ''; // Réinitialiser les résultats en phrases
 
             const storageGroups = document.querySelectorAll("#storage-container .input-group");
             const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
@@ -303,24 +291,6 @@
                 return;
             }
 
-            // Créer la première ligne d'en-tête
-            const headerRow = document.createElement('tr');
-            const headerCell = document.createElement('th');
-            headerCell.textContent = 'Lieu de Stockage / Lieu de Traitement';
-            headerRow.appendChild(headerCell);
-
-            treatmentGroups.forEach((treatmentGroup) => {
-                const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
-                const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
-                const th = document.createElement('th');
-                th.textContent = `${treatmentName} (${treatmentOption})`;
-                headerRow.appendChild(th);
-            });
-
-            // Mettre à jour le thead
-            distanceTableHead.innerHTML = '';
-            distanceTableHead.appendChild(headerRow);
-
             let totalCalculations = storageGroups.length * treatmentGroups.length;
             let completedCalculations = 0;
 
@@ -329,11 +299,6 @@
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
                 const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
-
-                const row = document.createElement('tr');
-                const storageCell = document.createElement('td');
-                storageCell.textContent = storageName;
-                row.appendChild(storageCell);
 
                 // Vérifier que les coordonnées du stockage sont valides
                 if (storageLat && storageLon) {
@@ -344,14 +309,28 @@
                         const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
                         const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
 
-                        const cell = document.createElement('td');
-
                         // Vérifier que les coordonnées du traitement sont valides
                         if (treatmentLat && treatmentLon) {
                             try {
                                 const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
                                 const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
-                                cell.textContent = `${distance} km`;
+
+                                // Ajouter une ligne au tableau
+                                const row = document.createElement('tr');
+
+                                const storageCell = document.createElement('td');
+                                storageCell.textContent = storageName;
+                                row.appendChild(storageCell);
+
+                                const treatmentCell = document.createElement('td');
+                                treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
+                                row.appendChild(treatmentCell);
+
+                                const distanceCell = document.createElement('td');
+                                distanceCell.textContent = `${distance} km`;
+                                row.appendChild(distanceCell);
+
+                                distanceTableBody.appendChild(row);
 
                                 // Optionnel : Afficher l'itinéraire sur la carte
                                 const routeControl = L.Routing.control({
@@ -368,31 +347,65 @@
 
                                 routeControls.push(routeControl);
 
-                                // Ajouter le résultat en phrase
-                                const resultParagraph = document.createElement('p');
-                                resultParagraph.textContent = `La distance entre "${storageName}" et "${treatmentName} (${treatmentOption})" est de ${distance} km.`;
-                                textResultsDiv.appendChild(resultParagraph);
-
                             } catch (err) {
                                 console.error('Erreur lors du calcul de l\'itinéraire:', err);
-                                cell.textContent = 'Erreur';
+                                // Ajouter une ligne avec l'erreur au tableau
+                                const row = document.createElement('tr');
+
+                                const storageCell = document.createElement('td');
+                                storageCell.textContent = storageName;
+                                row.appendChild(storageCell);
+
+                                const treatmentCell = document.createElement('td');
+                                treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
+                                row.appendChild(treatmentCell);
+
+                                const distanceCell = document.createElement('td');
+                                distanceCell.textContent = 'Erreur';
+                                row.appendChild(distanceCell);
+
+                                distanceTableBody.appendChild(row);
                             }
                         } else {
-                            cell.textContent = 'Coordonnées invalides';
+                            // Coordonnées du traitement invalides
+                            const row = document.createElement('tr');
+
+                            const storageCell = document.createElement('td');
+                            storageCell.textContent = storageName;
+                            row.appendChild(storageCell);
+
+                            const treatmentCell = document.createElement('td');
+                            treatmentCell.textContent = 'Coordonnées invalides';
+                            row.appendChild(treatmentCell);
+
+                            const distanceCell = document.createElement('td');
+                            distanceCell.textContent = '';
+                            row.appendChild(distanceCell);
+
+                            distanceTableBody.appendChild(row);
                         }
 
-                        row.appendChild(cell);
                         completedCalculations++;
                         statusMessage.textContent = `Calcul des distances en cours... (${completedCalculations}/${totalCalculations})`;
                     }
                 } else {
-                    const cell = document.createElement('td');
-                    cell.setAttribute('colspan', treatmentGroups.length);
-                    cell.textContent = 'Coordonnées invalides';
-                    row.appendChild(cell);
-                }
+                    // Coordonnées du stockage invalides
+                    const row = document.createElement('tr');
 
-                distanceTableBody.appendChild(row);
+                    const storageCell = document.createElement('td');
+                    storageCell.textContent = 'Coordonnées invalides';
+                    row.appendChild(storageCell);
+
+                    const treatmentCell = document.createElement('td');
+                    treatmentCell.textContent = '';
+                    row.appendChild(treatmentCell);
+
+                    const distanceCell = document.createElement('td');
+                    distanceCell.textContent = '';
+                    row.appendChild(distanceCell);
+
+                    distanceTableBody.appendChild(row);
+                }
             }
 
             statusMessage.textContent = 'Toutes les distances ont été calculées.';

@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.4</title>
+    <title>Version 1.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
+    <!-- Feuilles de style pour Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
@@ -66,7 +67,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.4
+            Version 1.5
         </div>
     </div>
 
@@ -115,6 +116,7 @@
         </section>
     </main>
 
+    <!-- Inclusion des scripts nécessaires -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script>
@@ -274,57 +276,84 @@
             const distanceTableBody = distanceTable.querySelector("tbody");
             distanceTableBody.innerHTML = '';
 
-            const storageGroups = document.querySelectorAll(".input-group");
-            const storageInputs = Array.from(storageGroups).filter(group => group.querySelector(".storage-input"));
-            const treatmentInputs = Array.from(storageGroups).filter(group => group.querySelector(".treatment-input"));
+            const storageGroups = document.querySelectorAll("#storage-container .input-group");
+            const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
 
             // Créer la première ligne d'en-tête
-            let headerRow = '<tr><th>Stockage \\ Traitement</th>';
-            treatmentInputs.forEach((treatmentGroup) => {
-                const treatmentName = treatmentGroup.querySelector(".large-input").value;
+            let headerRow = '<tr><th>Lieu de Stockage / Lieu de Traitement</th>';
+            treatmentGroups.forEach((treatmentGroup) => {
+                const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
                 const treatmentOption = treatmentGroup.querySelector(".treatment-option").selectedOptions[0].text;
                 headerRow += `<th>${treatmentName} (${treatmentOption})</th>`;
             });
             headerRow += '</tr>';
             distanceTable.querySelector("thead").innerHTML = headerRow;
 
-            storageInputs.forEach((storageGroup, storageIndex) => {
+            // Tableau pour stocker toutes les promesses
+            let allRowPromises = [];
+
+            storageGroups.forEach((storageGroup) => {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
                 const storageLon = storageGroup.querySelector(".longitude-input").value;
-                const storageName = storageGroup.querySelector(".large-input").value;
+                const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
 
                 let rowContent = `<tr><td>${storageName}</td>`;
-                let completedRoutes = 0;
+                let routePromises = [];
 
                 if (storageLat && storageLon) {
-                    treatmentInputs.forEach((treatmentGroup) => {
+                    treatmentGroups.forEach((treatmentGroup) => {
                         const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
                         const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
 
                         if (treatmentLat && treatmentLon) {
-                            const newRoute = L.Routing.control({
-                                waypoints: [
-                                    L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
-                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
-                                ],
-                                routeWhileDragging: true
-                            }).addTo(map);
+                            const routePromise = new Promise((resolve, reject) => {
+                                const router = L.Routing.osrmv1();
+                                router.route([
+                                    {
+                                        latLng: L.latLng(parseFloat(storageLat), parseFloat(storageLon))
+                                    },
+                                    {
+                                        latLng: L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
+                                    }
+                                ], function(err, routes) {
+                                    if (err) {
+                                        console.error('Erreur lors du calcul de l\'itinéraire:', err);
+                                        resolve('<td>Erreur</td>');
+                                    } else {
+                                        const distance = (routes[0].summary.totalDistance / 1000).toFixed(2); // Convertir en km
+                                        resolve(`<td>${distance} km</td>`);
 
-                            newRoute.on('routesfound', function(e) {
-                                const distance = (e.routes[0].summary.totalDistance / 1000).toFixed(2); // Convert to km
-                                rowContent += `<td>${distance} km</td>`;
-                                completedRoutes++;
-
-                                if (completedRoutes === treatmentInputs.length) {
-                                    rowContent += '</tr>';
-                                    distanceTableBody.innerHTML += rowContent;
-                                }
+                                        // Optionnel : Afficher l'itinéraire sur la carte
+                                        const routeLine = L.Routing.line(routes[0]).addTo(map);
+                                        routeControls.push(routeLine);
+                                    }
+                                });
                             });
 
-                            routeControls.push(newRoute);
+                            routePromises.push(routePromise);
+                        } else {
+                            // Si les coordonnées sont manquantes
+                            routePromises.push(Promise.resolve('<td>Coordonnées invalides</td>'));
                         }
                     });
+
+                    const rowPromise = Promise.all(routePromises).then(cells => {
+                        rowContent += cells.join('');
+                        rowContent += '</tr>';
+                        distanceTableBody.innerHTML += rowContent;
+                    });
+
+                    allRowPromises.push(rowPromise);
+                } else {
+                    // Si les coordonnées sont manquantes
+                    rowContent += '<td colspan="' + treatmentGroups.length + '">Coordonnées invalides</td></tr>';
+                    distanceTableBody.innerHTML += rowContent;
                 }
+            });
+
+            // Attendre que toutes les lignes soient complétées
+            Promise.all(allRowPromises).then(() => {
+                console.log('Toutes les distances ont été calculées.');
             });
         }
     </script>

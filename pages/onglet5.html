@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.7</title>
+    <title>Version 1.8</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour Leaflet -->
@@ -15,7 +15,7 @@
         .input-group { margin-bottom: 20px; position: relative; display: flex; align-items: center; flex-wrap: wrap; }
         .input-container { display: flex; flex-direction: column; margin-bottom: 20px; }
         .button-add { margin-top: 5px; }
-        .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; }
+        .remove-button { background-color: red; color: white; border: none; padding: 5px; cursor: pointer; border-radius: 8px; }
         input { padding: 8px; margin-bottom: 10px; flex-grow: 1; margin-right: 10px; }
         .small-input { width: 90px; }
         .autocomplete-suggestions {
@@ -49,6 +49,13 @@
         #distance-table th {
             background-color: #f4f4f4;
         }
+        /* Styles pour les messages de statut */
+        #status-message {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -67,7 +74,7 @@
             </nav>
         </header>
         <div class="header-overlay">
-            Version 1.7
+            Version 1.8
         </div>
     </div>
 
@@ -105,6 +112,7 @@
             </div>
 
             <button onclick="compareRoutes()">Comparer les itinéraires</button>
+            <div id="status-message"></div>
             <div id="map"></div>
             <table id="distance-table">
                 <thead>
@@ -261,7 +269,10 @@
                 map.removeControl(control);
             });
             routeControls = [];
-            
+
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.textContent = 'Calcul des distances en cours...';
+
             const distanceTable = document.querySelector("#distance-table");
             const distanceTableHead = distanceTable.querySelector("thead");
             const distanceTableBody = distanceTable.querySelector("tbody");
@@ -273,6 +284,7 @@
             // Vérifier qu'il y a au moins un lieu de stockage et un lieu de traitement
             if (storageGroups.length === 0 || treatmentGroups.length === 0) {
                 alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
+                statusMessage.textContent = '';
                 return;
             }
 
@@ -293,6 +305,9 @@
             // Mettre à jour le thead
             distanceTableHead.innerHTML = '';
             distanceTableHead.appendChild(headerRow);
+
+            let totalCalculations = storageGroups.length * treatmentGroups.length;
+            let completedCalculations = 0;
 
             // Pour chaque lieu de stockage
             for (const storageGroup of storageGroups) {
@@ -344,6 +359,8 @@
                         }
 
                         row.appendChild(cell);
+                        completedCalculations++;
+                        statusMessage.textContent = `Calcul des distances en cours... (${completedCalculations}/${totalCalculations})`;
                     }
                 } else {
                     const cell = document.createElement('td');
@@ -355,6 +372,7 @@
                 distanceTableBody.appendChild(row);
             }
 
+            statusMessage.textContent = 'Toutes les distances ont été calculées.';
             console.log('Toutes les distances ont été calculées.');
         }
 

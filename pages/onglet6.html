@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.4</title>
+    <title>Version 1.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <style>
@@ -14,6 +14,19 @@
         }
         #custom-density-container label {
             margin-right: 10px;
+        }
+        #material-list {
+            margin-top: 20px;
+        }
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        .material-item div {
+            width: 20%;
+            text-align: center;
         }
         #version-display {
             opacity: 0;
@@ -26,7 +39,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 1.4</div>
+        <div class="header-overlay">Version 1.6</div>
     </div>
 
     <header class="menu">
@@ -58,6 +71,16 @@
             <input type="number" id="material-weight" step="1" min="1">
         </div>
         <button onclick="addMaterial()">Ajouter le matériau</button>
+
+        <!-- Liste des matériaux ajoutés -->
+        <div id="material-list">
+            <div class="material-item" style="font-weight: bold;">
+                <div>Matériau</div>
+                <div>Masse Volumique (kg/m³)</div>
+                <div>Poids (kg)</div>
+                <div>Volume (m³)</div>
+            </div>
+        </div>
         <div id="vehicle-results"></div>
     </main>
 
@@ -101,7 +124,7 @@
             const selectedMaterial = document.getElementById("material-dropdown").value;
             const customDensity = document.getElementById("custom-density").value;
             const weight = document.getElementById("material-weight").value;
-            const vehicleResultsDiv = document.getElementById("vehicle-results");
+            const materialListDiv = document.getElementById("material-list");
 
             if (!selectedMaterial || !customDensity || !weight) {
                 alert("Veuillez remplir tous les champs.");
@@ -110,10 +133,18 @@
 
             const density = parseFloat(customDensity);
             const weightKg = parseFloat(weight);
-
-            // Logique pour calculer le véhicule adapté, comme dans la version précédente.
             const volume = weightKg / density; // Volume en m³
-            vehicleResultsDiv.textContent = `Matériau ajouté : ${selectedMaterial} avec une masse volumique de ${density} kg/m³ et un poids de ${weightKg} kg (Volume calculé : ${volume.toFixed(2)} m³).`;
+
+            // Ajouter le matériau à la liste
+            const materialItemDiv = document.createElement("div");
+            materialItemDiv.classList.add("material-item");
+            materialItemDiv.innerHTML = `
+                <div>${selectedMaterial}</div>
+                <div>${density}</div>
+                <div>${weightKg}</div>
+                <div>${volume.toFixed(2)}</div>
+            `;
+            materialListDiv.appendChild(materialItemDiv);
 
             calculateVehicles(weightKg);
         }

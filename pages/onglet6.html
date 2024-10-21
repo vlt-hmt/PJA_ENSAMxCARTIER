@@ -83,7 +83,7 @@
                     <select class="material-select">
                         <option value="">Sélectionnez un matériau</option>
                     </select>
-                    <input type="number" min="0" step="any" class="material-weight" placeholder="Poids en tonnes">
+                    <input type="number" min="0" step="any" class="material-weight" placeholder="Poids en kg">
                     <button class="remove-material" onclick="removeMaterial(this)">Supprimer</button>
                 </div>
             </div>
@@ -157,7 +157,7 @@
             inputWeight.min = '0';
             inputWeight.step = 'any';
             inputWeight.className = 'material-weight';
-            inputWeight.placeholder = 'Poids en tonnes';
+            inputWeight.placeholder = 'Poids en kg';
 
             const removeButton = document.createElement('button');
             removeButton.className = 'remove-material';
@@ -195,15 +195,22 @@
                 return;
             }
 
-            // Filtrer les véhicules appropriés
-            const suitableVehicles = vehiclesData.filter(vehicle => vehicle.maxLoad >= totalWeight);
-
-            // Trier les véhicules par charge utile croissante
-            suitableVehicles.sort((a, b) => a.maxLoad - b.maxLoad);
-
-            // Afficher les véhicules recommandés
             const vehicleResultsDiv = document.getElementById('vehicle-results');
             vehicleResultsDiv.innerHTML = '';
+
+            // Convert vehicle maxLoads to kg for comparison
+            const vehiclesWithMaxLoadKg = vehiclesData.map(vehicle => {
+                return {
+                    ...vehicle,
+                    maxLoadKg: vehicle.maxLoad * 1000
+                };
+            });
+
+            // Trier les véhicules par charge utile croissante
+            vehiclesWithMaxLoadKg.sort((a, b) => a.maxLoadKg - b.maxLoadKg);
+
+            // Trouver les véhicules pouvant transporter le poids total
+            let suitableVehicles = vehiclesWithMaxLoadKg.filter(vehicle => vehicle.maxLoadKg >= totalWeight);
 
             if (suitableVehicles.length > 0) {
                 const resultList = document.createElement('ul');
@@ -214,7 +221,14 @@
                 });
                 vehicleResultsDiv.appendChild(resultList);
             } else {
-                vehicleResultsDiv.textContent = 'Aucun véhicule approprié trouvé pour le poids total.';
+                // Si aucun véhicule ne peut transporter le poids total, proposer une combinaison
+                const largestVehicle = vehiclesWithMaxLoadKg[vehiclesWithMaxLoadKg.length - 1];
+                const numberOfVehicles = Math.ceil(totalWeight / largestVehicle.maxLoadKg);
+
+                const message = document.createElement('p');
+                message.textContent = `Le poids total de ${totalWeight} kg dépasse la charge utile maximale d'un véhicule. Vous aurez besoin d'au moins ${numberOfVehicles} véhicule(s) de type "${largestVehicle.class}" pour transporter le poids total.`;
+
+                vehicleResultsDiv.appendChild(message);
             }
         }
     </script>

@@ -1,355 +1,94 @@
 {
-"Feuil1":[
- {
-  "Matériau": "Plastique rigide PS-PSE",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2970,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -704,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1705,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique biosourcé PP",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 122,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -768,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1310,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique pétrosourcé PP",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2770,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -768,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1310,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique biosourcé PE",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 122,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -747,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1130,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique pétrosourcé PE",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2770,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -747,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1130,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Acier",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -2090,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Aluminium",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 873,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -8430,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Verre",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 130,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 639,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1160,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Carton",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 120,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 992,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": 110,
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -260,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -379,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": -77
- },
- {
-  "Matériau": "Plastique pétrosourcé PET",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2140,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 662,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -384,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1740,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique biosourcé PET",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 160,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -384,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1740,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Ordures ménagères résiduelles",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 374,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 18,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": 110,
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -212,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": -77
- },
- {
-  "Matériau": "Déchets putrescibles",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 45,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -126,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Céramiques et autres inertes",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 130,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Bois",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 69,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -405,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Autres plastiques complexes",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2660,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -651,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PVC",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 4610,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 141,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -299,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1850,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique moyen",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 5560,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -626,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Déchets alimentaires",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2930,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": 18,
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "-97.3",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": -77
- },
- {
-  "Matériau": "Déchets de cuisine",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": 173,
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": -12
- },
- {
-  "Matériau": "Plastique rigide PE bouteilles",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 434,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1440,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PE autres emballages",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 434,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1440,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique souple PE",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 530,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1130,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PP bouteilles",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 434,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1310,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PP autres emballages",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 434,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1310,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PET bouteilles",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 662,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1740,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PET autres emballages",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 662,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1740,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PET\/Recyclage paillettes",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 480,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1510,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PET\/Recyclage granulés",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 548,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1630,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique souple PE\/Recyclage granulés",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 134,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1640,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PP\/Recyclage granulés",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 173,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1600,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PE\/Recyclage paillettes",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 258,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1450,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Plastique rigide PE\/Recyclage granulés",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 313,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1390,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Aluminium\/Recyclage",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 873,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -8430,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Verre\/Recyclage",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 639,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1160,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Carton\/Recyclage",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 992,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -379,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- },
- {
-  "Matériau": "Déchets de cuisine\/Méthanisation",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": 173,
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": -12
- },
- {
-  "Matériau": "Bois de classe B",
-  "Incinération - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A",
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": -24
- },
- {
-  "Matériau": "Plastique rigide PVC\/Recyclage",
-  "Incinération - Impact (kg éq. CO2\/tonne)": 2915,
-  "Recyclage - Impact (kg éq. CO2\/tonne)": 141,
-  "Méthanisation - Impact (kg éq. CO2\/tonne)": "N\/A",
-  "Incinération - Émissions Évitées (kg éq. CO2\/tonne)": -1093,
-  "Recyclage - Émissions Évitées (kg éq. CO2\/tonne)": -1850,
-  "Méthanisation - Émissions Évitées (kg éq. CO2\/tonne)": "N\/A"
- }
-]
+    "Feuil1": [
+        {
+            "Matériau": "Plastique rigide PS-PSE",
+            "Incinération - Impact (kg éq. CO2/tonne)": 2970,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 18,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": -704,
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -1705,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 1050
+        },
+        {
+            "Matériau": "Plastique biosourcé PP",
+            "Incinération - Impact (kg éq. CO2/tonne)": 122,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 18,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": -768,
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -1310,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 960
+        },
+        {
+            "Matériau": "Plastique pétrosourcé PP",
+            "Incinération - Impact (kg éq. CO2/tonne)": 2770,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 18,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": -768,
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -1310,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 960
+        },
+        {
+            "Matériau": "Plastique biosourcé PE",
+            "Incinération - Impact (kg éq. CO2/tonne)": 122,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 18,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": -747,
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -1130,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 930
+        },
+        {
+            "Matériau": "Plastique pétrosourcé PE",
+            "Incinération - Impact (kg éq. CO2/tonne)": 2770,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 18,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": -747,
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -1130,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 930
+        },
+        {
+            "Matériau": "Acier",
+            "Incinération - Impact (kg éq. CO2/tonne)": "N/A",
+            "Recyclage - Impact (kg éq. CO2/tonne)": 18,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -2090,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 8000
+        },
+        {
+            "Matériau": "Aluminium",
+            "Incinération - Impact (kg éq. CO2/tonne)": "N/A",
+            "Recyclage - Impact (kg éq. CO2/tonne)": 873,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -8430,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 2900
+        },
+        {
+            "Matériau": "Verre",
+            "Incinération - Impact (kg éq. CO2/tonne)": 130,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 639,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": "N/A",
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -1160,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": "N/A",
+            "Masse Volumique (kg/m³)": 2800
+        },
+        {
+            "Matériau": "Carton",
+            "Incinération - Impact (kg éq. CO2/tonne)": 120,
+            "Recyclage - Impact (kg éq. CO2/tonne)": 992,
+            "Méthanisation - Impact (kg éq. CO2/tonne)": 110,
+            "Incinération - Émissions Évitées (kg éq. CO2/tonne)": -260,
+            "Recyclage - Émissions Évitées (kg éq. CO2/tonne)": -379,
+            "Méthanisation - Émissions Évitées (kg éq. CO2/tonne)": -77,
+            "Masse Volumique (kg/m³)": 700
+        }
+    ]
 }

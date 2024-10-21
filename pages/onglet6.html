@@ -209,32 +209,28 @@
             // Trier les véhicules par charge utile croissante pour utiliser le plus petit d'abord
             vehiclesWithMaxLoadKg.sort((a, b) => a.maxLoadKg - b.maxLoadKg);
 
-            let remainingWeight = totalWeight;
-            let vehicleCounts = {};
+            // Trouver le véhicule le plus petit qui peut transporter le poids total
+            let chosenVehicle = vehiclesWithMaxLoadKg.find(vehicle => vehicle.maxLoadKg >= totalWeight);
 
-            // Utiliser les plus petits véhicules possibles
-            for (let vehicle of vehiclesWithMaxLoadKg) {
-                while (remainingWeight > 0 && remainingWeight >= vehicle.maxLoadKg) {
-                    vehicleCounts[vehicle.class] = (vehicleCounts[vehicle.class] || 0) + 1;
-                    remainingWeight -= vehicle.maxLoadKg;
-                }
-                // Si le poids restant est inférieur à la capacité du véhicule actuel, il prend un véhicule
-                if (remainingWeight > 0 && remainingWeight <= vehicle.maxLoadKg) {
-                    vehicleCounts[vehicle.class] = (vehicleCounts[vehicle.class] || 0) + 1;
-                    remainingWeight = 0;
-                    break;
-                }
-            }
-
-            // Afficher les véhicules recommandés
-            const resultList = document.createElement('ul');
-            for (let [vehicleClass, count] of Object.entries(vehicleCounts)) {
-                const vehicle = vehiclesWithMaxLoadKg.find(v => v.class === vehicleClass);
+            if (chosenVehicle) {
+                // Si un seul véhicule peut transporter le poids total
                 const listItem = document.createElement('li');
-                listItem.textContent = `${count} x ${vehicleClass} (Charge utile maximale: ${vehicle.maxLoad} tonnes)`;
-                resultList.appendChild(listItem);
+                listItem.textContent = `1 x ${chosenVehicle.class} (Charge utile maximale: ${chosenVehicle.maxLoad} tonnes)`;
+                vehicleResultsDiv.appendChild(listItem);
+            } else {
+                // Si le poids dépasse la capacité du plus grand véhicule, utiliser deux véhicules identiques
+                const halfWeight = totalWeight / 2;
+                let halfVehicle = vehiclesWithMaxLoadKg.find(vehicle => vehicle.maxLoadKg >= halfWeight);
+
+                if (halfVehicle) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `2 x ${halfVehicle.class} (Charge utile maximale: ${halfVehicle.maxLoad} tonnes)`;
+                    vehicleResultsDiv.appendChild(listItem);
+                } else {
+                    // Si même la moitié du poids ne rentre pas, afficher un message d'erreur
+                    vehicleResultsDiv.textContent = 'Aucun véhicule approprié ne peut transporter la charge.';
+                }
             }
-            vehicleResultsDiv.appendChild(resultList);
         }
     </script>
 </body>

@@ -1,67 +1,23 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.3</title>
+    <title>Version 1.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
     <style>
-        /* Styles personnalisés pour Version 1.3 */
-        #material-section, #vehicle-section {
-            margin: 20px 0;
+        /* Styles pour le champ personnalisé */
+        #custom-density-container {
+            margin-top: 15px;
+            display: none; /* Caché par défaut */
         }
-        .material-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .material-select {
-            flex: 1;
-            padding: 8px;
+        #custom-density-container label {
             margin-right: 10px;
         }
-        .material-weight {
-            width: 150px;
-            padding: 8px;
-            margin-right: 10px;
-        }
-        .remove-material {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-        #add-material-button, #calculate-button {
-            margin-right: 10px;
-            padding: 10px 15px;
-            cursor: pointer;
-        }
-        #vehicle-results ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        #vehicle-results li {
-            background-color: #f4f4f4;
-            margin: 5px 0;
-            padding: 10px;
-        }
-
-        /* Animation de fondu pour la version */
-        .version-fade {
+        #version-display {
             opacity: 0;
-            transition: opacity 1s ease-in;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
+            transition: opacity 1s ease;
         }
         .show-version {
             opacity: 1;
@@ -70,184 +26,158 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div>
+        <div class="header-overlay">Version 1.4</div>
     </div>
 
     <header class="menu">
-        <nav>
-            <ul>
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="onglet1.html">Onglet 1</a></li>
-                <li><a href="onglet2.html">Onglet 2</a></li>
-                <li><a href="onglet3.html">Onglet 3</a></li>
-                <li><a href="onglet4.html">Onglet 4</a></li>
-                <li><a href="onglet5.html">Onglet 5</a></li>
-                <li><a href="onglet6.html" class="active">Onglet 6</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
+        <div id="menu-container"></div>
+        <script>
+            fetch('../menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                });
+        </script>
     </header>
 
     <main class="content">
-        <h1>Sélection de Matériaux et Véhicules Appropriés</h1>
-        <section id="material-section">
-            <h2>Ajouter des Matériaux</h2>
-            <div id="materials-container">
-                <div class="material-group">
-                    <select class="material-select">
-                        <option value="">Sélectionnez un matériau</option>
-                    </select>
-                    <input type="number" min="0" step="any" class="material-weight" placeholder="Poids en kg">
-                    <button class="remove-material" onclick="removeMaterial(this)">Supprimer</button>
-                </div>
-            </div>
-            <button id="add-material-button" onclick="addMaterial()">Ajouter un autre matériau</button>
-            <button id="calculate-button" onclick="calculateVehicles()">Calculer les véhicules appropriés</button>
-        </section>
-
-        <section id="vehicle-section">
-            <h2>Véhicules Recommandés</h2>
-            <div id="vehicle-results"></div>
-        </section>
-
-        <!-- Affichage de la version avec animation -->
-        <div id="version-display" class="version-fade">Version 1.3</div>
+        <h1>Sélection de Matériaux et Transport</h1>
+        <div>
+            <label for="material-dropdown">Choisissez un matériau :</label>
+            <select id="material-dropdown" onchange="showCustomDensity()">
+                <option value="">Sélectionnez un matériau</option>
+                <!-- Options à remplir dynamiquement -->
+            </select>
+        </div>
+        <div id="custom-density-container">
+            <label for="custom-density">Personnalisez la masse volumique (kg/m³) :</label>
+            <input type="number" id="custom-density" step="1" min="1">
+        </div>
+        <div>
+            <label for="material-weight">Entrez le poids (kg) :</label>
+            <input type="number" id="material-weight" step="1" min="1">
+        </div>
+        <button onclick="addMaterial()">Ajouter le matériau</button>
+        <div id="vehicle-results"></div>
     </main>
 
     <script>
-        // Variables pour stocker les données
-        let materialsData = [];
-        let vehiclesData = [];
+        const materialsData = {
+            "Plastique rigide PS-PSE": 1050,
+            "Plastique biosourcé PP": 960,
+            "Plastique pétrosourcé PP": 960,
+            "Plastique biosourcé PE": 930,
+            "Plastique pétrosourcé PE": 930,
+            "Acier": 8000,
+            "Aluminium": 2900,
+            "Verre": 2800,
+            "Carton": 700,
+            "Plastique rigide PVC": 1410
+        };
 
-        // Charger les données des matériaux
-        fetch('../static/json/impactfdvmat.json')
-            .then(response => response.json())
-            .then(data => {
-                materialsData = data.Feuil1;
-                populateMaterialSelects();
-            })
-            .catch(error => console.error('Erreur lors du chargement des matériaux:', error));
-
-        // Charger les données des véhicules
-        fetch('../static/json/vehiculecarbone.json')
-            .then(response => response.json())
-            .then(data => {
-                vehiclesData = data.vehicleClasses;
-            })
-            .catch(error => console.error('Erreur lors du chargement des véhicules:', error));
-
-        // Fonction pour remplir les sélecteurs de matériaux
-        function populateMaterialSelects() {
-            const selects = document.querySelectorAll('.material-select');
-            selects.forEach(select => {
-                materialsData.forEach(material => {
-                    const option = document.createElement('option');
-                    option.value = material.Matériau;
-                    option.textContent = material.Matériau;
-                    select.appendChild(option);
-                });
+        function populateDropdown() {
+            const materialDropdown = document.getElementById("material-dropdown");
+            Object.keys(materialsData).forEach(material => {
+                const option = document.createElement("option");
+                option.value = material;
+                option.textContent = material;
+                materialDropdown.appendChild(option);
             });
         }
 
-        // Fonction pour ajouter un nouveau groupe de matériau
+        function showCustomDensity() {
+            const selectedMaterial = document.getElementById("material-dropdown").value;
+            const customDensityContainer = document.getElementById("custom-density-container");
+            if (selectedMaterial) {
+                const defaultDensity = materialsData[selectedMaterial];
+                document.getElementById("custom-density").value = defaultDensity;
+                customDensityContainer.style.display = "block";
+            } else {
+                customDensityContainer.style.display = "none";
+            }
+        }
+
         function addMaterial() {
-            const container = document.getElementById('materials-container');
-            const materialGroup = document.createElement('div');
-            materialGroup.className = 'material-group';
+            const selectedMaterial = document.getElementById("material-dropdown").value;
+            const customDensity = document.getElementById("custom-density").value;
+            const weight = document.getElementById("material-weight").value;
+            const vehicleResultsDiv = document.getElementById("vehicle-results");
 
-            const select = document.createElement('select');
-            select.className = 'material-select';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Sélectionnez un matériau';
-            select.appendChild(defaultOption);
-
-            materialsData.forEach(material => {
-                const option = document.createElement('option');
-                option.value = material.Matériau;
-                option.textContent = material.Matériau;
-                select.appendChild(option);
-            });
-
-            const inputWeight = document.createElement('input');
-            inputWeight.type = 'number';
-            inputWeight.min = '0';
-            inputWeight.step = 'any';
-            inputWeight.className = 'material-weight';
-            inputWeight.placeholder = 'Poids en kg';
-
-            const removeButton = document.createElement('button');
-            removeButton.className = 'remove-material';
-            removeButton.textContent = 'Supprimer';
-            removeButton.onclick = function() { removeMaterial(removeButton); };
-
-            materialGroup.appendChild(select);
-            materialGroup.appendChild(inputWeight);
-            materialGroup.appendChild(removeButton);
-
-            container.appendChild(materialGroup);
-        }
-
-        // Fonction pour supprimer un groupe de matériau
-        function removeMaterial(button) {
-            const materialGroup = button.parentElement;
-            materialGroup.remove();
-        }
-
-        // Fonction pour calculer les véhicules appropriés
-        function calculateVehicles() {
-            const materialGroups = document.querySelectorAll('.material-group');
-            let totalWeight = 0;
-
-            materialGroups.forEach(group => {
-                const weightInput = group.querySelector('.material-weight');
-                const weight = parseFloat(weightInput.value);
-                if (!isNaN(weight)) {
-                    totalWeight += weight;
-                }
-            });
-
-            if (totalWeight === 0) {
-                alert('Veuillez entrer le poids pour au moins un matériau.');
+            if (!selectedMaterial || !customDensity || !weight) {
+                alert("Veuillez remplir tous les champs.");
                 return;
             }
 
-            const vehicleResultsDiv = document.getElementById('vehicle-results');
-            vehicleResultsDiv.innerHTML = '';
+            const density = parseFloat(customDensity);
+            const weightKg = parseFloat(weight);
 
-            // Convert vehicle maxLoads to kg for comparison
-            const vehiclesWithMaxLoadKg = vehiclesData.map(vehicle => {
-                return {
-                    ...vehicle,
-                    maxLoadKg: vehicle.maxLoad * 1000
-                };
-            });
+            // Logique pour calculer le véhicule adapté, comme dans la version précédente.
+            const volume = weightKg / density; // Volume en m³
+            vehicleResultsDiv.textContent = `Matériau ajouté : ${selectedMaterial} avec une masse volumique de ${density} kg/m³ et un poids de ${weightKg} kg (Volume calculé : ${volume.toFixed(2)} m³).`;
 
-            // Trier les véhicules par charge utile croissante pour utiliser le plus petit d'abord
-            vehiclesWithMaxLoadKg.sort((a, b) => a.maxLoadKg - b.maxLoadKg);
+            calculateVehicles(weightKg);
+        }
 
-            // Trouver le véhicule le plus petit qui peut transporter le poids total
-            let chosenVehicle = vehiclesWithMaxLoadKg.find(vehicle => vehicle.maxLoadKg >= totalWeight);
+        function calculateVehicles(totalWeight) {
+            const vehicleClasses = [
+                {
+                    "class": "Véhicule utilitaire léger < 1,5 t essence",
+                    "maxLoad": 400
+                },
+                {
+                    "class": "Véhicule utilitaire léger < 1,5 t diesel",
+                    "maxLoad": 400
+                },
+                {
+                    "class": "Véhicule utilitaire léger 1,5 à 2,5 t essence",
+                    "maxLoad": 700
+                },
+                {
+                    "class": "Véhicule utilitaire léger 1,5 à 2,5 t diesel",
+                    "maxLoad": 700
+                },
+                {
+                    "class": "Camion léger 2,51 à 3,5 t essence",
+                    "maxLoad": 1200
+                },
+                {
+                    "class": "Camion léger 2,51 à 3,5 t diesel",
+                    "maxLoad": 1200
+                },
+                {
+                    "class": "Camion moyen 3,51 à 5 t",
+                    "maxLoad": 2370
+                },
+                {
+                    "class": "Camion moyen 5,1 à 6 t",
+                    "maxLoad": 2840
+                },
+                {
+                    "class": "Camion lourd 11 à 19 t",
+                    "maxLoad": 9790
+                }
+            ];
 
-            if (chosenVehicle) {
-                // Si un seul véhicule peut transporter le poids total
-                const listItem = document.createElement('li');
-                listItem.textContent = `1 x ${chosenVehicle.class} (Charge utile maximale: ${chosenVehicle.maxLoad} tonnes)`;
-                vehicleResultsDiv.appendChild(listItem);
-            } else {
-                // Si le poids dépasse la capacité du plus grand véhicule, utiliser deux véhicules identiques
-                const halfWeight = totalWeight / 2;
-                let halfVehicle = vehiclesWithMaxLoadKg.find(vehicle => vehicle.maxLoadKg >= halfWeight);
+            let vehicles = [];
+            let remainingWeight = totalWeight;
 
-                if (halfVehicle) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `2 x ${halfVehicle.class} (Charge utile maximale: ${halfVehicle.maxLoad} tonnes)`;
-                    vehicleResultsDiv.appendChild(listItem);
-                } else {
-                    // Si même la moitié du poids ne rentre pas, afficher un message d'erreur
-                    vehicleResultsDiv.textContent = 'Aucun véhicule approprié ne peut transporter la charge.';
+            vehicleClasses.sort((a, b) => a.maxLoad - b.maxLoad);
+
+            while (remainingWeight > 0) {
+                for (let i = vehicleClasses.length - 1; i >= 0; i--) {
+                    if (remainingWeight > vehicleClasses[i].maxLoad) {
+                        vehicles.push(vehicleClasses[i]);
+                        remainingWeight -= vehicleClasses[i].maxLoad;
+                        break;
+                    }
+                }
+                if (remainingWeight < 400) {
+                    vehicles.push(vehicleClasses[0]);
+                    break;
                 }
             }
+
+            document.getElementById('vehicle-results').textContent = `Véhicules proposés : ${vehicles.map(v => v.class).join(", ")}`;
         }
 
         // Fonction pour afficher l'animation de fondu de version
@@ -255,8 +185,10 @@
             const versionDisplay = document.getElementById('version-display');
             setTimeout(() => {
                 versionDisplay.classList.add('show-version');
-            }, 500); // Délai avant que la version n'apparaisse
+            }, 500);
         };
+
+        populateDropdown();
     </script>
 </body>
 </html>

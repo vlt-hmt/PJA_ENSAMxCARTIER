@@ -27,3 +27,5 @@ voilà le github collaboratif, ça vous va?
             - 
 
 16/10/2024 : Travail sur le site, ajout de fichiers au format .json, plus facilement maniables que du .csv, découverte d'une ligne qui était source d'erreur, et présente dans chaque fichier html : la 1ère ligne "<!DOCTYPE html>" était inutile et source d'erreurs.
+
+17/10/2024 : 

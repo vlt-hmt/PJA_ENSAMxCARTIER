@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.8</title>
+    <title>Version 2.7</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -105,7 +105,7 @@
         }
         #distance-table th, #distance-table td {
             border: 1px solid #ddd;
-            padding: 12px; /* Espace supplémentaire entre les cellules */
+            padding: 8px;
         }
         #distance-table th {
             background-color: #f4f4f4;
@@ -125,31 +125,11 @@
         .content h1 {
             margin-top: 20px;
         }
-        hr {
-            border: none;
-            border-top: 1px solid #ccc;
-            margin: 20px 0;
-        }
-        .section-title {
-            margin-top: 30px;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .allocation-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
     </style>
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.8</div>
+        <div class="header-overlay">Version 2.7</div>
     </div>
 
     <header class="menu">
@@ -166,14 +146,6 @@
 
     <main class="content">
         <h1>Comparaison Scénarios</h1>
-
-        <!-- Contrôle du coefficient d'allocation pour le recyclage -->
-        <div class="allocation-control">
-            <label for="allocation-coeff">Coefficient d'allocation pour le recyclage (%) :</label>
-            <input type="number" id="allocation-coeff" value="50" min="0" max="100" step="1">
-        </div>
-
-        <hr>
 
         <section>
             <div id="material-selection">
@@ -200,8 +172,6 @@
             <div id="vehicle-results"></div>
         </section>
 
-        <hr>
-
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
@@ -214,8 +184,6 @@
                 </div>
                 <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
             </div>
-
-            <hr>
 
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
@@ -234,8 +202,6 @@
                 </div>
                 <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
             </div>
-
-            <hr>
 
             <button onclick="compareRoutes()">Comparer</button>
             <div id="status-message"></div>
@@ -328,7 +294,7 @@
 
             const density = parseFloat(customDensity);
             const weightKg = parseFloat(weight);
-            const volume = weightKg / density; 
+            const volume = weightKg / density; // Volume en m³
 
             const materialItemDiv = document.createElement("div");
             materialItemDiv.classList.add("material-item");
@@ -565,8 +531,7 @@
 
         function calculateTreatmentEmissions(treatmentType) {
             let totalEmissions = 0;
-            const allocationInput = document.getElementById('allocation-coeff');
-            const allocationCoefficient = treatmentType === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
+            const allocationCoefficient = treatmentType === 'Recyclage' ? 0.5 : 1;
             selectedMaterials.forEach(material => {
                 const materialData = materialsData[material.name].impacts;
                 const weightTonnes = material.weight / 1000;

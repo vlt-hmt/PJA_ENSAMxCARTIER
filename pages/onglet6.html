@@ -206,40 +206,23 @@
                 };
             });
 
-            // Trier les véhicules par charge utile décroissante
-            vehiclesWithMaxLoadKg.sort((a, b) => b.maxLoadKg - a.maxLoadKg);
+            // Trier les véhicules par charge utile croissante pour utiliser le plus petit d'abord
+            vehiclesWithMaxLoadKg.sort((a, b) => a.maxLoadKg - b.maxLoadKg);
 
-            // Implémentation d'un algorithme de bin-packing simple
             let remainingWeight = totalWeight;
             let vehicleCounts = {};
 
-            while (remainingWeight > 0) {
-                let vehicleFound = false;
-                for (let vehicle of vehiclesWithMaxLoadKg) {
-                    if (vehicle.maxLoadKg >= remainingWeight) {
-                        // Si un véhicule peut transporter le poids restant, on l'utilise
-                        vehicleCounts[vehicle.class] = (vehicleCounts[vehicle.class] || 0) + 1;
-                        remainingWeight -= remainingWeight;
-                        vehicleFound = true;
-                        break;
-                    }
+            // Utiliser les plus petits véhicules possibles
+            for (let vehicle of vehiclesWithMaxLoadKg) {
+                while (remainingWeight > 0 && remainingWeight >= vehicle.maxLoadKg) {
+                    vehicleCounts[vehicle.class] = (vehicleCounts[vehicle.class] || 0) + 1;
+                    remainingWeight -= vehicle.maxLoadKg;
                 }
-                if (!vehicleFound) {
-                    // Si aucun véhicule ne peut transporter le poids restant, on choisit le plus grand possible
-                    for (let vehicle of vehiclesWithMaxLoadKg) {
-                        if (vehicle.maxLoadKg <= remainingWeight) {
-                            vehicleCounts[vehicle.class] = (vehicleCounts[vehicle.class] || 0) + 1;
-                            remainingWeight -= vehicle.maxLoadKg;
-                            vehicleFound = true;
-                            break;
-                        }
-                    }
-                }
-                if (!vehicleFound) {
-                    // Si le poids restant est inférieur au plus petit véhicule, on utilise le plus petit véhicule
-                    const smallestVehicle = vehiclesWithMaxLoadKg[vehiclesWithMaxLoadKg.length - 1];
-                    vehicleCounts[smallestVehicle.class] = (vehicleCounts[smallestVehicle.class] || 0) + 1;
-                    remainingWeight -= smallestVehicle.maxLoadKg;
+                // Si le poids restant est inférieur à la capacité du véhicule actuel, il prend un véhicule
+                if (remainingWeight > 0 && remainingWeight <= vehicle.maxLoadKg) {
+                    vehicleCounts[vehicle.class] = (vehicleCounts[vehicle.class] || 0) + 1;
+                    remainingWeight = 0;
+                    break;
                 }
             }
 

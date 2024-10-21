@@ -8801,7 +8801,14 @@
 
 	    // map loading
             // Initialisation de la carte
-  
+            console.log("init map...");
+            var map = L.map('myMap').setView([47.6062, -122.3321], 12);
+
+            // Ajouter une couche OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
 
             // Exemple : Ajouter un marqueur sur la carte
             var marker = L.marker([47.6062, -122.3321]).addTo(map);
@@ -9347,14 +9354,6 @@
                 }
                 
                 document.getElementById('myMap').style.display = 'block';
-	        console.log("init map...");
-                var map = L.map('myMap').setView([47.6062, -122.3321], 12);
-
-                // Ajouter une couche OpenStreetMap
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
                 document.getElementById('progressBarContainer').style.display = 'none';
                 let optimalRoute = getOptimalRoute(bestSolution, ntoa);
                 let adresslatlon = dataVeolia.concat(dataCartier);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.5</title>
+    <title>Version 2.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour la carte -->
@@ -132,7 +132,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.5</div>
+        <div class="header-overlay">Version 2.6</div>
     </div>
 
     <header class="menu">
@@ -217,6 +217,7 @@
                     <tr>
                         <th>Lieu de Stockage</th>
                         <th>Lieu de Traitement</th>
+                        <th>Mode de Traitement</th>
                         <th>Distance</th>
                         <th>Émissions Transport (kg CO₂e)</th>
                         <th>Émissions Traitement (kg CO₂e)</th>
@@ -597,8 +598,12 @@
                             row.appendChild(storageCell);
 
                             const treatmentCell = document.createElement('td');
-                            treatmentCell.textContent = `${treatmentName} (${treatmentOption})`;
+                            treatmentCell.textContent = treatmentName;
                             row.appendChild(treatmentCell);
+
+                            const modeCell = document.createElement('td');
+                            modeCell.textContent = treatmentOption;
+                            row.appendChild(modeCell);
 
                             const distanceCell = document.createElement('td');
                             distanceCell.textContent = `${distance} km`;
@@ -683,12 +688,14 @@
         function calculateTreatmentEmissions(treatmentType) {
             // Calculer les émissions de traitement pour chaque matériau
             let totalEmissions = 0;
+            const allocationCoefficient = treatmentType === 'Recyclage' ? 0.5 : 1; // Coefficient d'allocation de 50% pour le recyclage
             selectedMaterials.forEach(material => {
                 const materialData = materialsData[material.name].impacts;
                 const weightTonnes = material.weight / 1000; // Convertir en tonnes
                 let emissionKey = `${treatmentType} - Impact (kg éq. CO2/tonne)`;
                 let emissions = parseFloat(materialData[emissionKey]);
                 if (isNaN(emissions)) emissions = 0;
+                emissions *= allocationCoefficient; // Appliquer le coefficient d'allocation
                 totalEmissions += emissions * weightTonnes;
             });
             return totalEmissions;

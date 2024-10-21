@@ -5,98 +5,112 @@
             "emptyEmissions": 0.062,
             "fullEmissions": 0.062,
             "maxLoad": 0.4,
-            "emissionsPerTonKm": 0.155
+            "emissionsPerTonKm": 0.155,
+            "volumeUtil": 2.5
         },
         {
             "class": "Véhicule utilitaire léger < 1,5 t diesel",
             "emptyEmissions": 0.059,
             "fullEmissions": 0.059,
             "maxLoad": 0.4,
-            "emissionsPerTonKm": 0.148
+            "emissionsPerTonKm": 0.148,
+            "volumeUtil": 2.5
         },
         {
             "class": "Véhicule utilitaire léger 1,5 à 2,5 t essence",
             "emptyEmissions": 0.07,
             "fullEmissions": 0.07,
             "maxLoad": 0.7,
-            "emissionsPerTonKm": 0.100
+            "emissionsPerTonKm": 0.1,
+            "volumeUtil": 4
         },
         {
             "class": "Véhicule utilitaire léger 1,5 à 2,5 t diesel",
             "emptyEmissions": 0.068,
             "fullEmissions": 0.068,
             "maxLoad": 0.7,
-            "emissionsPerTonKm": 0.097
+            "emissionsPerTonKm": 0.097,
+            "volumeUtil": 4
         },
         {
             "class": "Camion léger 2,51 à 3,5 t essence",
             "emptyEmissions": 0.123,
             "fullEmissions": 0.123,
             "maxLoad": 1.2,
-            "emissionsPerTonKm": 0.103
+            "emissionsPerTonKm": 0.103,
+            "volumeUtil": 6
         },
         {
             "class": "Camion léger 2,51 à 3,5 t diesel",
             "emptyEmissions": 0.088,
             "fullEmissions": 0.088,
             "maxLoad": 1.2,
-            "emissionsPerTonKm": 0.073
+            "emissionsPerTonKm": 0.073,
+            "volumeUtil": 6
         },
         {
             "class": "Camion léger 3,5 t",
             "emptyEmissions": 0.101,
             "fullEmissions": 0.101,
             "maxLoad": 1.4,
-            "emissionsPerTonKm": 0.072
+            "emissionsPerTonKm": 0.072,
+            "volumeUtil": 8.5
         },
         {
             "class": "Camion moyen 3,51 à 5 t",
             "emptyEmissions": 0.136,
             "fullEmissions": 0.196,
             "maxLoad": 2.37,
-            "emissionsPerTonKm": 0.083
+            "emissionsPerTonKm": 0.083,
+            "volumeUtil": 12
         },
         {
             "class": "Camion moyen 5,1 à 6 t",
             "emptyEmissions": 0.107,
             "fullEmissions": 0.154,
             "maxLoad": 2.84,
-            "emissionsPerTonKm": 0.054
+            "emissionsPerTonKm": 0.054,
+            "volumeUtil": 18
         },
         {
             "class": "Camion moyen 6,1 à 10,9 t",
             "emptyEmissions": 0.158,
             "fullEmissions": 0.228,
             "maxLoad": 4.69,
-            "emissionsPerTonKm": 0.049
+            "emissionsPerTonKm": 0.049,
+            "volumeUtil": 25
         },
         {
             "class": "Camion lourd 11 à 19 t",
             "emptyEmissions": 0.208,
             "fullEmissions": 0.3,
             "maxLoad": 9.79,
-            "emissionsPerTonKm": 0.031
+            "emissionsPerTonKm": 0.031,
+            "volumeUtil": 35
         },
         {
             "class": "Camion lourd 19,1 à 21 t",
             "emptyEmissions": 0.24,
             "fullEmissions": 0.346,
             "maxLoad": 11.62,
-            "emissionsPerTonKm": 0.030
+            "emissionsPerTonKm": 0.03,
+            "volumeUtil": 45
         },
         {
             "class": "Camion lourd 21,1 à 32,6 t",
             "emptyEmissions": 0.302,
             "fullEmissions": 0.435,
             "maxLoad": 16.66,
-            "emissionsPerTonKm": 0.0261
+            "emissionsPerTonKm": 0.0261,
+            "volumeUtil": 55
         },
         {
             "class": "Tracteur routier (semi-remorque)",
             "emptyEmissions": 0.252,
             "fullEmissions": 0.363,
             "maxLoad": 25,
-            "emissionsPerTonKm": 0.0145
+            "emissionsPerTonKm": 0.0145,
+            "volumeUtil": 70
         }
     ]
 }

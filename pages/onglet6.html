@@ -1,46 +1,222 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENSAM x Cartier</title>
+    <title>Onglet 6 - Sélection de Matériaux et Véhicules</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- Ajoutez cette ligne -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Styles personnalisés pour Onglet 6 */
+        #material-section, #vehicle-section {
+            margin: 20px 0;
+        }
+        .material-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .material-select {
+            flex: 1;
+            padding: 8px;
+            margin-right: 10px;
+        }
+        .material-weight {
+            width: 150px;
+            padding: 8px;
+            margin-right: 10px;
+        }
+        .remove-material {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        #add-material-button, #calculate-button {
+            margin-right: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        #vehicle-results ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #vehicle-results li {
+            background-color: #f4f4f4;
+            margin: 5px 0;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+        <div class="header-overlay">ENSAM x Cartier</div>
     </div>
 
-     <header class="menu">
-        <div id="menu-container"></div>
-        <script>
-            // Charger le menu dans l'élément avec l'ID "menu-container"
-            fetch('../menu.html')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur réseau lors du chargement du menu.');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    document.getElementById('menu-container').innerHTML = data;
-                })
-                .catch(error => console.error('Erreur lors du chargement du menu :', error));
-        </script>
+    <header class="menu">
+        <nav>
+            <ul>
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="onglet1.html">Onglet 1</a></li>
+                <li><a href="onglet2.html">Onglet 2</a></li>
+                <li><a href="onglet3.html">Onglet 3</a></li>
+                <li><a href="onglet4.html">Onglet 4</a></li>
+                <li><a href="onglet5.html">Onglet 5</a></li>
+                <li><a href="onglet6.html" class="active">Onglet 6</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main class="content">
-        <h1>Bienvenue sur la page de notre projet</h1>
-        <p>Ceci est la page 1.</p>
-        <img src="../static/images/image_home.jpg" alt="Home Image">
-        <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
+        <h1>Sélection de Matériaux et Véhicules Appropriés</h1>
+        <section id="material-section">
+            <h2>Ajouter des Matériaux</h2>
+            <div id="materials-container">
+                <div class="material-group">
+                    <select class="material-select">
+                        <option value="">Sélectionnez un matériau</option>
+                    </select>
+                    <input type="number" min="0" step="any" class="material-weight" placeholder="Poids en tonnes">
+                    <button class="remove-material" onclick="removeMaterial(this)">Supprimer</button>
+                </div>
+            </div>
+            <button id="add-material-button" onclick="addMaterial()">Ajouter un autre matériau</button>
+            <button id="calculate-button" onclick="calculateVehicles()">Calculer les véhicules appropriés</button>
+        </section>
+
+        <section id="vehicle-section">
+            <h2>Véhicules Recommandés</h2>
+            <div id="vehicle-results"></div>
+        </section>
     </main>
-    <div class="footer">
-        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
-    </div>
+
+    <script>
+        // Variables pour stocker les données
+        let materialsData = [];
+        let vehiclesData = [];
+
+        // Charger les données des matériaux
+        fetch('../static/json/impactfdvmat.json')
+            .then(response => response.json())
+            .then(data => {
+                materialsData = data.Feuil1;
+                populateMaterialSelects();
+            })
+            .catch(error => console.error('Erreur lors du chargement des matériaux:', error));
+
+        // Charger les données des véhicules
+        fetch('../static/json/vehiculecarbone.json')
+            .then(response => response.json())
+            .then(data => {
+                vehiclesData = data.vehicleClasses;
+            })
+            .catch(error => console.error('Erreur lors du chargement des véhicules:', error));
+
+        // Fonction pour remplir les sélecteurs de matériaux
+        function populateMaterialSelects() {
+            const selects = document.querySelectorAll('.material-select');
+            selects.forEach(select => {
+                materialsData.forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.Matériau;
+                    option.textContent = material.Matériau;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // Fonction pour ajouter un nouveau groupe de matériau
+        function addMaterial() {
+            const container = document.getElementById('materials-container');
+            const materialGroup = document.createElement('div');
+            materialGroup.className = 'material-group';
+
+            const select = document.createElement('select');
+            select.className = 'material-select';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Sélectionnez un matériau';
+            select.appendChild(defaultOption);
+
+            materialsData.forEach(material => {
+                const option = document.createElement('option');
+                option.value = material.Matériau;
+                option.textContent = material.Matériau;
+                select.appendChild(option);
+            });
+
+            const inputWeight = document.createElement('input');
+            inputWeight.type = 'number';
+            inputWeight.min = '0';
+            inputWeight.step = 'any';
+            inputWeight.className = 'material-weight';
+            inputWeight.placeholder = 'Poids en tonnes';
+
+            const removeButton = document.createElement('button');
+            removeButton.className = 'remove-material';
+            removeButton.textContent = 'Supprimer';
+            removeButton.onclick = function() { removeMaterial(removeButton); };
+
+            materialGroup.appendChild(select);
+            materialGroup.appendChild(inputWeight);
+            materialGroup.appendChild(removeButton);
+
+            container.appendChild(materialGroup);
+        }
+
+        // Fonction pour supprimer un groupe de matériau
+        function removeMaterial(button) {
+            const materialGroup = button.parentElement;
+            materialGroup.remove();
+        }
+
+        // Fonction pour calculer les véhicules appropriés
+        function calculateVehicles() {
+            const materialGroups = document.querySelectorAll('.material-group');
+            let totalWeight = 0;
+
+            materialGroups.forEach(group => {
+                const weightInput = group.querySelector('.material-weight');
+                const weight = parseFloat(weightInput.value);
+                if (!isNaN(weight)) {
+                    totalWeight += weight;
+                }
+            });
+
+            if (totalWeight === 0) {
+                alert('Veuillez entrer le poids pour au moins un matériau.');
+                return;
+            }
+
+            // Filtrer les véhicules appropriés
+            const suitableVehicles = vehiclesData.filter(vehicle => vehicle.maxLoad >= totalWeight);
+
+            // Trier les véhicules par charge utile croissante
+            suitableVehicles.sort((a, b) => a.maxLoad - b.maxLoad);
+
+            // Afficher les véhicules recommandés
+            const vehicleResultsDiv = document.getElementById('vehicle-results');
+            vehicleResultsDiv.innerHTML = '';
+
+            if (suitableVehicles.length > 0) {
+                const resultList = document.createElement('ul');
+                suitableVehicles.forEach(vehicle => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${vehicle.class} - Charge utile maximale: ${vehicle.maxLoad} tonnes`;
+                    resultList.appendChild(listItem);
+                });
+                vehicleResultsDiv.appendChild(resultList);
+            } else {
+                vehicleResultsDiv.textContent = 'Aucun véhicule approprié trouvé pour le poids total.';
+            }
+        }
+    </script>
 </body>
 </html>

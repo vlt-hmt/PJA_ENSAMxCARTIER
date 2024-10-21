@@ -9354,6 +9354,7 @@
                 }
                 
                 document.getElementById('myMap').style.display = 'block';
+		map.invalidateSize();
                 document.getElementById('progressBarContainer').style.display = 'none';
                 let optimalRoute = getOptimalRoute(bestSolution, ntoa);
                 let adresslatlon = dataVeolia.concat(dataCartier);

@@ -271,6 +271,17 @@
                 .catch(err => {
                     console.error('Erreur lors de l\'autocomplétion :', err);
                 });
+                    document.addEventListener('click', function(event) {
+            // Vérifier si le clic est en dehors de la zone d'autocomplétion
+            const suggestions = document.querySelectorAll('.autocomplete-suggestions');
+            suggestions.forEach(suggestionDiv => {
+                if (!suggestionDiv.contains(event.target) && !suggestionDiv.parentElement.contains(event.target)) {
+                    // Vider les suggestions si le clic est en dehors de la zone d'autocomplétion
+                    suggestionDiv.innerHTML = '';
+                }
+            });
+        });
+
         }
 
         async function compareRoutes() {

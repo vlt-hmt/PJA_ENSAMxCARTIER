@@ -1,1 +1,46 @@
-test
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENSAM x Cartier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- Ajoutez cette ligne -->
+    <script src="../script.js" defer></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="header-image">
+        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+    </div>
+
+     <header class="menu">
+        <div id="menu-container"></div>
+        <script>
+            // Charger le menu dans l'élément avec l'ID "menu-container"
+            fetch('../menu.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur réseau lors du chargement du menu.');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                })
+                .catch(error => console.error('Erreur lors du chargement du menu :', error));
+        </script>
+    </header>
+
+    <main class="content">
+        <h1>Bienvenue sur la page de notre projet</h1>
+        <p>Ceci est la page 1.</p>
+        <img src="../static/images/image_home.jpg" alt="Home Image">
+        <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
+    </main>
+    <div class="footer">
+        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
+    </div>
+</body>
+</html>

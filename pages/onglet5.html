@@ -183,7 +183,12 @@
             inputGroup.appendChild(lonInput);
             inputGroup.appendChild(removeButton);
             inputGroup.appendChild(suggestionsDiv);
-
+            document.querySelectorAll('.large-input').forEach(input => {
+                input.addEventListener('focus', function() {
+                autocompleteAddress(this);
+                }
+                                       }
+                    
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
@@ -243,12 +248,12 @@
         function autocompleteAddress(input) {
             const query = input.value;
             const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
-
+        
             if (query.length < 3) {
                 suggestionsDiv.innerHTML = '';
                 return;
             }
-
+        
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
                 .then(response => response.json())
                 .then(data => {
@@ -272,6 +277,7 @@
                     console.error('Erreur lors de l\'autocomplétion :', err);
                 });
         }
+
         document.addEventListener('click', function(event) {
     // Vérifier si le clic est en dehors de la zone d'autocomplétion
     const suggestions = document.querySelectorAll('.autocomplete-suggestions');

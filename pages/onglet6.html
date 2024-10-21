@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.3</title>
+    <title>Version 2.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <style>
@@ -46,7 +46,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.3</div>
+        <div class="header-overlay">Version 2.4</div>
     </div>
 
     <header class="menu">
@@ -156,29 +156,32 @@
                 <div>${density}</div>
                 <div>${weightKg}</div>
                 <div>${volume.toFixed(2)}</div>
-                <div><button onclick="removeMaterial(this, ${weightKg})">Supprimer</button></div>
+                <div><button onclick="removeMaterial(this)">Supprimer</button></div>
             `;
             materialListDiv.appendChild(materialItemDiv);
 
             calculateVehicles();
         }
 
-        function removeMaterial(button, weightKg) {
+        function removeMaterial(button) {
             const materialItem = button.parentElement.parentElement;
             materialItem.remove();
             calculateVehicles();
         }
 
         function calculateVehicles() {
-            let totalWeight = 0;
-            let totalVolume = 0;
+            let totalWeight = 0; // en kg
+            let totalVolume = 0; // en m³
 
-            document.querySelectorAll('#material-list .material-item').forEach(item => {
+            document.querySelectorAll('#material-list .material-item').forEach((item, index) => {
+                if (index === 0) return; // Skip header row
                 const weight = parseFloat(item.children[2].innerText);
                 const volume = parseFloat(item.children[3].innerText);
                 totalWeight += weight;
                 totalVolume += volume;
             });
+
+            let totalWeightTonnes = totalWeight / 1000; // Convertir le poids total en tonnes
 
             let vehicles = [];
 
@@ -186,18 +189,18 @@
             vehicleData.sort((a, b) => a.maxLoad - b.maxLoad);
 
             // Chercher un véhicule qui peut transporter le poids et le volume totaux
-            let singleVehicle = vehicleData.find(vehicle => totalWeight <= vehicle.maxLoad && totalVolume <= vehicle.volumeUtil);
+            let singleVehicle = vehicleData.find(vehicle => totalWeightTonnes <= vehicle.maxLoad && totalVolume <= vehicle.volumeUtil);
 
             if (singleVehicle) {
                 // Utiliser un seul véhicule s'il peut supporter le poids et le volume totaux
                 vehicles.push(singleVehicle.class);
             } else {
                 // Si aucun véhicule unique ne peut supporter la charge, diviser le poids et le volume en deux
-                let halfWeight = totalWeight / 2;
+                let halfWeightTonnes = totalWeightTonnes / 2;
                 let halfVolume = totalVolume / 2;
 
                 // Chercher un véhicule capable de transporter la moitié du poids et du volume
-                let halfLoadVehicle = vehicleData.find(vehicle => halfWeight <= vehicle.maxLoad && halfVolume <= vehicle.volumeUtil);
+                let halfLoadVehicle = vehicleData.find(vehicle => halfWeightTonnes <= vehicle.maxLoad && halfVolume <= vehicle.volumeUtil);
 
                 if (halfLoadVehicle) {
                     // Proposer deux véhicules de ce type pour transporter le poids et le volume divisés par deux
@@ -205,25 +208,20 @@
                 } else {
                     // Si même la moitié du poids ou du volume dépasse la capacité des plus grands véhicules
                     let largestVehicle = vehicleData[vehicleData.length - 1];
-                    let remainingWeight = totalWeight;
+                    let remainingWeightTonnes = totalWeightTonnes;
                     let remainingVolume = totalVolume;
 
-                    // Utiliser le plus grand véhicule disponible jusqu'à ce que le poids et le volume restants soient gérés
-                    while (remainingWeight > 0 || remainingVolume > 0) {
-                        if (remainingWeight > largestVehicle.maxLoad || remainingVolume > largestVehicle.volumeUtil) {
-                            vehicles.push(largestVehicle.class);
-                            remainingWeight -= Math.min(remainingWeight, largestVehicle.maxLoad);
-                            remainingVolume -= Math.min(remainingVolume, largestVehicle.volumeUtil);
-                        } else {
-                            vehicles.push(largestVehicle.class);
-                            break;
-                        }
+                    // Utiliser le plus grand véhicule disponible autant de fois que nécessaire
+                    while (remainingWeightTonnes > 0 || remainingVolume > 0) {
+                        vehicles.push(largestVehicle.class);
+                        remainingWeightTonnes -= Math.min(remainingWeightTonnes, largestVehicle.maxLoad);
+                        remainingVolume -= Math.min(remainingVolume, largestVehicle.volumeUtil);
                     }
                 }
             }
 
             // Afficher les véhicules conseillés
-            document.getElementById('vehicle-results').textContent = `Véhicules proposés : ${vehicles.join(", ")}`;
+            document.getElementById('vehicle-results').textContent = `Véhicule(s) proposé(s) : ${vehicles.join(", ")}`;
         }
 
         window.onload = function() {

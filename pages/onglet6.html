@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.9</title>
+    <title>Version 2.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <style>
@@ -46,7 +46,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 1.9</div>
+        <div class="header-overlay">Version 2.2</div>
     </div>
 
     <header class="menu">
@@ -66,7 +66,6 @@
             <label for="material-dropdown">Choisissez un matériau :</label>
             <select id="material-dropdown" onchange="showCustomDensity()">
                 <option value="">Sélectionnez un matériau</option>
-                <!-- Options à remplir dynamiquement -->
             </select>
             <label for="custom-density">Masse volumique (kg/m³) :</label>
             <input type="number" id="custom-density" step="1" min="1">
@@ -75,7 +74,6 @@
             <button onclick="addMaterial()">Ajouter</button>
         </div>
 
-        <!-- Liste des matériaux ajoutés -->
         <div id="material-list">
             <div class="material-item" style="font-weight: bold;">
                 <div>Matériau</div>
@@ -90,6 +88,7 @@
 
     <script>
         let materialsData = {};
+        let vehicleData = [];
 
         async function loadMaterialsData() {
             try {
@@ -97,7 +96,7 @@
                 const data = await response.json();
                 data.Feuil1.forEach(material => {
                     const name = material.Matériau;
-                    const density = getEstimatedDensity(name); // Adjust this function if needed
+                    const density = material["Masse Volumique (kg/m³)"];
                     materialsData[name] = density;
                 });
                 populateDropdown();
@@ -106,23 +105,14 @@
             }
         }
 
-        function getEstimatedDensity(materialName) {
-            // Ajoutez ici des estimations de densité en fonction du nom du matériau.
-            const densities = {
-                "Plastique rigide PS-PSE": 1050,
-                "Plastique biosourcé PP": 960,
-                "Plastique pétrosourcé PP": 960,
-                "Plastique biosourcé PE": 930,
-                "Plastique pétrosourcé PE": 930,
-                "Acier": 8000,
-                "Aluminium": 2900,
-                "Verre": 2800,
-                "Carton": 700,
-                "Plastique rigide PVC": 1410,
-                "Bois": 650, // Placeholder for any other wood material
-                // Ajoutez d'autres matériaux ici
-            };
-            return densities[materialName] || 1000; // Valeur par défaut si non trouvé
+        async function loadVehicleData() {
+            try {
+                const response = await fetch('../static/json/vehiculecarbone.json');
+                const data = await response.json();
+                vehicleData = data.vehicleClasses;
+            } catch (error) {
+                console.error("Erreur lors du chargement des données de véhicules :", error);
+            }
         }
 
         function populateDropdown() {
@@ -159,7 +149,6 @@
             const weightKg = parseFloat(weight);
             const volume = weightKg / density; // Volume en m³
 
-            // Ajouter le matériau à la liste
             const materialItemDiv = document.createElement("div");
             materialItemDiv.classList.add("material-item");
             materialItemDiv.innerHTML = `
@@ -171,51 +160,45 @@
             `;
             materialListDiv.appendChild(materialItemDiv);
 
-            calculateVehicles(weightKg);
+            calculateVehicles();
         }
 
         function removeMaterial(button, weightKg) {
             const materialItem = button.parentElement.parentElement;
             materialItem.remove();
-            totalWeight -= weightKg;
-            calculateVehicles(totalWeight);
+            calculateVehicles();
         }
 
-        function calculateVehicles(totalWeight) {
-            const vehicleClasses = [
-                { "class": "Véhicule utilitaire léger < 1,5 t essence", "maxLoad": 400 },
-                { "class": "Véhicule utilitaire léger < 1,5 t diesel", "maxLoad": 400 },
-                { "class": "Véhicule utilitaire léger 1,5 à 2,5 t essence", "maxLoad": 700 },
-                { "class": "Véhicule utilitaire léger 1,5 à 2,5 t diesel", "maxLoad": 700 },
-                { "class": "Camion léger 2,51 à 3,5 t essence", "maxLoad": 1200 },
-                { "class": "Camion léger 2,51 à 3,5 t diesel", "maxLoad": 1200 },
-                { "class": "Camion moyen 3,51 à 5 t", "maxLoad": 2370 },
-                { "class": "Camion moyen 5,1 à 6 t", "maxLoad": 2840 },
-                { "class": "Camion lourd 11 à 19 t", "maxLoad": 9790 }
-            ];
+        function calculateVehicles() {
+            let totalWeight = 0;
+            document.querySelectorAll('#material-list .material-item').forEach(item => {
+                const weight = parseFloat(item.children[2].innerText);
+                totalWeight += weight;
+            });
 
             let vehicles = [];
             let remainingWeight = totalWeight;
-            vehicleClasses.sort((a, b) => a.maxLoad - b.maxLoad);
+            vehicleData.sort((a, b) => a.maxLoad - b.maxLoad);
 
             while (remainingWeight > 0) {
-                for (let i = vehicleClasses.length - 1; i >= 0; i--) {
-                    if (remainingWeight > vehicleClasses[i].maxLoad) {
-                        vehicles.push(vehicleClasses[i]);
-                        remainingWeight -= vehicleClasses[i].maxLoad;
+                for (let i = vehicleData.length - 1; i >= 0; i--) {
+                    if (remainingWeight > vehicleData[i].maxLoad) {
+                        vehicles.push(vehicleData[i].class);
+                        remainingWeight -= vehicleData[i].maxLoad;
                         break;
                     }
                 }
                 if (remainingWeight < 400) {
-                    vehicles.push(vehicleClasses[0]);
+                    vehicles.push(vehicleData[0].class);
                     break;
                 }
             }
-            document.getElementById('vehicle-results').textContent = `Véhicules proposés : ${vehicles.map(v => v.class).join(", ")}`;
+            document.getElementById('vehicle-results').textContent = `Véhicules proposés : ${vehicles.join(", ")}`;
         }
 
         window.onload = function() {
             loadMaterialsData();
+            loadVehicleData();
         };
     </script>
 </body>

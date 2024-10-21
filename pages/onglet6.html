@@ -96,7 +96,7 @@
                 const data = await response.json();
                 data.Feuil1.forEach(material => {
                     const name = material.Matériau;
-                    const density = material["Masse Volumique (kg/m³)"];
+                    const density = material["Densité (kg/m³)"];
                     materialsData[name] = density;
                 });
                 populateDropdown();

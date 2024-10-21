@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.6</title>
+    <title>Version 2.8</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
-    <!-- Feuilles de style pour la carte -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
-        /* Styles combinés des deux pages */
         #material-selection {
             display: flex;
             align-items: center;
@@ -107,7 +105,7 @@
         }
         #distance-table th, #distance-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px; /* Espace supplémentaire entre les cellules */
         }
         #distance-table th {
             background-color: #f4f4f4;
@@ -124,15 +122,34 @@
             font-size: 16px;
             color: red;
         }
-        /* Styles supplémentaires pour améliorer l'affichage */
         .content h1 {
             margin-top: 20px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+        .section-title {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .allocation-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.6</div>
+        <div class="header-overlay">Version 2.8</div>
     </div>
 
     <header class="menu">
@@ -148,9 +165,16 @@
     </header>
 
     <main class="content">
-        <h1>Sélection de Matériaux, Transport et Itinéraires</h1>
+        <h1>Comparaison Scénarios</h1>
 
-        <!-- Section de sélection des matériaux -->
+        <!-- Contrôle du coefficient d'allocation pour le recyclage -->
+        <div class="allocation-control">
+            <label for="allocation-coeff">Coefficient d'allocation pour le recyclage (%) :</label>
+            <input type="number" id="allocation-coeff" value="50" min="0" max="100" step="1">
+        </div>
+
+        <hr>
+
         <section>
             <div id="material-selection">
                 <label for="material-dropdown">Choisissez un matériau :</label>
@@ -176,7 +200,8 @@
             <div id="vehicle-results"></div>
         </section>
 
-        <!-- Section des lieux et itinéraires -->
+        <hr>
+
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
@@ -189,6 +214,8 @@
                 </div>
                 <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
             </div>
+
+            <hr>
 
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
@@ -208,7 +235,9 @@
                 <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
             </div>
 
-            <button onclick="compareRoutes()">Comparer les itinéraires</button>
+            <hr>
+
+            <button onclick="compareRoutes()">Comparer</button>
             <div id="status-message"></div>
             <div id="error-message"></div>
             <div id="map"></div>
@@ -230,7 +259,6 @@
         </section>
     </main>
 
-    <!-- Inclusion des scripts nécessaires -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
@@ -300,7 +328,7 @@
 
             const density = parseFloat(customDensity);
             const weightKg = parseFloat(weight);
-            const volume = weightKg / density; // Volume en m³
+            const volume = weightKg / density; 
 
             const materialItemDiv = document.createElement("div");
             materialItemDiv.classList.add("material-item");
@@ -313,7 +341,6 @@
             `;
             materialListDiv.appendChild(materialItemDiv);
 
-            // Ajouter le matériau à la liste des matériaux sélectionnés
             selectedMaterials.push({
                 name: selectedMaterial,
                 weight: weightKg
@@ -327,49 +354,42 @@
             const materialName = materialItem.children[0].innerText;
             const weight = parseFloat(materialItem.children[2].innerText);
 
-            // Retirer le matériau de la liste des matériaux sélectionnés
             selectedMaterials = selectedMaterials.filter(mat => !(mat.name === materialName && mat.weight === weight));
-
             materialItem.remove();
             calculateVehicles();
         }
 
         function calculateVehicles() {
-            let totalWeight = 0; // en kg
-            let totalVolume = 0; // en m³
+            let totalWeight = 0; 
+            let totalVolume = 0;
 
             document.querySelectorAll('#material-list .material-item').forEach((item, index) => {
-                if (index === 0) return; // Skip header row
+                if (index === 0) return; 
                 const weight = parseFloat(item.children[2].innerText);
                 const volume = parseFloat(item.children[3].innerText);
                 totalWeight += weight;
                 totalVolume += volume;
             });
 
-            let totalWeightTonnes = totalWeight / 1000; // Convertir le poids total en tonnes
+            let totalWeightTonnes = totalWeight / 1000;
 
             let vehicles = [];
 
-            // Trier les véhicules par capacité de charge (maxLoad) et volume (volumeUtil) de plus petit à plus grand
             vehicleData.sort((a, b) => a.maxLoad - b.maxLoad);
 
-            // Chercher un véhicule qui peut transporter le poids et le volume totaux
             let singleVehicle = vehicleData.find(vehicle => totalWeightTonnes <= vehicle.maxLoad && totalVolume <= vehicle.volumeUtil);
 
             if (singleVehicle) {
                 vehicles.push(singleVehicle);
             } else {
-                // Si aucun véhicule unique ne peut supporter la charge, diviser le poids et le volume en deux
                 let halfWeightTonnes = totalWeightTonnes / 2;
                 let halfVolume = totalVolume / 2;
 
-                // Chercher un véhicule capable de transporter la moitié du poids et du volume
                 let halfLoadVehicle = vehicleData.find(vehicle => halfWeightTonnes <= vehicle.maxLoad && halfVolume <= vehicle.volumeUtil);
 
                 if (halfLoadVehicle) {
                     vehicles.push(halfLoadVehicle, halfLoadVehicle);
                 } else {
-                    // Utiliser le plus grand véhicule disponible autant de fois que nécessaire
                     let largestVehicle = vehicleData[vehicleData.length - 1];
                     let remainingWeightTonnes = totalWeightTonnes;
                     let remainingVolume = totalVolume;
@@ -382,15 +402,12 @@
                 }
             }
 
-            // Mettre à jour la liste des véhicules sélectionnés
             selectedVehicles = vehicles;
 
-            // Afficher les véhicules conseillés
             const vehicleNames = vehicles.map(v => v.class);
             document.getElementById('vehicle-results').textContent = `Véhicule(s) proposé(s) : ${vehicleNames.join(", ")}`;
         }
 
-        // Script pour la carte et les itinéraires
         const map = L.map('map').setView([48.8566, 2.3522], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -398,139 +415,6 @@
         }).addTo(map);
 
         let routeControls = [];
-
-        function addStorageInput() {
-            const container = document.getElementById("storage-container");
-            const inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-
-            const addressInput = document.createElement("input");
-            addressInput.type = "text";
-            addressInput.className = "large-input storage-input";
-            addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
-
-            const latInput = document.createElement("input");
-            latInput.type = "text";
-            latInput.className = "small-input latitude-input";
-            latInput.placeholder = "Lat";
-
-            const lonInput = document.createElement("input");
-            lonInput.type = "text";
-            lonInput.className = "small-input longitude-input";
-            lonInput.placeholder = "Lon";
-
-            const removeButton = document.createElement("button");
-            removeButton.className = "remove-button";
-            removeButton.textContent = "Supprimer";
-            removeButton.onclick = function() { removeInput(removeButton); };
-
-            const suggestionsDiv = document.createElement("div");
-            suggestionsDiv.className = "autocomplete-suggestions";
-
-            inputGroup.appendChild(addressInput);
-            inputGroup.appendChild(latInput);
-            inputGroup.appendChild(lonInput);
-            inputGroup.appendChild(removeButton);
-            inputGroup.appendChild(suggestionsDiv);
-
-            container.insertBefore(inputGroup, container.querySelector(".button-add"));
-        }
-
-        function addTreatmentInput() {
-            const container = document.getElementById("treatment-container");
-            const inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-
-            const addressInput = document.createElement("input");
-            addressInput.type = "text";
-            addressInput.className = "large-input treatment-input";
-            addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
-
-            const latInput = document.createElement("input");
-            latInput.type = "text";
-            latInput.className = "small-input latitude-input";
-            latInput.placeholder = "Lat";
-
-            const lonInput = document.createElement("input");
-            lonInput.type = "text";
-            lonInput.className = "small-input longitude-input";
-            lonInput.placeholder = "Lon";
-
-            const selectOption = document.createElement("select");
-            selectOption.className = "treatment-option";
-            selectOption.innerHTML = `
-                <option value="Recyclage">Recyclage</option>
-                <option value="Méthanisation">Méthanisation</option>
-                <option value="Incinération">Incinération</option>
-                <option value="Enfouissement">Enfouissement</option>
-            `;
-
-            const removeButton = document.createElement("button");
-            removeButton.className = "remove-button";
-            removeButton.textContent = "Supprimer";
-            removeButton.onclick = function() { removeInput(removeButton); };
-
-            const suggestionsDiv = document.createElement("div");
-            suggestionsDiv.className = "autocomplete-suggestions";
-
-            inputGroup.appendChild(addressInput);
-            inputGroup.appendChild(latInput);
-            inputGroup.appendChild(lonInput);
-            inputGroup.appendChild(selectOption);
-            inputGroup.appendChild(removeButton);
-            inputGroup.appendChild(suggestionsDiv);
-
-            container.insertBefore(inputGroup, container.querySelector(".button-add"));
-        }
-
-        function removeInput(button) {
-            const inputGroup = button.parentElement;
-            inputGroup.remove();
-        }
-
-        function autocompleteAddress(input) {
-            const query = input.value;
-            const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
-
-            if (query.length < 3) {
-                suggestionsDiv.innerHTML = '';
-                return;
-            }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
-                .then(response => response.json())
-                .then(data => {
-                    suggestionsDiv.innerHTML = '';
-                    data.slice(0, 5).forEach(place => {
-                        const suggestion = document.createElement("div");
-                        suggestion.className = "autocomplete-suggestion";
-                        suggestion.textContent = place.display_name;
-                        suggestion.onclick = function() {
-                            input.value = place.display_name;
-                            const latInput = input.parentElement.querySelector(".latitude-input");
-                            const lonInput = input.parentElement.querySelector(".longitude-input");
-                            latInput.value = place.lat;
-                            lonInput.value = place.lon;
-                            suggestionsDiv.innerHTML = '';
-                        };
-                        suggestionsDiv.appendChild(suggestion);
-                    });
-                })
-                .catch(err => {
-                    console.error('Erreur lors de l\'autocomplétion :', err);
-                });
-
-            document.addEventListener('click', function(event) {
-                const suggestions = document.querySelectorAll('.autocomplete-suggestions');
-                suggestions.forEach(suggestionDiv => {
-                    if (!suggestionDiv.contains(event.target) && !suggestionDiv.parentElement.contains(event.target)) {
-                        suggestionDiv.innerHTML = '';
-                    }
-                });
-            });
-        }
 
         async function compareRoutes() {
             routeControls.forEach(control => {
@@ -558,7 +442,7 @@
             }
 
             if (selectedVehicles.length === 0 || selectedMaterials.length === 0) {
-                alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer les itinéraires.");
+                alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer.");
                 statusMessage.textContent = '';
                 return;
             }
@@ -580,15 +464,11 @@
 
                         try {
                             const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
-                            const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
+                            const distance = (route.summary.totalDistance / 1000).toFixed(2);
 
-                            // Calcul des émissions de transport
                             const transportEmissions = calculateTransportEmissions(distance);
-
-                            // Calcul des émissions de traitement
                             const treatmentEmissions = calculateTreatmentEmissions(treatmentOption);
 
-                            // Calcul des émissions totales
                             const totalEmissions = transportEmissions + treatmentEmissions;
 
                             const row = document.createElement('tr');
@@ -673,12 +553,10 @@
         }
 
         function calculateTransportEmissions(distance) {
-            // Distance en km
-            // Calculer les émissions pour chaque véhicule
             let totalEmissions = 0;
             selectedVehicles.forEach(vehicle => {
-                const emissionsPerTonKm = vehicle.emissionsPerTonKm; // kg CO₂e par tonne.km
-                const totalWeightTonnes = selectedMaterials.reduce((sum, mat) => sum + mat.weight, 0) / 1000; // Convertir en tonnes
+                const emissionsPerTonKm = vehicle.emissionsPerTonKm;
+                const totalWeightTonnes = selectedMaterials.reduce((sum, mat) => sum + mat.weight, 0) / 1000;
                 const emissions = emissionsPerTonKm * totalWeightTonnes * distance;
                 totalEmissions += emissions;
             });
@@ -686,17 +564,18 @@
         }
 
         function calculateTreatmentEmissions(treatmentType) {
-            // Calculer les émissions de traitement pour chaque matériau
             let totalEmissions = 0;
-            const allocationCoefficient = treatmentType === 'Recyclage' ? 0.5 : 1; // Coefficient d'allocation de 50% pour le recyclage
+            const allocationInput = document.getElementById('allocation-coeff');
+            const allocationCoefficient = treatmentType === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
             selectedMaterials.forEach(material => {
                 const materialData = materialsData[material.name].impacts;
-                const weightTonnes = material.weight / 1000; // Convertir en tonnes
-                let emissionKey = `${treatmentType} - Impact (kg éq. CO2/tonne)`;
-                let emissions = parseFloat(materialData[emissionKey]);
-                if (isNaN(emissions)) emissions = 0;
-                emissions *= allocationCoefficient; // Appliquer le coefficient d'allocation
-                totalEmissions += emissions * weightTonnes;
+                const weightTonnes = material.weight / 1000;
+                const impactKey = `${treatmentType} - Impact (kg éq. CO2/tonne)`;
+                const avoidedKey = `${treatmentType} - Émissions Évitées (kg éq. CO2/tonne)`;
+                let impact = parseFloat(materialData[impactKey]) || 0;
+                let avoidedEmissions = parseFloat(materialData[avoidedKey]) || 0;
+                const netEmissions = (impact + avoidedEmissions) * allocationCoefficient;
+                totalEmissions += netEmissions * weightTonnes;
             });
             return totalEmissions;
         }

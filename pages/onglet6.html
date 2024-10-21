@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.1</title>
+    <title>Version 1.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
     <style>
-        /* Styles personnalisés pour Version 1.1 */
+        /* Styles personnalisés pour Version 1.3 */
         #material-section, #vehicle-section {
             margin: 20px 0;
         }
@@ -111,7 +111,7 @@
         </section>
 
         <!-- Affichage de la version avec animation -->
-        <div id="version-display" class="version-fade">Version 1.1</div>
+        <div id="version-display" class="version-fade">Version 1.3</div>
     </main>
 
     <script>
@@ -192,6 +192,62 @@
         function removeMaterial(button) {
             const materialGroup = button.parentElement;
             materialGroup.remove();
+        }
+
+        // Fonction pour calculer les véhicules appropriés
+        function calculateVehicles() {
+            const materialGroups = document.querySelectorAll('.material-group');
+            let totalWeight = 0;
+
+            materialGroups.forEach(group => {
+                const weightInput = group.querySelector('.material-weight');
+                const weight = parseFloat(weightInput.value);
+                if (!isNaN(weight)) {
+                    totalWeight += weight;
+                }
+            });
+
+            if (totalWeight === 0) {
+                alert('Veuillez entrer le poids pour au moins un matériau.');
+                return;
+            }
+
+            const vehicleResultsDiv = document.getElementById('vehicle-results');
+            vehicleResultsDiv.innerHTML = '';
+
+            // Convert vehicle maxLoads to kg for comparison
+            const vehiclesWithMaxLoadKg = vehiclesData.map(vehicle => {
+                return {
+                    ...vehicle,
+                    maxLoadKg: vehicle.maxLoad * 1000
+                };
+            });
+
+            // Trier les véhicules par charge utile croissante pour utiliser le plus petit d'abord
+            vehiclesWithMaxLoadKg.sort((a, b) => a.maxLoadKg - b.maxLoadKg);
+
+            // Trouver le véhicule le plus petit qui peut transporter le poids total
+            let chosenVehicle = vehiclesWithMaxLoadKg.find(vehicle => vehicle.maxLoadKg >= totalWeight);
+
+            if (chosenVehicle) {
+                // Si un seul véhicule peut transporter le poids total
+                const listItem = document.createElement('li');
+                listItem.textContent = `1 x ${chosenVehicle.class} (Charge utile maximale: ${chosenVehicle.maxLoad} tonnes)`;
+                vehicleResultsDiv.appendChild(listItem);
+            } else {
+                // Si le poids dépasse la capacité du plus grand véhicule, utiliser deux véhicules identiques
+                const halfWeight = totalWeight / 2;
+                let halfVehicle = vehiclesWithMaxLoadKg.find(vehicle => vehicle.maxLoadKg >= halfWeight);
+
+                if (halfVehicle) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `2 x ${halfVehicle.class} (Charge utile maximale: ${halfVehicle.maxLoad} tonnes)`;
+                    vehicleResultsDiv.appendChild(listItem);
+                } else {
+                    // Si même la moitié du poids ne rentre pas, afficher un message d'erreur
+                    vehicleResultsDiv.textContent = 'Aucun véhicule approprié ne peut transporter la charge.';
+                }
+            }
         }
 
         // Fonction pour afficher l'animation de fondu de version

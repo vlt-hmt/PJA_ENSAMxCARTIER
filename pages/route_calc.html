@@ -9359,12 +9359,7 @@
                 } else {
                     console.log("Impossible d'afficher l'itinéraire, les coordonnées sont insuffisantes.");
                 }
-		var redMarker = L.AwesomeMarkers.icon({
-  	            icon: 'info-sign',
-                    markerColor: 'red',  // Couleur du marqueur : 'red', 'blue', 'green', 'orange', 'purple', etc.
-                    prefix: 'glyphicon' // Tu peux utiliser 'fa' pour FontAwesome ou 'glyphicon' pour les glyphicons.
-                });
-                var marker = L.marker(latlongs[0],{ icon: redMarker }).addTo(map);
+                var marker = L.marker(latlongs[0]).addTo(map);
                 let blase=optimalRoute[0];
                 marker.bindPopup("<b>Centre de traitement</b><br>"+blase).openPopup();
                 for (let i = 1; i < latlongs.length-1; i++) { // création du dictionnaire

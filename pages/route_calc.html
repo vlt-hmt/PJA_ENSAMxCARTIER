@@ -8848,8 +8848,8 @@
             const Tmax=10;
             const M=0;
             // Paramètres de l'algorithme génétique
-            const POPULATION_SIZE = 200;
-            const GENERATIONS = 100;
+            const POPULATION_SIZE = 100;
+            const GENERATIONS = 50;
             const MUTATION_RATE = 0.03;
             const CROSSOVER_RATE = 0.8;
             const MAX_ROUTE_TIME = 600;  // en minutes
@@ -9342,20 +9342,30 @@
                 for (let i = 0; i < optimalRoute.length; i++) { // création du dictionnaire
                      latlong.push([getCoordinatesByAddress(optimalRoute[i],adresslatlon)]);
                 }
-                //let latLngs = la.map(address => {
-                    //let [lat, lon] = address.split(",");
-                    //return [parseFloat(lat), parseFloat(lon)];
-                //});
-                console.log(latlong)
-                if (latlong.length > 1) {
+                let latlongs = [];
+                const latlngPoints = latlong.map(point => {
+                    const [lat, lon] = point[0].split(',').map(Number);  // Séparer la chaîne en latitude et longitude et convertir en nombre
+                    latlongs.push([lat,lon]);  // Créer un objet L.latLng avec ces valeurs
+                });
+
+                console.log(latlongs);
+                if (latlongs.length > 1) {
                     L.Routing.control({
-                        waypoints: latlong.map(point => L.latLng(point[0], point[1])),
-                        routeWhileDragging: true,
+                        waypoints: latlongs.map(point => L.latLng(point[0], point[1])),
                         show: true,
                     }).addTo(map);
                 } else {
                     console.log("Impossible d'afficher l'itinéraire, les coordonnées sont insuffisantes.");
                 }
+                var marker = L.marker(latlongs[0]).addTo(map);
+                let blase=optimalRoute[0];
+                marker.bindPopup("<b>Centre de traitement</b><br>"+blase).openPopup();
+                for (let i = 1; i < latlongs.length-1; i++) { // création du dictionnaire
+                     var marker = L.marker(latlongs[i]).addTo(map);
+                     marker.bindPopup("<b>Boutique officielle Cartier</b><br>"+optimalRoute[i]).openPopup();
+                }
+
+                console.log("map intialized!");
             }
     </script>
 </body>

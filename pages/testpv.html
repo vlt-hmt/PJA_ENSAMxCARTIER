@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.7</title>
+    <title>Version 2.9</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -105,7 +105,7 @@
         }
         #distance-table th, #distance-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
         }
         #distance-table th {
             background-color: #f4f4f4;
@@ -125,11 +125,48 @@
         .content h1 {
             margin-top: 20px;
         }
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+        .section-title {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .allocation-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .detailed-summary {
+            margin-top: 30px;
+        }
+        .detailed-summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .detailed-summary th, .detailed-summary td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .detailed-summary th {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.7</div>
+        <div class="header-overlay">Version 2.9</div>
     </div>
 
     <header class="menu">
@@ -146,6 +183,14 @@
 
     <main class="content">
         <h1>Comparaison Scénarios</h1>
+
+        <!-- Contrôle du coefficient d'allocation pour le recyclage -->
+        <div class="allocation-control">
+            <label for="allocation-coeff">Coefficient d'allocation pour le recyclage (%) :</label>
+            <input type="number" id="allocation-coeff" value="50" min="0" max="100" step="1">
+        </div>
+
+        <hr>
 
         <section>
             <div id="material-selection">
@@ -172,6 +217,8 @@
             <div id="vehicle-results"></div>
         </section>
 
+        <hr>
+
         <section class="route-section">
             <h2>Ajouter des lieux de stockage</h2>
             <div id="storage-container" class="input-container">
@@ -184,6 +231,8 @@
                 </div>
                 <button class="button-add" onclick="addStorageInput()">Ajouter un autre lieu de stockage</button>
             </div>
+
+            <hr>
 
             <h2>Ajouter des lieux de traitement</h2>
             <div id="treatment-container" class="input-container">
@@ -202,6 +251,8 @@
                 </div>
                 <button class="button-add" onclick="addTreatmentInput()">Ajouter un autre lieu de traitement</button>
             </div>
+
+            <hr>
 
             <button onclick="compareRoutes()">Comparer</button>
             <div id="status-message"></div>
@@ -222,6 +273,24 @@
                 <tbody>
                 </tbody>
             </table>
+
+            <!-- Section pour le récapitulatif détaillé -->
+            <div class="detailed-summary">
+                <h2>Récapitulatif détaillé par matériau et scénario</h2>
+                <table id="detailed-summary-table">
+                    <thead>
+                        <tr>
+                            <th>Matériau</th>
+                            <th>Mode de Traitement</th>
+                            <th>Impact du Traitement (kg CO₂e)</th>
+                            <th>Émissions Évitées (kg CO₂e)</th>
+                            <th>Net (kg CO₂e)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
@@ -294,7 +363,7 @@
 
             const density = parseFloat(customDensity);
             const weightKg = parseFloat(weight);
-            const volume = weightKg / density; // Volume en m³
+            const volume = weightKg / density;
 
             const materialItemDiv = document.createElement("div");
             materialItemDiv.classList.add("material-item");
@@ -326,11 +395,11 @@
         }
 
         function calculateVehicles() {
-            let totalWeight = 0; 
+            let totalWeight = 0;
             let totalVolume = 0;
 
             document.querySelectorAll('#material-list .material-item').forEach((item, index) => {
-                if (index === 0) return; 
+                if (index === 0) return;
                 const weight = parseFloat(item.children[2].innerText);
                 const volume = parseFloat(item.children[3].innerText);
                 totalWeight += weight;
@@ -374,15 +443,43 @@
             document.getElementById('vehicle-results').textContent = `Véhicule(s) proposé(s) : ${vehicleNames.join(", ")}`;
         }
 
-        const map = L.map('map').setView([48.8566, 2.3522], 11);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+        function autocompleteAddress(input) {
+            const query = input.value;
+            const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
 
-        let routeControls = [];
+            if (query.length < 3) {
+                suggestionsDiv.innerHTML = '';
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsDiv.innerHTML = '';
+                    data.slice(0, 5).forEach(place => {
+                        const suggestion = document.createElement("div");
+                        suggestion.className = "autocomplete-suggestion";
+                        suggestion.textContent = place.display_name;
+                        suggestion.onclick = function() {
+                            input.value = place.display_name;
+                            const latInput = input.parentElement.querySelector(".latitude-input");
+                            const lonInput = input.parentElement.querySelector(".longitude-input");
+                            latInput.value = place.lat;
+                            lonInput.value = place.lon;
+                            suggestionsDiv.innerHTML = '';
+                        };
+                        suggestionsDiv.appendChild(suggestion);
+                    });
+                })
+                .catch(err => {
+                    console.error('Erreur lors de l\'autocomplétion :', err);
+                });
+        }
 
         async function compareRoutes() {
+            const allocationInput = document.getElementById('allocation-coeff');
+            const allocationCoefficient = parseFloat(allocationInput.value) / 100;
+
             routeControls.forEach(control => {
                 control.getPlan().setWaypoints([]);
                 map.removeControl(control);
@@ -415,6 +512,9 @@
 
             let totalCalculations = storageGroups.length * treatmentGroups.length;
             let completedCalculations = 0;
+
+            const detailedTable = document.querySelector("#detailed-summary-table tbody");
+            detailedTable.innerHTML = '';
 
             for (const storageGroup of storageGroups) {
                 const storageLat = storageGroup.querySelector(".latitude-input").value;
@@ -468,6 +568,25 @@
                             row.appendChild(totalEmissionCell);
 
                             distanceTableBody.appendChild(row);
+
+                            // Mise à jour du tableau détaillé
+                            selectedMaterials.forEach(material => {
+                                const matData = materialsData[material.name].impacts;
+                                const weightTonnes = material.weight / 1000;
+                                const impact = matData[`${treatmentOption} - Impact (kg éq. CO2/tonne)`] * weightTonnes;
+                                const avoided = matData[`${treatmentOption} - Émissions Évitées (kg éq. CO2/tonne)`] * weightTonnes;
+                                const net = (impact + avoided) * allocationCoefficient;
+
+                                const detailRow = document.createElement('tr');
+                                detailRow.innerHTML = `
+                                    <td>${material.name}</td>
+                                    <td>${treatmentOption}</td>
+                                    <td>${impact.toFixed(2)}</td>
+                                    <td>${avoided.toFixed(2)}</td>
+                                    <td>${net.toFixed(2)}</td>
+                                `;
+                                detailedTable.appendChild(detailRow);
+                            });
 
                             const routeControl = L.Routing.control({
                                 waypoints: [
@@ -531,7 +650,8 @@
 
         function calculateTreatmentEmissions(treatmentType) {
             let totalEmissions = 0;
-            const allocationCoefficient = treatmentType === 'Recyclage' ? 0.5 : 1;
+            const allocationInput = document.getElementById('allocation-coeff');
+            const allocationCoefficient = treatmentType === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
             selectedMaterials.forEach(material => {
                 const materialData = materialsData[material.name].impacts;
                 const weightTonnes = material.weight / 1000;

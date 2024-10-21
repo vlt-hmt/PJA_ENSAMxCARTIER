@@ -41,7 +41,7 @@
     <main class="content">
      <h1>Determination of collection route</h1>
      <p>On this page please indicate your vehicle category, country and geographical area of ​​collection.</p>
-      <div class="partBody">
+       <div class="partBody">
         <div class="dropdown" id="vehicleCategoryDropdownContainer">
             <button class="dropbtn" id="vehicleCategoryButton">Vehicle Category (MPLW)</button>
             <div class="dropdown-content" id="vehicleCategoryDropdown">
@@ -171,11 +171,15 @@
             <input type="hidden" name="vehicle" id="selectedVehicle" value="">
             <input type="hidden" name="service" id="selectedService" value="">
             <input type="hidden" name="option" id="selectedOption" value="">
-            <button type="submit">Optimize Route</button>
+            <button type="submit" id="optimizeButton">Optimize Route</button>
         </form>
+        <div id="progressBarContainer" style="display:none;">
+            <p>Calcul de l'itinéraire en cours...</p>
+            <progress id="progressBar" value="0" max="100"></progress>
+        </div>
 
-        <div id="myMap"></div>
-      </div>
+        <div id="myMap" style="display: none; width: 100%; height: 500px;"></div>
+       </div>
      <img src="../static/images/image_home.jpg" alt="Home Image">
     </main>
     <div class="footer">
@@ -8805,6 +8809,10 @@
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
+
+            // Exemple : Ajouter un marqueur sur la carte
+            var marker = L.marker([47.6062, -122.3321]).addTo(map);
+            marker.bindPopup("<b>Hello world!</b><br>I am a marker.").openPopup();
             console.log("map intialized!");
  	    // data init algorithm
             function selectVehicle(vehicle) {
@@ -8847,7 +8855,7 @@
             const M=0;
             // Paramètres de l'algorithme génétique
             const POPULATION_SIZE = 100;
-            const GENERATIONS = 50;
+            const GENERATIONS = 100;
             const MUTATION_RATE = 0.03;
             const CROSSOVER_RATE = 0.8;
             const MAX_ROUTE_TIME = 600;  // en minutes
@@ -9040,7 +9048,7 @@
             }
             
             // Fonction genetic_algorithm (traduction de Python en JavaScript)
-            function geneticAlgorithm(setOfAllCustomers, setOfAllDepots, distance, P, t) {
+            async function geneticAlgorithm(setOfAllCustomers, setOfAllDepots, distance, P, t) {
               let population = createInitialPopulation(POPULATION_SIZE, setOfAllCustomers, setOfAllDepots, setOfAllDepots);
               let fitnessScores = [];
               for (let generation = 0; generation < GENERATIONS; generation++) {
@@ -9066,8 +9074,12 @@
                 }
                 if (Math.min(...npopulation.map(individual => evaluateSolution([individual], setOfAllCustomers, setOfAllDepots, distance, P, t))) > Math.min(...fitnessScores)) {
                   npopulation = population;
+                  
                 }
                 population = npopulation;
+                let progress = ((generation + 1) / GENERATIONS) * 100; // Pourcentage complété
+                progressBar.value = progress;
+                await new Promise(resolve => setTimeout(resolve, 10));
               }
               return population[fitnessScores.indexOf(Math.min(...fitnessScores))];
             }
@@ -9183,12 +9195,21 @@
               bestSolution[i] = ntoa[bestSolution[i]];
             }
 
-            function optimizeroute(event) {
+            async function optimizeroute(event) {
                 let vehicle = document.getElementById("selectedVehicle").value;
                 let country = document.getElementById("selectedService").value;
                 let option = document.getElementById("selectedOption").value;
                 event.preventDefault(); // Empêche la page de se recharger
                 console.log("la fonction est bien lancée")
+
+                // Masquer la carte avant de commencer le calcul
+                document.getElementById('myMap').style.display = 'none';
+                document.getElementById('optimizeButton').style.display = 'none';
+
+
+                // Afficher la barre de progression avant de commencer l'optimisation
+                document.getElementById('progressBarContainer').style.display = 'block';
+                let progressBar = document.getElementById('progressBar');
 
                 // Assurer que les valeurs sont bien définies
                 if (!vehicle || !country || !option) {
@@ -9327,11 +9348,13 @@
                 }
 
                 // Extraire l'itinéraire optimal depuis la solution calculée (à adapter)
-                let bestSolution = geneticAlgorithm(setOfAllCustomers, setOfAllDepots, distance, P, t);
+                let bestSolution = await geneticAlgorithm(setOfAllCustomers, setOfAllDepots, distance, P, t);
                 if (evaluateSolution([bestSolution], setOfAllCustomers, setOfAllDepots, distance, P, t) > 2000) {
                   bestSolution = geneticAlgorithm(setOfAllCustomers, setOfAllDepots, distance, P, t);
                 }
-
+                
+                document.getElementById('myMap').style.display = 'block';
+                document.getElementById('progressBarContainer').style.display = 'none';
                 let optimalRoute = getOptimalRoute(bestSolution, ntoa);
                 let adresslatlon = dataVeolia.concat(dataCartier);
                 console.log(adresslatlon);

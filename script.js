@@ -1,26 +1,6 @@
 // Variable globale pour stocker les données du CSV
 let csvData = {};
 
-// Fonction générique pour charger un fichier CSV et stocker ses données
-function loadCSV(csvFilePath, callback, delimiter = ',') {
-    Papa.parse(csvFilePath, {
-        download: true,
-        header: true,  // Utilise la première ligne comme en-tête
-        skipEmptyLines: true,
-        delimiter: delimiter,  // Permet de spécifier le séparateur
-        complete: function(results) {
-            // Stocker les données dans la variable globale
-            csvData[csvFilePath] = results.data;
-            if (callback && typeof callback === 'function') {
-                callback(results.data);
-            }
-        },
-        error: function(error) {
-            console.error(`Erreur lors du chargement du fichier CSV (${csvFilePath}) :`, error);
-        }
-    });
-}
-
 // Fonction générique pour remplir un menu déroulant à partir d'une colonne spécifique d'un fichier CSV
 function populateDropdown(csvFilePath, columnName, dropdownId, delimiter = ',') {
     // Charger les données CSV si elles ne sont pas déjà chargées

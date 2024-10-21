@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.2</title>
+    <title>Version 2.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <style>
@@ -46,7 +46,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.2</div>
+        <div class="header-overlay">Version 2.3</div>
     </div>
 
     <header class="menu">
@@ -171,28 +171,58 @@
 
         function calculateVehicles() {
             let totalWeight = 0;
+            let totalVolume = 0;
+
             document.querySelectorAll('#material-list .material-item').forEach(item => {
                 const weight = parseFloat(item.children[2].innerText);
+                const volume = parseFloat(item.children[3].innerText);
                 totalWeight += weight;
+                totalVolume += volume;
             });
 
             let vehicles = [];
-            let remainingWeight = totalWeight;
+
+            // Trier les véhicules par capacité de charge (maxLoad) et volume (volumeUtil) de plus petit à plus grand
             vehicleData.sort((a, b) => a.maxLoad - b.maxLoad);
 
-            while (remainingWeight > 0) {
-                for (let i = vehicleData.length - 1; i >= 0; i--) {
-                    if (remainingWeight > vehicleData[i].maxLoad) {
-                        vehicles.push(vehicleData[i].class);
-                        remainingWeight -= vehicleData[i].maxLoad;
-                        break;
+            // Chercher un véhicule qui peut transporter le poids et le volume totaux
+            let singleVehicle = vehicleData.find(vehicle => totalWeight <= vehicle.maxLoad && totalVolume <= vehicle.volumeUtil);
+
+            if (singleVehicle) {
+                // Utiliser un seul véhicule s'il peut supporter le poids et le volume totaux
+                vehicles.push(singleVehicle.class);
+            } else {
+                // Si aucun véhicule unique ne peut supporter la charge, diviser le poids et le volume en deux
+                let halfWeight = totalWeight / 2;
+                let halfVolume = totalVolume / 2;
+
+                // Chercher un véhicule capable de transporter la moitié du poids et du volume
+                let halfLoadVehicle = vehicleData.find(vehicle => halfWeight <= vehicle.maxLoad && halfVolume <= vehicle.volumeUtil);
+
+                if (halfLoadVehicle) {
+                    // Proposer deux véhicules de ce type pour transporter le poids et le volume divisés par deux
+                    vehicles.push(halfLoadVehicle.class, halfLoadVehicle.class);
+                } else {
+                    // Si même la moitié du poids ou du volume dépasse la capacité des plus grands véhicules
+                    let largestVehicle = vehicleData[vehicleData.length - 1];
+                    let remainingWeight = totalWeight;
+                    let remainingVolume = totalVolume;
+
+                    // Utiliser le plus grand véhicule disponible jusqu'à ce que le poids et le volume restants soient gérés
+                    while (remainingWeight > 0 || remainingVolume > 0) {
+                        if (remainingWeight > largestVehicle.maxLoad || remainingVolume > largestVehicle.volumeUtil) {
+                            vehicles.push(largestVehicle.class);
+                            remainingWeight -= Math.min(remainingWeight, largestVehicle.maxLoad);
+                            remainingVolume -= Math.min(remainingVolume, largestVehicle.volumeUtil);
+                        } else {
+                            vehicles.push(largestVehicle.class);
+                            break;
+                        }
                     }
                 }
-                if (remainingWeight < 400) {
-                    vehicles.push(vehicleData[0].class);
-                    break;
-                }
             }
+
+            // Afficher les véhicules conseillés
             document.getElementById('vehicle-results').textContent = `Véhicules proposés : ${vehicles.join(", ")}`;
         }
 

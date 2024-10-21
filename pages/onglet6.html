@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 1.6</title>
+    <title>Version 1.7</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <style>
-        /* Styles pour le champ personnalisé */
-        #custom-density-container {
+        #material-selection {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 15px;
-            display: none; /* Caché par défaut */
-        }
-        #custom-density-container label {
-            margin-right: 10px;
         }
         #material-list {
             margin-top: 20px;
@@ -23,10 +21,19 @@
             justify-content: space-between;
             padding: 8px;
             border-bottom: 1px solid #ccc;
+            align-items: center;
         }
         .material-item div {
             width: 20%;
             text-align: center;
+        }
+        .material-item button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 4px;
         }
         #version-display {
             opacity: 0;
@@ -39,7 +46,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 1.6</div>
+        <div class="header-overlay">Version 1.7</div>
     </div>
 
     <header class="menu">
@@ -55,22 +62,18 @@
 
     <main class="content">
         <h1>Sélection de Matériaux et Transport</h1>
-        <div>
+        <div id="material-selection">
             <label for="material-dropdown">Choisissez un matériau :</label>
             <select id="material-dropdown" onchange="showCustomDensity()">
                 <option value="">Sélectionnez un matériau</option>
                 <!-- Options à remplir dynamiquement -->
             </select>
-        </div>
-        <div id="custom-density-container">
-            <label for="custom-density">Personnalisez la masse volumique (kg/m³) :</label>
+            <label for="custom-density">Masse volumique (kg/m³) :</label>
             <input type="number" id="custom-density" step="1" min="1">
-        </div>
-        <div>
-            <label for="material-weight">Entrez le poids (kg) :</label>
+            <label for="material-weight">Poids (kg) :</label>
             <input type="number" id="material-weight" step="1" min="1">
+            <button onclick="addMaterial()">Ajouter</button>
         </div>
-        <button onclick="addMaterial()">Ajouter le matériau</button>
 
         <!-- Liste des matériaux ajoutés -->
         <div id="material-list">
@@ -79,6 +82,7 @@
                 <div>Masse Volumique (kg/m³)</div>
                 <div>Poids (kg)</div>
                 <div>Volume (m³)</div>
+                <div>Action</div>
             </div>
         </div>
         <div id="vehicle-results"></div>
@@ -98,6 +102,8 @@
             "Plastique rigide PVC": 1410
         };
 
+        let totalWeight = 0;
+
         function populateDropdown() {
             const materialDropdown = document.getElementById("material-dropdown");
             Object.keys(materialsData).forEach(material => {
@@ -110,13 +116,10 @@
 
         function showCustomDensity() {
             const selectedMaterial = document.getElementById("material-dropdown").value;
-            const customDensityContainer = document.getElementById("custom-density-container");
+            const customDensityContainer = document.getElementById("custom-density");
             if (selectedMaterial) {
                 const defaultDensity = materialsData[selectedMaterial];
-                document.getElementById("custom-density").value = defaultDensity;
-                customDensityContainer.style.display = "block";
-            } else {
-                customDensityContainer.style.display = "none";
+                customDensityContainer.value = defaultDensity;
             }
         }
 
@@ -134,6 +137,7 @@
             const density = parseFloat(customDensity);
             const weightKg = parseFloat(weight);
             const volume = weightKg / density; // Volume en m³
+            totalWeight += weightKg;
 
             // Ajouter le matériau à la liste
             const materialItemDiv = document.createElement("div");
@@ -143,10 +147,18 @@
                 <div>${density}</div>
                 <div>${weightKg}</div>
                 <div>${volume.toFixed(2)}</div>
+                <div><button onclick="removeMaterial(this, ${weightKg})">Supprimer</button></div>
             `;
             materialListDiv.appendChild(materialItemDiv);
 
-            calculateVehicles(weightKg);
+            calculateVehicles(totalWeight);
+        }
+
+        function removeMaterial(button, weightKg) {
+            const materialItem = button.parentElement.parentElement;
+            materialItem.remove();
+            totalWeight -= weightKg;
+            calculateVehicles(totalWeight);
         }
 
         function calculateVehicles(totalWeight) {

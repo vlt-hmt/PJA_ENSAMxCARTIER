@@ -16,17 +16,21 @@
     </div>
 
     <header class="menu">
-        <nav>
-             <ul>
-                  <li><a href="../index.html">Accueil</a></li>
-                  <li><a href="onglet1.html">Onglet 1</a></li>
-                  <li><a href="route_calc.html">itinéraire t'as peur</a></li>
-    	          <li><a href="onglet3.html">Onglet 3</a></li>
-    	          <li><a href="onglet4.html">Onglet 4</a></li>
-                  <li><a href="onglet5.html">Onglet 5</a></li>
-                  <li><a href="contact.html">Contact</a></li>
-             </ul>
-         </nav>
+        <div id="menu-container"></div>
+        <script>
+            // Charger le menu dans l'élément avec l'ID "menu-container"
+            fetch('../menu.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur réseau lors du chargement du menu.');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                })
+                .catch(error => console.error('Erreur lors du chargement du menu :', error));
+        </script>
     </header>
 
     <main class="content">

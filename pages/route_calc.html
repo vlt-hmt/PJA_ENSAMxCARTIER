@@ -8801,18 +8801,18 @@
 
 	    // map loading
             // Initialisation de la carte
-            console.log("init map...");
-            var map = L.map('myMap').setView([47.475504, -0.561328], 12);
+            let map
 
-            // Ajouter une couche OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // Exemple : Ajouter un marqueur sur la carte
-            var marker = L.marker([47.6062, -122.3321]).addTo(map);
-            marker.bindPopup("<b>Hello world!</b><br>I am a marker.").openPopup();
+	    function initializeMap() {
+                if (!map) {
+                    map = L.map('myMap').setView([50.1109, 8.6821], 13); // Par exemple, centrer la carte sur Francfort
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 18,
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(map);
+                }
+            }
+	    
             console.log("map intialized!");
  	    // data init algorithm
             function selectVehicle(vehicle) {
@@ -9354,7 +9354,8 @@
                 }
                 
                 document.getElementById('myMap').style.display = 'block';
-		map.invalidateSize();
+		initializeMap(); // Initialise la carte si nécessaire
+                map.invalidateSize();
                 document.getElementById('progressBarContainer').style.display = 'none';
                 let optimalRoute = getOptimalRoute(bestSolution, ntoa);
                 let adresslatlon = dataVeolia.concat(dataCartier);

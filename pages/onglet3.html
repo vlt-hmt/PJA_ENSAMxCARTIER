@@ -58,7 +58,7 @@
     </div>
 
     <script>
-        fetch('../static/json/pays_mat_co2.json'); // Variable pour stocker les données JSON chargées
+        let jsonData; // Variable pour stocker les données JSON chargées
 
         // Palette de couleurs pour chaque matériau
         const materialColors = {
@@ -107,24 +107,27 @@
                     }
                 });
 
-                // Créer les graphiques circulaires initiaux
-                const initialCountry = document.getElementById('countrySelector').value;
-                createPieCharts(initialCountry);
+                // Charger le fichier JSON pour les données par pays et créer les graphiques circulaires
+                fetch('../static/json/pays_mat_co2.json')
+                    .then(response => response.json())
+                    .then(countryData => {
+                        createPieCharts(document.getElementById('countrySelector').value, countryData);
+                    })
+                    .catch(error => console.error('Erreur lors du chargement du fichier JSON des pays:', error));
             })
             .catch(error => console.error('Erreur lors du chargement du JSON:', error));
 
         // Fonction pour obtenir les données d'un pays sélectionné
-        function getCountryData(country) {
-            if (!jsonData) return null;
-            return jsonData.find(item => item["Country"] === country);
+        function getCountryData(country, countryData) {
+            return countryData.find(item => item["Country"] === country);
         }
 
         // Fonction pour créer les graphiques circulaires
-        function createPieCharts(country) {
-            const countryData = getCountryData(country);
-            if (!countryData) return;
-            const labels = Object.keys(countryData).slice(1); // Exclure le pays
-            const masses = Object.values(countryData).slice(1).map(val => parseFloat(val.replace(",", ".")));
+        function createPieCharts(country, countryData) {
+            const countryInfo = getCountryData(country, countryData);
+            if (!countryInfo) return;
+            const labels = Object.keys(countryInfo).slice(1); // Exclure le pays
+            const masses = Object.values(countryInfo).slice(1).map(val => parseFloat(val.replace(",", ".")));
 
             const totalMass = masses.reduce((acc, val) => acc + val, 0);
             const massPercentages = masses.map(mass => (mass / totalMass) * 100);
@@ -151,14 +154,17 @@
             // Dessiner les graphiques circulaires
             const ctxMass = document.getElementById('pieChartMass').getContext('2d');
             new Chart(ctxMass, massConfig);
-
-            // Configurer et dessiner les autres graphiques si nécessaire...
         }
 
         // Mettre à jour les graphiques lors de la sélection d'un pays
         document.getElementById('countrySelector').addEventListener('change', (event) => {
             const selectedCountry = event.target.value;
-            createPieCharts(selectedCountry);
+            fetch('../static/json/pays_mat_co2.json')
+                .then(response => response.json())
+                .then(countryData => {
+                    createPieCharts(selectedCountry, countryData);
+                })
+                .catch(error => console.error('Erreur lors du chargement du fichier JSON des pays:', error));
         });
     </script>
 </body>

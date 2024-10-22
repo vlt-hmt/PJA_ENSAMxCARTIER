@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.12 - Comparaison de Scénarios</title>
+    <title>Version 2.16 - Comparaison de Scénarios</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour la carte -->
@@ -164,7 +164,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.12 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.16 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -548,164 +548,164 @@
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
-        function addTreatmentInput() {
-            const container = document.getElementById("treatment-container");
-            const inputGroup = document.createElement("div");
-            inputGroup.className = "input-group";
-
-            const addressInput = document.createElement("input");
-            addressInput.type = "text";
-            addressInput.className = "large-input treatment-input";
-            addressInput.placeholder = "Entrez une autre adresse complète";
-            addressInput.oninput = function() { autocompleteAddress(addressInput); };
-
-            const latInput = document.createElement("input");
-            latInput.type = "text";
-            latInput.className = "small-input latitude-input";
-            latInput.placeholder = "Lat";
-
-            const lonInput = document.createElement("input");
-            lonInput.type = "text";
-            lonInput.className = "small-input longitude-input";
-            lonInput.placeholder = "Lon";
-
-            const selectOption = document.createElement("select");
-            selectOption.className = "treatment-option";
-            selectOption.innerHTML = `
-                <option value="Recyclage">Recyclage</option>
-                <option value="Méthanisation">Méthanisation</option>
-                <option value="Incinération">Incinération</option>
-                <option value="Enfouissement">Enfouissement</option>
-            `;
-
-            const removeButton = document.createElement("button");
-            removeButton.className = "remove-button";
-            removeButton.textContent = "Supprimer";
-            removeButton.onclick = function() { removeInput(removeButton); };
-
-            const suggestionsDiv = document.createElement("div");
-            suggestionsDiv.className = "autocomplete-suggestions";
-
-            inputGroup.appendChild(addressInput);
-            inputGroup.appendChild(latInput);
-            inputGroup.appendChild(lonInput);
-            inputGroup.appendChild(selectOption);
-            inputGroup.appendChild(removeButton);
-            inputGroup.appendChild(suggestionsDiv);
-
-            container.insertBefore(inputGroup, container.querySelector(".button-add"));
-        }
-
-        function removeInput(button) {
-            const inputGroup = button.parentElement;
-            inputGroup.remove();
-        }
-
-        // Initialisation de la carte
-        const map = L.map('map').setView([48.8566, 2.3522], 11);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        async function compareRoutes() {
-            const allocationInput = document.getElementById('allocation-coeff');
-            const allocationCoefficient = parseFloat(allocationInput.value) / 100;
-
-            routeControls.forEach(control => {
-                control.getPlan().setWaypoints([]);
-                map.removeControl(control);
-            });
-            routeControls = [];
-
-            const statusMessage = document.getElementById('status-message');
-            const errorMessage = document.getElementById('error-message');
-            statusMessage.textContent = 'Calcul des distances en cours...';
-            errorMessage.textContent = '';
-
-            const distanceTable = document.querySelector("#distance-table");
-            const distanceTableBody = distanceTable.querySelector("tbody");
-            distanceTableBody.innerHTML = '';
-
-            const storageGroups = document.querySelectorAll("#storage-container .input-group");
-            const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
-
-            if (storageGroups.length === 0 || treatmentGroups.length === 0) {
-                alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
-                statusMessage.textContent = '';
-                return;
-            }
-
-            if (selectedVehicles.length === 0 || selectedMaterials.length === 0) {
-                alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer.");
-                statusMessage.textContent = '';
-                return;
-            }
-
-            let totalCalculations = storageGroups.length * treatmentGroups.length;
-            let completedCalculations = 0;
-
-            const detailedTable = document.querySelector("#detailed-summary-table tbody");
-            detailedTable.innerHTML = '';
-
+                function addTreatmentInput() {
+                    const container = document.getElementById("treatment-container");
+                    const inputGroup = document.createElement("div");
+                    inputGroup.className = "input-group";
+        
+                    const addressInput = document.createElement("input");
+                    addressInput.type = "text";
+                    addressInput.className = "large-input treatment-input";
+                    addressInput.placeholder = "Entrez une autre adresse complète";
+                    addressInput.oninput = function() { autocompleteAddress(addressInput); };
+        
+                    const latInput = document.createElement("input");
+                    latInput.type = "text";
+                    latInput.className = "small-input latitude-input";
+                    latInput.placeholder = "Lat";
+        
+                    const lonInput = document.createElement("input");
+                    lonInput.type = "text";
+                    lonInput.className = "small-input longitude-input";
+                    lonInput.placeholder = "Lon";
+        
+                    const selectOption = document.createElement("select");
+                    selectOption.className = "treatment-option";
+                    selectOption.innerHTML = `
+                        <option value="Recyclage">Recyclage</option>
+                        <option value="Méthanisation">Méthanisation</option>
+                        <option value="Incinération">Incinération</option>
+                        <option value="Enfouissement">Enfouissement</option>
+                    `;
+        
+                    const removeButton = document.createElement("button");
+                    removeButton.className = "remove-button";
+                    removeButton.textContent = "Supprimer";
+                    removeButton.onclick = function() { removeInput(removeButton); };
+        
+                    const suggestionsDiv = document.createElement("div");
+                    suggestionsDiv.className = "autocomplete-suggestions";
+        
+                    inputGroup.appendChild(addressInput);
+                    inputGroup.appendChild(latInput);
+                    inputGroup.appendChild(lonInput);
+                    inputGroup.appendChild(selectOption);
+                    inputGroup.appendChild(removeButton);
+                    inputGroup.appendChild(suggestionsDiv);
+        
+                    container.insertBefore(inputGroup, container.querySelector(".button-add"));
+                }
+        
+                function removeInput(button) {
+                    const inputGroup = button.parentElement;
+                    inputGroup.remove();
+                }
+        
+                // Initialisation de la carte
+                const map = L.map('map').setView([48.8566, 2.3522], 11);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 18,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+        
+                async function compareRoutes() {
+                    const allocationInput = document.getElementById('allocation-coeff');
+                    const allocationCoefficient = parseFloat(allocationInput.value) / 100;
+        
+                    routeControls.forEach(control => {
+                        control.getPlan().setWaypoints([]);
+                        map.removeControl(control);
+                    });
+                    routeControls = [];
+        
+                    const statusMessage = document.getElementById('status-message');
+                    const errorMessage = document.getElementById('error-message');
+                    statusMessage.textContent = 'Calcul des distances en cours...';
+                    errorMessage.textContent = '';
+        
+                    const distanceTable = document.querySelector("#distance-table");
+                    const distanceTableBody = distanceTable.querySelector("tbody");
+                    distanceTableBody.innerHTML = '';
+        
+                    const storageGroups = document.querySelectorAll("#storage-container .input-group");
+                    const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
+        
+                    if (storageGroups.length === 0 || treatmentGroups.length === 0) {
+                        alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
+                        statusMessage.textContent = '';
+                        return;
+                    }
+        
+                    if (selectedVehicles.length === 0 || selectedMaterials.length === 0) {
+                        alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer.");
+                        statusMessage.textContent = '';
+                        return;
+                    }
+        
+                    let totalCalculations = storageGroups.length * treatmentGroups.length;
+                    let completedCalculations = 0;
+        
+                    const detailedTable = document.querySelector("#detailed-summary-table tbody");
+                    detailedTable.innerHTML = '';
+        
             for (const storageGroup of storageGroups) {
-                const storageLat = storageGroup.querySelector(".latitude-input").value;
-                const storageLon = storageGroup.querySelector(".longitude-input").value;
+                const storageLat = parseFloat(storageGroup.querySelector(".latitude-input").value);
+                const storageLon = parseFloat(storageGroup.querySelector(".longitude-input").value);
                 const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage';
-
+        
                 if (storageLat && storageLon) {
                     for (const treatmentGroup of treatmentGroups) {
-                        const treatmentLat = treatmentGroup.querySelector(".latitude-input").value;
-                        const treatmentLon = treatmentGroup.querySelector(".longitude-input").value;
+                        const treatmentLat = parseFloat(treatmentGroup.querySelector(".latitude-input").value);
+                        const treatmentLon = parseFloat(treatmentGroup.querySelector(".longitude-input").value);
                         const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
                         const treatmentOption = treatmentGroup.querySelector(".treatment-option").value;
-
+        
                         try {
-                            const route = await calculateRoute(parseFloat(storageLat), parseFloat(storageLon), parseFloat(treatmentLat), parseFloat(treatmentLon));
+                            const route = await calculateRoute(storageLat, storageLon, treatmentLat, treatmentLon);
                             const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
-
+        
                             // Calcul des émissions de transport
                             const transportEmissions = calculateTransportEmissions(distance);
-
+        
                             // Calcul des émissions de traitement
                             const treatmentEmissions = calculateTreatmentEmissions(treatmentOption);
-
+        
                             // Calcul des émissions totales
                             const totalEmissions = transportEmissions + treatmentEmissions;
-
+        
                             const row = document.createElement('tr');
-
+        
                             const storageCell = document.createElement('td');
                             storageCell.textContent = storageName;
                             row.appendChild(storageCell);
-
+        
                             const treatmentCell = document.createElement('td');
                             treatmentCell.textContent = treatmentName;
                             row.appendChild(treatmentCell);
-
+        
                             const modeCell = document.createElement('td');
                             modeCell.textContent = treatmentOption;
                             row.appendChild(modeCell);
-
+        
                             const distanceCell = document.createElement('td');
                             distanceCell.textContent = `${distance} km`;
                             row.appendChild(distanceCell);
-
+        
                             const transportEmissionCell = document.createElement('td');
                             transportEmissionCell.textContent = `${transportEmissions.toFixed(2)}`;
                             row.appendChild(transportEmissionCell);
-
+        
                             const treatmentEmissionCell = document.createElement('td');
                             treatmentEmissionCell.textContent = `${treatmentEmissions.toFixed(2)}`;
                             row.appendChild(treatmentEmissionCell);
-
+        
                             const totalEmissionCell = document.createElement('td');
                             totalEmissionCell.textContent = `${totalEmissions.toFixed(2)}`;
                             row.appendChild(totalEmissionCell);
-
+        
                             distanceTableBody.appendChild(row);
-
-                            // Mise à jour du tableau détaillé
+        
+                            // Mise à jour du tableau détaillé pour chaque matériau
                             selectedMaterials.forEach(material => {
                                 const matData = materialsData[material.name].impacts;
                                 const weightTonnes = material.weight / 1000;
@@ -714,7 +714,7 @@
                                 const impact = impactPerTonne * weightTonnes;
                                 const avoided = avoidedPerTonne * weightTonnes;
                                 const net = (impact + avoided) * allocationCoefficient;
-
+        
                                 const detailRow = document.createElement('tr');
                                 detailRow.innerHTML = `
                                     <td>${material.name}</td>
@@ -725,11 +725,11 @@
                                 `;
                                 detailedTable.appendChild(detailRow);
                             });
-
+        
                             const routeControl = L.Routing.control({
                                 waypoints: [
-                                    L.latLng(parseFloat(storageLat), parseFloat(storageLon)),
-                                    L.latLng(parseFloat(treatmentLat), parseFloat(treatmentLon))
+                                    L.latLng(storageLat, storageLon),
+                                    L.latLng(treatmentLat, treatmentLon)
                                 ],
                                 routeWhileDragging: false,
                                 addWaypoints: false,
@@ -737,14 +737,14 @@
                                 fitSelectedRoutes: true,
                                 show: false
                             }).addTo(map);
-
+        
                             routeControls.push(routeControl);
-
+        
                         } catch (err) {
                             console.error('Erreur lors du calcul de l\'itinéraire:', err);
                             errorMessage.textContent = 'Erreur lors du calcul de certains itinéraires. Vérifiez votre connexion ou réessayez plus tard.';
                         }
-
+        
                         completedCalculations++;
                         statusMessage.textContent = `Calcul des distances en cours... (${completedCalculations}/${totalCalculations})`;
                     }
@@ -787,7 +787,7 @@
             });
             return totalEmissions;
         }
-
+        
         function calculateTreatmentEmissions(treatmentType) {
             // Calculer les émissions de traitement pour chaque matériau
             let totalEmissions = 0;
@@ -802,14 +802,14 @@
                 const avoidedPerTonne = parseFloat(materialData[`${treatmentType} - Émissions Évitées (kg éq. CO2/tonne)`]) || 0;
                 const netEmissions = (impactPerTonne + avoidedPerTonne) * allocationCoefficient;
         
-                // Vérifier si le matériau est adapté au traitement choisi
-                const isAdapted = adaptationData[material.name] && adaptationData[material.name][treatmentType];
-                if (isAdapted === 0) { // Si non adapté (0), ajouter un avertissement
-                    warnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
-                }
-        
                 // Ajouter les émissions nettes au total
                 totalEmissions += netEmissions * weightTonnes;
+        
+                // Vérifier si le matériau est adapté au traitement choisi
+                if (adaptationData[material.name] && adaptationData[material.name][treatmentType] === 0) {
+                    // Si le matériau n'est pas adapté, ajouter un avertissement spécifique
+                    warnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
+                }
             });
         
             // Afficher les avertissements s'il y en a

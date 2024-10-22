@@ -608,45 +608,47 @@
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(map);
         
-                async function compareRoutes() {
-                    const allocationInput = document.getElementById('allocation-coeff');
-                    const allocationCoefficient = parseFloat(allocationInput.value) / 100;
+        async function compareRoutes() {
+            const allocationInput = document.getElementById('allocation-coeff');
+            const allocationCoefficient = parseFloat(allocationInput.value) / 100;
         
-                    routeControls.forEach(control => {
-                        control.getPlan().setWaypoints([]);
-                        map.removeControl(control);
-                    });
-                    routeControls = [];
+            routeControls.forEach(control => {
+                control.getPlan().setWaypoints([]);
+                map.removeControl(control);
+            });
+            routeControls = [];
         
-                    const statusMessage = document.getElementById('status-message');
-                    const errorMessage = document.getElementById('error-message');
-                    statusMessage.textContent = 'Calcul des distances en cours...';
-                    errorMessage.textContent = '';
+            const statusMessage = document.getElementById('status-message');
+            const errorMessage = document.getElementById('error-message');
+            statusMessage.textContent = 'Calcul des distances en cours...';
+            errorMessage.textContent = '';
         
-                    const distanceTable = document.querySelector("#distance-table");
-                    const distanceTableBody = distanceTable.querySelector("tbody");
-                    distanceTableBody.innerHTML = '';
+            const distanceTable = document.querySelector("#distance-table");
+            const distanceTableBody = distanceTable.querySelector("tbody");
+            distanceTableBody.innerHTML = '';
         
-                    const storageGroups = document.querySelectorAll("#storage-container .input-group");
-                    const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
+            const storageGroups = document.querySelectorAll("#storage-container .input-group");
+            const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
         
-                    if (storageGroups.length === 0 || treatmentGroups.length === 0) {
-                        alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
-                        statusMessage.textContent = '';
-                        return;
-                    }
+            if (storageGroups.length === 0 || treatmentGroups.length === 0) {
+                alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
+                statusMessage.textContent = '';
+                return;
+            }
         
-                    if (selectedVehicles.length === 0 || selectedMaterials.length === 0) {
-                        alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer.");
-                        statusMessage.textContent = '';
-                        return;
-                    }
+            if (selectedVehicles.length === 0 || selectedMaterials.length === 0) {
+                alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer.");
+                statusMessage.textContent = '';
+                return;
+            }
         
-                    let totalCalculations = storageGroups.length * treatmentGroups.length;
-                    let completedCalculations = 0;
+            let totalCalculations = storageGroups.length * treatmentGroups.length;
+            let completedCalculations = 0;
         
-                    const detailedTable = document.querySelector("#detailed-summary-table tbody");
-                    detailedTable.innerHTML = '';
+            const detailedTable = document.querySelector("#detailed-summary-table tbody");
+            detailedTable.innerHTML = '';
+        
+            let allWarnings = [];  // Pour stocker tous les avertissements cumulés
         
             for (const storageGroup of storageGroups) {
                 const storageLat = parseFloat(storageGroup.querySelector(".latitude-input").value);
@@ -667,8 +669,8 @@
                             // Calcul des émissions de transport
                             const transportEmissions = calculateTransportEmissions(distance);
         
-                            // Calcul des émissions de traitement
-                            const treatmentEmissions = calculateTreatmentEmissions(treatmentOption);
+                            // Calcul des émissions de traitement, collecter les avertissements
+                            const treatmentEmissions = calculateTreatmentEmissions(treatmentOption, allWarnings);
         
                             // Calcul des émissions totales
                             const totalEmissions = transportEmissions + treatmentEmissions;
@@ -750,6 +752,15 @@
                     }
                 }
             }
+        
+            // Afficher les avertissements après toutes les itérations
+            if (allWarnings.length > 0) {
+                const warningMessage = allWarnings.join("<br>");
+                document.getElementById("warning-message").innerHTML = `<strong>Avertissements :</strong><br>${warningMessage}`;
+            } else {
+                document.getElementById("warning-message").innerHTML = ""; // Nettoyer si aucun avertissement
+            }
+        
             statusMessage.textContent = 'Toutes les distances ont été calculées.';
         }
 

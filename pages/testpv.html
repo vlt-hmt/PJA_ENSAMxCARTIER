@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.16 - Comparaison de Scénarios</title>
+    <title>Version 2.17 - Comparaison de Scénarios</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour la carte -->
@@ -164,7 +164,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.16 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.17 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -788,12 +788,11 @@
             return totalEmissions;
         }
         
-        function calculateTreatmentEmissions(treatmentType) {
+        function calculateTreatmentEmissions(treatmentType, allWarnings) {
             // Calculer les émissions de traitement pour chaque matériau
             let totalEmissions = 0;
             const allocationInput = document.getElementById('allocation-coeff');
             const allocationCoefficient = treatmentType === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
-            let warnings = []; // Pour stocker les avertissements sur les matériaux non adaptés
         
             selectedMaterials.forEach(material => {
                 const materialData = materialsData[material.name].impacts;
@@ -808,18 +807,9 @@
                 // Vérifier si le matériau est adapté au traitement choisi
                 if (adaptationData[material.name] && adaptationData[material.name][treatmentType] === 0) {
                     // Si le matériau n'est pas adapté, ajouter un avertissement spécifique
-                    warnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
+                    allWarnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
                 }
             });
-        
-            // Afficher les avertissements s'il y en a
-            if (warnings.length > 0) {
-                const warningMessage = warnings.join("<br>");
-                document.getElementById("warning-message").innerHTML = `<strong>Avertissements :</strong><br>${warningMessage}`;
-            } else {
-                document.getElementById("warning-message").innerHTML = ""; // Nettoyer si aucun avertissement
-            }
-        
             return totalEmissions;
         }
 

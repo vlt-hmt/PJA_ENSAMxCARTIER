@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.11 - Comparaison de Scénarios</title>
+    <title>Version 2.12 - Comparaison de Scénarios</title>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour la carte -->
@@ -164,7 +164,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.11 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.12 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -291,6 +291,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="warning-message" style="color: red; font-weight: bold; margin-top: 20px;"></div>
         </section>
     </main>
 
@@ -304,7 +305,27 @@
         let selectedVehicles = [];
         let selectedMaterials = [];
         let routeControls = [];
+        let adaptationData = {};
+        
+        async function loadAdaptationData() {
+            try {
+                const response = await fetch('../static/json/adaptation_traitement.json');
+                const data = await response.json();
+                adaptationData = data.reduce((acc, item) => {
+                    acc[item.Matériau] = {
+                        "Recyclage": item["Adapté au Recyclage"],
+                        "Méthanisation": item["Adapté à la Méthanisation"],
+                        "Incinération": item["Adapté à l'Incinération"]
+                    };
+                    return acc;
+                }, {});
+            } catch (error) {
+                console.error("Erreur lors du chargement des données d'adaptation :", error);
+            }
+        }
 
+
+        
         async function loadMaterialsData() {
             try {
                 const response = await fetch('../static/json/impactfdvmat.json');
@@ -761,21 +782,41 @@
             let totalEmissions = 0;
             const allocationInput = document.getElementById('allocation-coeff');
             const allocationCoefficient = treatmentType === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
-
+            let warnings = []; // Pour stocker les avertissements sur les matériaux non adaptés
+        
             selectedMaterials.forEach(material => {
                 const materialData = materialsData[material.name].impacts;
                 const weightTonnes = material.weight / 1000; // Convertir en tonnes
                 const impactPerTonne = parseFloat(materialData[`${treatmentType} - Impact (kg éq. CO2/tonne)`]) || 0;
                 const avoidedPerTonne = parseFloat(materialData[`${treatmentType} - Émissions Évitées (kg éq. CO2/tonne)`]) || 0;
                 const netEmissions = (impactPerTonne + avoidedPerTonne) * allocationCoefficient;
+        
+                // Vérifier si le matériau est adapté au traitement choisi
+                const isAdapted = adaptationData[material.name] && adaptationData[material.name][treatmentType];
+                if (isAdapted === 0) { // Si non adapté (0), ajouter un avertissement
+                    warnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
+                }
+        
+                // Ajouter les émissions nettes au total
                 totalEmissions += netEmissions * weightTonnes;
             });
+        
+            // Afficher les avertissements s'il y en a
+            if (warnings.length > 0) {
+                const warningMessage = warnings.join("<br>");
+                document.getElementById("warning-message").innerHTML = `<strong>Avertissements :</strong><br>${warningMessage}`;
+            } else {
+                document.getElementById("warning-message").innerHTML = ""; // Nettoyer si aucun avertissement
+            }
+        
             return totalEmissions;
         }
+
 
         window.onload = function() {
             loadMaterialsData();
             loadVehicleData();
+            loadAdaptationData();
         };
     </script>
 </body>

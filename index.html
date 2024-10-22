@@ -76,6 +76,7 @@
         }
 
     </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <div class="container">
@@ -83,7 +84,8 @@
         <form id="loginForm" onsubmit="return handleLogin(event)">
             <input type="text" id="username" placeholder="Nom d'utilisateur" required><br>
             <input type="password" id="password" placeholder="Mot de passe" required><br>
-            <div class="g-recaptcha" data-sitekey="6Lcm9WgqAAAAAJU0FThDhKPHNpgdzYcNswZiEidW"></div>
+            <div class="g-recaptcha" data-sitekey="6Lfo_2gqAAAAAGStZ1IPZSLKORoW_48bKjNiBhPk"></div>
+            <br/>
             <div class="options">
               <div class="remember-me">
                 <input type="checkbox" id="rememberMe">
@@ -104,7 +106,6 @@
         </form>
     </div>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script type="text/javascript">
       (function() {
         emailjs.init("QSBLibzLIomIh4Uxc");

@@ -1,238 +1,236 @@
-{
-  "MaterialAdaptation": [
+[
     {
-      "Matériau": "Plastique rigide PS-PSE",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PS-PSE",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique biosourcé PP",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique biosourcé PP",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique pétrosourcé PP",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique pétrosourcé PP",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique biosourcé PE",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique biosourcé PE",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique pétrosourcé PE",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique pétrosourcé PE",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Acier",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 0
+        "Matériau": "Acier",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Aluminium",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 0
+        "Matériau": "Aluminium",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Verre",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 0
+        "Matériau": "Verre",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Carton",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Carton",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 1,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique pétrosourcé PET",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique pétrosourcé PET",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique biosourcé PET",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique biosourcé PET",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Ordures ménagères résiduelles",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Ordures ménagères résiduelles",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Déchets putrescibles",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Déchets putrescibles",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 1,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Céramiques et autres inertes",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 0
+        "Matériau": "Céramiques et autres inertes",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Bois",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Bois",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Autres plastiques complexes",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Autres plastiques complexes",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PVC",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PVC",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique moyen",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique moyen",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Déchets alimentaires",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Déchets alimentaires",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 1,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Déchets de cuisine",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Déchets de cuisine",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 1,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Plastique rigide PE bouteilles",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PE bouteilles",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PE autres emballages",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PE autres emballages",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique souple PE",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique souple PE",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PP bouteilles",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PP bouteilles",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PP autres emballages",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PP autres emballages",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PET bouteilles",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PET bouteilles",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PET autres emballages",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PET autres emballages",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PET/Recyclage paillettes",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PET/Recyclage paillettes",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PET/Recyclage granulés",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PET/Recyclage granulés",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique souple PE/Recyclage granulés",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique souple PE/Recyclage granulés",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PP/Recyclage granulés",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PP/Recyclage granulés",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PE/Recyclage paillettes",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PE/Recyclage paillettes",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PE/Recyclage granulés",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PE/Recyclage granulés",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Aluminium/Recyclage",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 0
+        "Matériau": "Aluminium/Recyclage",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Verre/Recyclage",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 0
+        "Matériau": "Verre/Recyclage",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Carton/Recyclage",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Carton/Recyclage",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 1,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Déchets de cuisine/Méthanisation",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 1,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Déchets de cuisine/Méthanisation",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 1,
+        "Adapté à l'Incinération": 0
     },
     {
-      "Matériau": "Bois de classe B",
-      "Adapté au Recyclage": 0,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Bois de classe B",
+        "Adapté au Recyclage": 0,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     },
     {
-      "Matériau": "Plastique rigide PVC/Recyclage",
-      "Adapté au Recyclage": 1,
-      "Adapté à la Méthanisation": 0,
-      "Adapté à l'Incinération": 1
+        "Matériau": "Plastique rigide PVC/Recyclage",
+        "Adapté au Recyclage": 1,
+        "Adapté à la Méthanisation": 0,
+        "Adapté à l'Incinération": 1
     }
-  ]
-}
+]

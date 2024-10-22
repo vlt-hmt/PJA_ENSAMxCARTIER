@@ -247,7 +247,6 @@
 
         // Initialisation du captcha lors du chargement de la page
         window.onload = function() {
-            displayCaptcha();
             const rememberMe = localStorage.getItem('rememberMe');
             if (rememberMe) {
                 document.getElementById('username').value = localStorage.getItem('username');

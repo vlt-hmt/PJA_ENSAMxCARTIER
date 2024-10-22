@@ -6,19 +6,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="../script.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div> <!-- Overlay text -->
+        <div class="header-overlay">ENSAM x Cartier</div>
     </div>
 
     <header class="menu">
         <div id="menu-container"></div>
         <script>
-            // Charger le menu dans l'élément avec l'ID "menu-container"
             fetch('../menu.html')
                 .then(response => {
                     if (!response.ok) {
@@ -38,51 +35,67 @@
         <p>D'après les données de la campagne EOY 2024, l'histogramme ci-dessous représente l'impact Carbone théorique calculé par la maison Cartier à l'aide de coefficients en kgCO2eq/kg matière.</p>
         <p>Sous cet histogramme, il est possible de sélectionner un pays et d'avoir plus d'informations localement par pays.</p>
         <canvas id="materialsChart" width="800" height="400"></canvas>
-            <div>
-    <label for="countrySelector">Sélectionnez un pays :</label>
-    <select id="countrySelector">
-        <option value="Germany">Allemagne</option>
-        <option value="France">France</option>
-        <option value="Italy">Italie</option>
-        <option value="Holland">Pays-Bas</option>
-        <option value="Spain">Espagne</option>
-        <option value="Switzerland">Suisse</option>
-        <option value="UK">Royaume-Uni</option>
-        <option value="China">Chine</option>
-        <option value="USA">États-Unis</option>
-        <!-- Ajoutez d'autres options de pays si nécessaire -->
-    </select>
-</div>
-<div id="pieChartMass"></div>
-<div id="pieChartCO2"></div>
+        <div>
+            <label for="countrySelector">Sélectionnez un pays :</label>
+            <select id="countrySelector">
+                <option value="Germany">Allemagne</option>
+                <option value="France">France</option>
+                <option value="Italy">Italie</option>
+                <option value="Holland">Pays-Bas</option>
+                <option value="Spain">Espagne</option>
+                <option value="Switzerland">Suisse</option>
+                <option value="UK">Royaume-Uni</option>
+                <option value="China">Chine</option>
+                <option value="USA">États-Unis</option>
+            </select>
+        </div>
+        <canvas id="pieChartMass" width="400" height="400"></canvas>
+        <canvas id="pieChartCO2" width="400" height="400"></canvas>
     </main>
 
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>
-    
+
     <script>
+        fetch('../static/json/pays_mat_co2.json'); // Variable pour stocker les données JSON chargées
+
+        // Palette de couleurs pour chaque matériau
+        const materialColors = {
+            "MDF LIGHT": "#FF6384",
+            "RECYCLED CARDBOARD": "#36A2EB",
+            "RECYCLED POLYESTER": "#FFCE56",
+            "MICROFIBER": "#4BC0C0",
+            "ALUMINIUM": "#9966FF",
+            "PAPER": "#FF9F40",
+            "RECYCLED PMMA": "#C9CBCF",
+            "RECYCLED PP": "#E7E9ED",
+            "PVA": "#8BC34A",
+            "PET": "#00ACC1"
+        };
+
         // Charger le fichier JSON et créer l'histogramme
-        fetch('../static/json/materials.json') // Remplacez par le chemin correct vers votre fichier JSON
+        fetch('../static/json/materials.json')
             .then(response => response.json())
             .then(data => {
+                jsonData = data; // Stocker les données JSON dans la variable
                 const labels = data.map(item => item["Material Family"]);
                 const co2Data = data.map(item => item["Impact CO2 (t CO2e)"]);
                 const weightData = data.map(item => item["Material weight (t)"]);
 
                 const ctx = document.getElementById('materialsChart').getContext('2d');
-                const materialsChart = new Chart(ctx, {
+                new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: labels,
                         datasets: [{
                             label: 'Impact CO2 (t CO2e)',
                             data: co2Data,
-                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            backgroundColor: labels.map(label => materialColors[label] || 'rgba(75, 192, 192, 0.5)'),
                         }, {
                             label: 'Material Weight (t)',
                             data: weightData,
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            backgroundColor: labels.map(label => materialColors[label] || 'rgba(255, 99, 132, 0.5)'),
                         }]
                     },
                     options: {
@@ -93,75 +106,60 @@
                         }
                     }
                 });
+
+                // Créer les graphiques circulaires initiaux
+                const initialCountry = document.getElementById('countrySelector').value;
+                createPieCharts(initialCountry);
             })
             .catch(error => console.error('Erreur lors du chargement du JSON:', error));
-            // Charger les données JSON
-const data = [
-    {
-        "STAINLESS STEEL": "Germany",
-        "MDF LIGHT": "209.2",
-        "RECYCLED CARDBOARD": "40.6",
-        "RECYCLED POLYESTER": "32.1",
-        "MICROFIBER": "14.7",
-        "ALUMINIUM": "4.6",
-        "PAPER": "0.2",
-        "RECYCLED PMMA": "2.7",
-        "RECYCLED PP": "6.7",
-        "PVA": "4.8",
-        "PET": "0.1"
-    },
-    // Ajoutez les autres pays ici...
-];
-// Fonction pour obtenir les données d'un pays sélectionné
-function getCountryData(country) {
-    return data.find(item => item["STAINLESS STEEL"] === country);
-}
-// Fonction pour créer les graphiques circulaires
-function createPieCharts(country) {
-    const countryData = getCountryData(country);
-    if (!countryData) return;
-    const labels = Object.keys(countryData).slice(1); // Exclure le pays
-    const masses = Object.values(countryData).slice(1).map(val => parseFloat(val.replace(",", ".")));
-    // Calculer le total pourcentage pour chaque graphique
-    const totalMass = masses.reduce((acc, val) => acc + val, 0);
-    const massPercentages = masses.map(mass => (mass / totalMass) * 100);
-    // Configuration du graphique de masse
-    const massConfig = {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: massPercentages,
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Pourcentage de masse par matériau'
-                }
-            }
+
+        // Fonction pour obtenir les données d'un pays sélectionné
+        function getCountryData(country) {
+            if (!jsonData) return null;
+            return jsonData.find(item => item["Country"] === country);
         }
-    };
-    // Dessiner les graphiques
-    const ctxMass = document.getElementById('pieChartMass').getContext('2d');
-    new Chart(ctxMass, massConfig);
-}
-// Mettre à jour les graphiques lors de la sélection d'un pays
-document.getElementById('countrySelector').addEventListener('change', (event) => {
-    const selectedCountry = event.target.value;
-    createPieCharts(selectedCountry);
-});
-// Charger les graphiques initiaux avec le premier pays sélectionné
-window.onload = function () {
-    const initialCountry = document.getElementById('countrySelector').value;
-    createPieCharts(initialCountry);
-};
+
+        // Fonction pour créer les graphiques circulaires
+        function createPieCharts(country) {
+            const countryData = getCountryData(country);
+            if (!countryData) return;
+            const labels = Object.keys(countryData).slice(1); // Exclure le pays
+            const masses = Object.values(countryData).slice(1).map(val => parseFloat(val.replace(",", ".")));
+
+            const totalMass = masses.reduce((acc, val) => acc + val, 0);
+            const massPercentages = masses.map(mass => (mass / totalMass) * 100);
+
+            // Configuration du graphique de masse
+            const massConfig = {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: massPercentages,
+                        backgroundColor: labels.map(label => materialColors[label] || '#CCCCCC'),
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Pourcentage de masse par matériau' }
+                    }
+                }
+            };
+
+            // Dessiner les graphiques circulaires
+            const ctxMass = document.getElementById('pieChartMass').getContext('2d');
+            new Chart(ctxMass, massConfig);
+
+            // Configurer et dessiner les autres graphiques si nécessaire...
+        }
+
+        // Mettre à jour les graphiques lors de la sélection d'un pays
+        document.getElementById('countrySelector').addEventListener('change', (event) => {
+            const selectedCountry = event.target.value;
+            createPieCharts(selectedCountry);
+        });
     </script>
 </body>
 </html>

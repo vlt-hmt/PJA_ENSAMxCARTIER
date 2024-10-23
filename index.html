@@ -204,6 +204,28 @@
                 document.getElementById('rememberMe').checked = true;
             }
         };
+
+        function sendResetRequest(event) {
+            event.preventDefault(); // Empêche la soumission normale du formulaire
+
+            const userEmail = document.getElementById('userEmail').value;
+
+            const templateParams = {
+              user_email: userEmail,
+              admin_email: 'pjt.ensam.s9@gmail.com',
+              message: `Une demande de réinitialisation de mot de passe a été faite pour l'adresse e-mail suivante : ${userEmail}`
+            };
+
+            emailjs.send('service_y8hi5kg', 'template_j3w1ki3', templateParams)
+              .then((response) => {
+                console.log('Email envoyé avec succès !', response.status, response.text);
+                alert('Votre demande de réinitialisation a été envoyée à l\'administrateur.');
+              })
+              .catch((error) => {
+                console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+                alert('Erreur : impossible d\'envoyer votre demande. Veuillez réessayer plus tard.');
+              });
+        }
     </script>
 </body>
 </html>

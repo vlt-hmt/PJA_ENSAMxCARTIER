@@ -4,7 +4,7 @@
     <!-- Métadonnées -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.19 - Comparaison de Scénarios</title>
+    <title>Version 2.20 - Comparaison de Scénarios</title>
     <!-- Feuilles de style -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
@@ -159,7 +159,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.19 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.20 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -278,8 +278,8 @@
     </main>
 
     <!-- Inclusion des scripts nécessaires -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script>
         // Variables globales
@@ -295,10 +295,11 @@
             let shades = [];
             // Convertir la couleur de base en HSL
             let hsl = hexToHSL(baseColor);
-            let lightnessIncrement = 50 / (count + 1); // Ajuster la valeur pour répartir les nuances
+            let lightnessIncrement = 5; // Incrément réduit pour des nuances plus proches
 
-            for (let i = 1; i <= count; i++) {
+            for (let i = 0; i < count; i++) {
                 let newLightness = hsl.l - (i * lightnessIncrement);
+                if (newLightness < 20) newLightness = 20; // Empêcher une luminosité trop basse
                 let newColor = `hsl(${hsl.h}, ${hsl.s}%, ${newLightness}%)`;
                 shades.push(newColor);
             }
@@ -352,7 +353,8 @@
                     acc[item.Matériau] = {
                         "Recyclage": item["Adapté au Recyclage"],
                         "Méthanisation": item["Adapté à la Méthanisation"],
-                        "Incinération": item["Adapté à l'Incinération"]
+                        "Incinération": item["Adapté à l'Incinération"],
+                        "Enfouissement": 1 // Supposons que tous les matériaux peuvent être enfouis
                     };
                     return acc;
                 }, {});
@@ -647,19 +649,30 @@
             const allocationInput = document.getElementById('allocation-coeff');
             const allocationCoefficient = parseFloat(allocationInput.value) / 100;
 
+            // Réinitialiser les contrôles d'itinéraire sur la carte
             routeControls.forEach(control => {
-                control.getPlan().setWaypoints([]);
                 map.removeControl(control);
             });
             routeControls = [];
 
+            // Réinitialiser les messages
             const statusMessage = document.getElementById('status-message');
             const errorMessage = document.getElementById('error-message');
             statusMessage.textContent = 'Calcul des distances en cours...';
             errorMessage.textContent = '';
 
+            // Vider les conteneurs de résultats
             const distanceTableContainer = document.querySelector("#distance-table-container");
             distanceTableContainer.innerHTML = '';
+
+            // Réinitialiser les variables
+            const detailedTable = document.querySelector("#detailed-summary-table tbody");
+            detailedTable.innerHTML = '';
+
+            let allWarnings = [];
+            let storageLocations = [];
+            let storageColors = {};
+            let resultsByStorage = {};
 
             const storageGroups = document.querySelectorAll("#storage-container .input-group");
             const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
@@ -678,15 +691,6 @@
 
             let totalCalculations = storageGroups.length * treatmentGroups.length;
             let completedCalculations = 0;
-
-            const detailedTable = document.querySelector("#detailed-summary-table tbody");
-            detailedTable.innerHTML = '';
-
-            let allWarnings = [];  // Pour stocker tous les avertissements cumulés
-
-            let storageLocations = [];
-            let storageColors = {};
-            let resultsByStorage = {};
 
             // Collecter les lieux de stockage et assigner des couleurs de base
             storageGroups.forEach((storageGroup, index) => {

@@ -6,7 +6,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../LOG.js" defer></script>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
@@ -32,7 +31,7 @@
     </header>
 
     <main class="content">
-        <h1>Données Matériaux Campagne EOY2024</h1>
+        <h1>Données Matériaux Campagne EOY2024, V1.01</h1>
         <p>D'après les données de la campagne EOY 2024, l'histogramme ci-dessous représente l'impact Carbone théorique calculé par la maison Cartier à l'aide de coefficients en kgCO2eq/kg matière.</p>
         <p>Sous cet histogramme, il est possible de sélectionner un pays et d'avoir plus d'informations localement par pays.</p>
         <canvas id="materialsChart" width="800" height="400"></canvas>
@@ -60,8 +59,8 @@
 
     <script>
         let jsonData; // Variable pour stocker les données JSON chargées
+        let pieChartMass, pieChartCO2; // Variables pour les graphiques circulaires
 
-        // Palette de couleurs pour chaque matériau
         const materialColors = {
             "MDF LIGHT": "#FF6384",
             "RECYCLED CARDBOARD": "#36A2EB",
@@ -75,11 +74,10 @@
             "PET": "#00ACC1"
         };
 
-        // Charger le fichier JSON et créer l'histogramme
         fetch('../static/json/materials.json')
             .then(response => response.json())
             .then(data => {
-                jsonData = data; // Stocker les données JSON dans la variable
+                jsonData = data;
                 const labels = data.map(item => item["Material Family"]);
                 const co2Data = data.map(item => item["Impact CO2 (t CO2e)"]);
                 const weightData = data.map(item => item["Material weight (t)"]);
@@ -108,7 +106,6 @@
                     }
                 });
 
-                // Charger le fichier JSON pour les données par pays et créer les graphiques circulaires
                 fetch('../static/json/pays_mat_co2.json')
                     .then(response => response.json())
                     .then(countryData => {
@@ -118,23 +115,22 @@
             })
             .catch(error => console.error('Erreur lors du chargement du JSON:', error));
 
-        // Fonction pour obtenir les données d'un pays sélectionné
         function getCountryData(country, countryData) {
             return countryData.find(item => item["Country"] === country);
         }
 
-        // Fonction pour créer les graphiques circulaires
         function createPieCharts(country, countryData) {
             const countryInfo = getCountryData(country, countryData);
             if (!countryInfo) return;
-            const labels = Object.keys(countryInfo).slice(1); // Exclure le pays
-            const masses = Object.values(countryInfo).slice(1).map(val => parseFloat(val.replace(",", ".")));
 
+            const labels = Object.keys(countryInfo).slice(1);
+            const masses = Object.values(countryInfo).slice(1).map(val => parseFloat(val.replace(",", ".")));
             const totalMass = masses.reduce((acc, val) => acc + val, 0);
             const massPercentages = masses.map(mass => (mass / totalMass) * 100);
 
-            // Configuration du graphique de masse
-            const massConfig = {
+            if (pieChartMass) pieChartMass.destroy();
+            const ctxMass = document.getElementById('pieChartMass').getContext('2d');
+            pieChartMass = new Chart(ctxMass, {
                 type: 'pie',
                 data: {
                     labels: labels,
@@ -150,14 +146,9 @@
                         title: { display: true, text: 'Pourcentage de masse par matériau' }
                     }
                 }
-            };
-
-            // Dessiner les graphiques circulaires
-            const ctxMass = document.getElementById('pieChartMass').getContext('2d');
-            new Chart(ctxMass, massConfig);
+            });
         }
 
-        // Mettre à jour les graphiques lors de la sélection d'un pays
         document.getElementById('countrySelector').addEventListener('change', (event) => {
             const selectedCountry = event.target.value;
             fetch('../static/json/pays_mat_co2.json')

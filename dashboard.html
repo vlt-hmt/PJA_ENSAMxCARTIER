@@ -18,7 +18,7 @@
     <header class="menu">
         <nav>
              <ul>
-                  <li><a href="index.html">Accueil</a></li>
+                  <li><a href="dashboard.html">Accueil</a></li>
                   <li><a href="pages/onglet1.html">Onglet 1</a></li>
                   <li><a href="pages/route_calc.html">itinéraire t'as peur</a></li>
     	          <li><a href="pages/onglet3.html">Onglet 3</a></li>
@@ -40,5 +40,15 @@
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Vérifier si l'utilisateur est connecté en vérifiant le localStorage
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (!isLoggedIn) {
+          // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+          window.location.href = 'index.html';
+        }
+      });
+    </script>
 </body>
 </html>

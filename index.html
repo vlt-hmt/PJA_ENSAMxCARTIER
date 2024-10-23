@@ -93,11 +93,14 @@
                 <input type="checkbox" id="rememberMe">
                 <label for="rememberMe">Se souvenir de moi</label>
               </div>
+                <div class="forgot-password">
+                <a href="#" onclick="handleForgotPassword()">Mot de passe oublié ?</a>
+              </div>
             </div>
             <div class="error-message" id="errorMessage"></div>
             <button type="submit">Se connecter</button>
         </form>
-        <form id="resetPasswordRequestForm" onsubmit="sendResetRequest(event)">
+        <form id="resetPasswordRequestForm" onsubmit="sendResetRequest(event)" style="display:none;">
             <input type="email" id="userEmail" placeholder="Votre adresse e-mail" required>
             <button type="submit">Demander la réinitialisation du mot de passe</button>
         </form>
@@ -189,14 +192,8 @@
 
 
         function handleForgotPassword() {
-          event.preventDefault();
-          const username = document.getElementById('username').value;
-          const generatedPassword = Math.random().toString(36).slice(-8); // Génère un mot de passe aléatoire
-          if (!username) {
-              alert('Veuillez entrer votre nom d\'utilisateur pour réinitialiser le mot de passe.');
-          } else {
-            alert('Un lien de réinitialisation du mot de passe a été envoyé à votre adresse e-mail.');
-          }
+            document.getElementById("resetPasswordRequestForm").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
         }
 
         // Initialisation du captcha lors du chargement de la page

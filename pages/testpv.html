@@ -4,7 +4,7 @@
     <!-- Métadonnées -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.21 - Comparaison de Scénarios</title>
+    <title>Version 2.22 - Comparaison de Scénarios</title>
     <!-- Feuilles de style -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
@@ -159,7 +159,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.21 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.22 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -239,6 +239,7 @@
                         <option value="Recyclage">Recyclage</option>
                         <option value="Méthanisation">Méthanisation</option>
                         <option value="Incinération">Incinération</option>
+                        <!-- Option Enfouissement supprimée -->
                     </select>
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
                     <div class="autocomplete-suggestions"></div>
@@ -273,12 +274,18 @@
                 </table>
             </div>
             <div id="warning-message" style="color: red; font-weight: bold; margin-top: 20px;"></div>
+
+            <!-- Bouton pour télécharger le PDF -->
+            <button onclick="downloadPDF()">Télécharger le récapitulatif en PDF</button>
         </section>
     </main>
 
     <!-- Inclusion des scripts nécessaires -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <!-- Inclusion de jsPDF et jsPDF-AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <script>
         // Variables globales
@@ -353,6 +360,7 @@
                         "Recyclage": item["Adapté au Recyclage"],
                         "Méthanisation": item["Adapté à la Méthanisation"],
                         "Incinération": item["Adapté à l'Incinération"]
+                        // "Enfouissement" supprimé
                     };
                     return acc;
                 }, {});
@@ -609,6 +617,7 @@
                 <option value="Recyclage">Recyclage</option>
                 <option value="Méthanisation">Méthanisation</option>
                 <option value="Incinération">Incinération</option>
+                <!-- Option Enfouissement supprimée -->
             `;
 
             const removeButton = document.createElement("button");
@@ -936,6 +945,60 @@
                 }
             });
             return totalEmissions;
+        }
+
+        // Fonction pour télécharger le PDF
+        function downloadPDF() {
+            // Récupérer les tableaux à inclure dans le PDF
+            const distanceTables = document.querySelectorAll('.distance-table');
+            const detailedSummaryTable = document.querySelector('#detailed-summary-table');
+
+            // Initialiser jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            let yOffset = 10;
+
+            // Ajouter un titre au PDF
+            doc.setFontSize(18);
+            doc.text('Récapitulatif des résultats', 105, yOffset, null, null, 'center');
+            yOffset += 10;
+
+            // Ajouter les tableaux de distances
+            distanceTables.forEach((table) => {
+                const storageName = table.previousElementSibling.textContent;
+                doc.setFontSize(14);
+                doc.text(storageName, 10, yOffset);
+                yOffset += 10;
+
+                doc.autoTable({
+                    html: table,
+                    startY: yOffset,
+                    styles: { fontSize: 8 },
+                    headStyles: { fillColor: [41, 128, 185] },
+                    alternateRowStyles: { fillColor: [226, 226, 226] },
+                    margin: { left: 10, right: 10 },
+                });
+
+                yOffset = doc.lastAutoTable.finalY + 10;
+            });
+
+            // Ajouter le tableau récapitulatif détaillé
+            doc.setFontSize(16);
+            doc.text('Récapitulatif détaillé', 105, yOffset, null, null, 'center');
+            yOffset += 10;
+
+            doc.autoTable({
+                html: detailedSummaryTable,
+                startY: yOffset,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [41, 128, 185] },
+                alternateRowStyles: { fillColor: [226, 226, 226] },
+                margin: { left: 10, right: 10 },
+            });
+
+            // Enregistrer le PDF
+            doc.save('recapitulatif.pdf');
         }
 
         window.onload = function() {

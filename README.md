@@ -32,5 +32,4 @@ voilà le github collaboratif, ça vous va?
 
 22/10 : Valentin a créé un onglet de connexion en plus d'un onglet dashboard principal, le calcul d'itinéraire fonctionne comme dans l'ancienne version.
 
-23/10 : ça part en steak, y'a un Chatbot, l'onglet de connexion envoie des mails, c'est terrible, PV a fait un téléchargement de récapitulatif pdf, des couleurs et itinéraires
-    moi j'ai construit des meubles pour l'ENSIM.
+23/10 : ça part en steak, y'a un Chatbot, l'onglet de connexion envoie des mails, c'est terrible, PV a fait un téléchargement de récapitulatif pdf, des couleurs et itinéraires, Baptiste doit faire sa page avec les graphes par pays, pour que l'on voit que l'acier est terrible.

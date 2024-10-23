@@ -155,6 +155,9 @@
                 if (document.getElementById('rememberMe').checked) {
                     localStorage.setItem('userEmail', username);
                 }
+                // Connexion réussie
+                const user = userCredential.user;
+                localStorage.setItem('userToken', user.za);  // Stocker le jeton de connexion dans localStorage
                 window.location.href = 'dashboard.html';
             } catch(error) {
                     document.getElementById('errorMessage').innerText = "Erreur : " + error.message;

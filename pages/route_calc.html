@@ -185,6 +185,7 @@
     </main>
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
+	<a href="#" onclick="logout()">Déconnexion</a>
     </div>
                 <script id="json-data" type="application/json">    
         {
@@ -9391,6 +9392,10 @@
 
                 console.log("map intialized!");
             }
+	    function logout() {
+ 	     localStorage.removeItem('isLoggedIn'); // Supprimer l'état de connexion
+ 	     window.location.href = 'index.html'; // Rediriger vers la page de connexion
+	    }
     </script>
 </body>
 </html>

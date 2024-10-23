@@ -4,7 +4,7 @@
     <!-- Métadonnées -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.22 - Comparaison de Scénarios</title>
+    <title>Version 2.23 - Comparaison de Scénarios</title>
     <!-- Feuilles de style -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
@@ -13,6 +13,20 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
         /* Vos styles existants */
+        /* ... (Vous pouvez inclure ici votre CSS global fourni) ... */
+        /* Je vais inclure le CSS global pour que les styles soient cohérents */
+
+        body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #e0e0e0, #ffffff);
+            color: #333333;
+            transition: all 0.3s ease;
+        }
+        /* ... (le reste de votre CSS global) ... */
+        
+        /* Styles spécifiques pour cette page */
         #material-selection {
             display: flex;
             align-items: center;
@@ -159,7 +173,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.22 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.23 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -279,6 +293,9 @@
             <button onclick="downloadPDF()">Télécharger le récapitulatif en PDF</button>
         </section>
     </main>
+    <div class="footer">
+        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. Tous droits réservés.</p>
+    </div>
 
     <!-- Inclusion des scripts nécessaires -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -953,48 +970,88 @@
             const distanceTables = document.querySelectorAll('.distance-table');
             const detailedSummaryTable = document.querySelector('#detailed-summary-table');
 
-            // Initialiser jsPDF
+            // Initialiser jsPDF en mode paysage
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('landscape');
 
             let yOffset = 10;
 
+            // Ajouter une image (logo ou image d'en-tête)
+            // Assurez-vous que l'image est accessible (par URL ou base64)
+            // Exemple avec une image base64 (vous devrez remplacer 'your_base64_image_string' par votre image)
+            // doc.addImage('data:image/jpeg;base64,your_base64_image_string', 'JPEG', 10, yOffset, 40, 20);
+            // yOffset += 25;
+
             // Ajouter un titre au PDF
-            doc.setFontSize(18);
-            doc.text('Récapitulatif des résultats', 105, yOffset, null, null, 'center');
+            doc.setFontSize(22);
+            doc.setFont('Playfair Display', 'normal');
+            doc.text('Récapitulatif des résultats', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
             yOffset += 10;
+
+            // Ajouter un texte d'introduction
+            doc.setFontSize(14);
+            doc.setFont('Montserrat', 'normal');
+            const introText = "Ce document présente le récapitulatif des scénarios comparés, incluant les émissions liées au transport et au traitement des matériaux sélectionnés.";
+            doc.text(introText, 10, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 20 });
+            yOffset += 20;
+
+            // Ajuster les marges pour les tableaux
+            const margin = { top: yOffset, bottom: 20, left: 10, right: 10 };
 
             // Ajouter les tableaux de distances
             distanceTables.forEach((table) => {
                 const storageName = table.previousElementSibling.textContent;
-                doc.setFontSize(14);
-                doc.text(storageName, 10, yOffset);
-                yOffset += 10;
+                doc.setFontSize(16);
+                doc.setFont('Playfair Display', 'normal');
+                doc.text(storageName, 14, yOffset);
+
+                yOffset += 8;
 
                 doc.autoTable({
                     html: table,
                     startY: yOffset,
-                    styles: { fontSize: 8 },
-                    headStyles: { fillColor: [41, 128, 185] },
-                    alternateRowStyles: { fillColor: [226, 226, 226] },
-                    margin: { left: 10, right: 10 },
+                    styles: {
+                        font: 'Montserrat',
+                        fontSize: 8,
+                        cellPadding: 2,
+                        overflow: 'linebreak'
+                    },
+                    headStyles: { fillColor: [191, 161, 58] }, // Couleur or
+                    alternateRowStyles: { fillColor: [245, 245, 245] },
+                    margin: margin,
+                    theme: 'grid',
+                    tableWidth: 'wrap',
                 });
 
                 yOffset = doc.lastAutoTable.finalY + 10;
+
+                // Vérifier si on dépasse la page
+                if (yOffset >= doc.internal.pageSize.getHeight() - margin.bottom) {
+                    doc.addPage('landscape');
+                    yOffset = margin.top;
+                }
             });
 
             // Ajouter le tableau récapitulatif détaillé
-            doc.setFontSize(16);
-            doc.text('Récapitulatif détaillé', 105, yOffset, null, null, 'center');
+            doc.setFontSize(18);
+            doc.setFont('Playfair Display', 'normal');
+            doc.text('Récapitulatif détaillé', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
             yOffset += 10;
 
             doc.autoTable({
                 html: detailedSummaryTable,
                 startY: yOffset,
-                styles: { fontSize: 8 },
-                headStyles: { fillColor: [41, 128, 185] },
-                alternateRowStyles: { fillColor: [226, 226, 226] },
-                margin: { left: 10, right: 10 },
+                styles: {
+                    font: 'Montserrat',
+                    fontSize: 8,
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                headStyles: { fillColor: [191, 161, 58] },
+                alternateRowStyles: { fillColor: [245, 245, 245] },
+                margin: margin,
+                theme: 'grid',
+                tableWidth: 'wrap',
             });
 
             // Enregistrer le PDF

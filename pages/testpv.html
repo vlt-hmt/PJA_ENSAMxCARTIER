@@ -4,7 +4,7 @@
     <!-- Métadonnées -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.23 - Comparaison de Scénarios</title>
+    <title>Version 2.19 - Comparaison de Scénarios</title>
     <!-- Feuilles de style -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
@@ -13,9 +13,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
         /* Vos styles existants */
-        /* ... (Vous pouvez inclure ici votre CSS global fourni) ... */
-        /* Je vais inclure le CSS global pour que les styles soient cohérents */
-
         body {
             font-family: 'Playfair Display', serif;
             margin: 0;
@@ -173,7 +170,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.23 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.19 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -312,6 +309,7 @@
         let selectedMaterials = [];
         let routeControls = [];
         let adaptationData = {};
+        let allWarnings = []; // Variable globale pour les avertissements
 
         // Fonction pour générer des nuances de couleurs pour un lieu de stockage
         function generateShades(baseColor, count) {
@@ -377,7 +375,6 @@
                         "Recyclage": item["Adapté au Recyclage"],
                         "Méthanisation": item["Adapté à la Méthanisation"],
                         "Incinération": item["Adapté à l'Incinération"]
-                        // "Enfouissement" supprimé
                     };
                     return acc;
                 }, {});
@@ -634,7 +631,6 @@
                 <option value="Recyclage">Recyclage</option>
                 <option value="Méthanisation">Méthanisation</option>
                 <option value="Incinération">Incinération</option>
-                <!-- Option Enfouissement supprimée -->
             `;
 
             const removeButton = document.createElement("button");
@@ -692,7 +688,7 @@
             const detailedTable = document.querySelector("#detailed-summary-table tbody");
             detailedTable.innerHTML = '';
 
-            let allWarnings = [];
+            allWarnings = []; // Réinitialiser les avertissements
             let storageLocations = [];
             let storageColors = {};
             let resultsByStorage = {};
@@ -860,12 +856,12 @@
             }
 
             // Mettre à jour le tableau détaillé
-            updateDetailedSummary(allWarnings);
+            updateDetailedSummary();
 
             statusMessage.textContent = 'Toutes les distances ont été calculées.';
         }
 
-        function updateDetailedSummary(allWarnings) {
+        function updateDetailedSummary() {
             const detailedTable = document.querySelector("#detailed-summary-table tbody");
             detailedTable.innerHTML = '';
 
@@ -897,6 +893,7 @@
                     // Vérifier si le matériau est adapté au traitement choisi
                     if (adaptationData[material.name] && adaptationData[material.name][treatmentOption] === 0) {
                         detailRow.classList.add('non-adapte');
+                        allWarnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentOption.toLowerCase()}.`);
                     }
 
                     detailedTable.appendChild(detailRow);
@@ -939,7 +936,7 @@
             return totalEmissions;
         }
 
-        function calculateTreatmentEmissions(treatmentType, allWarnings) {
+        function calculateTreatmentEmissions(treatmentType) {
             // Calculer les émissions de traitement pour chaque matériau
             let totalEmissions = 0;
             const allocationInput = document.getElementById('allocation-coeff');
@@ -954,12 +951,6 @@
 
                 // Ajouter les émissions nettes au total
                 totalEmissions += netEmissions * weightTonnes;
-
-                // Vérifier si le matériau est adapté au traitement choisi
-                if (adaptationData[material.name] && adaptationData[material.name][treatmentType] === 0) {
-                    // Si le matériau n'est pas adapté, ajouter un avertissement spécifique
-                    allWarnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
-                }
             });
             return totalEmissions;
         }
@@ -974,16 +965,16 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('landscape');
 
-            let yOffset = 10;
+            let yOffset = 20;
 
-            // Ajouter une image (logo ou image d'en-tête)
-            // Assurez-vous que l'image est accessible (par URL ou base64)
-            // Exemple avec une image base64 (vous devrez remplacer 'your_base64_image_string' par votre image)
-            // doc.addImage('data:image/jpeg;base64,your_base64_image_string', 'JPEG', 10, yOffset, 40, 20);
-            // yOffset += 25;
+            // Ajouter le titre "ENSAM x CARTIER"
+            doc.setFontSize(22);
+            doc.setFont('Playfair Display', 'normal');
+            doc.text('ENSAM x CARTIER', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
+            yOffset += 15;
 
             // Ajouter un titre au PDF
-            doc.setFontSize(22);
+            doc.setFontSize(18);
             doc.setFont('Playfair Display', 'normal');
             doc.text('Récapitulatif des résultats', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
             yOffset += 10;
@@ -992,11 +983,26 @@
             doc.setFontSize(14);
             doc.setFont('Montserrat', 'normal');
             const introText = "Ce document présente le récapitulatif des scénarios comparés, incluant les émissions liées au transport et au traitement des matériaux sélectionnés.";
-            doc.text(introText, 10, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 20 });
+            doc.text(introText, 14, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 28 });
             yOffset += 20;
 
+            // Ajouter les avertissements s'il y en a
+            if (allWarnings.length > 0) {
+                doc.setFontSize(12);
+                doc.setTextColor(255, 0, 0); // Rouge
+                doc.text('Avertissements :', 14, yOffset);
+                yOffset += 6;
+                doc.setFontSize(10);
+                allWarnings.forEach(warning => {
+                    doc.text(`- ${warning}`, 14, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 28 });
+                    yOffset += 5;
+                });
+                doc.setTextColor(0, 0, 0); // Reset couleur
+                yOffset += 10;
+            }
+
             // Ajuster les marges pour les tableaux
-            const margin = { top: yOffset, bottom: 20, left: 10, right: 10 };
+            const margin = { top: yOffset, bottom: 20, left: 14, right: 14 };
 
             // Ajouter les tableaux de distances
             distanceTables.forEach((table) => {

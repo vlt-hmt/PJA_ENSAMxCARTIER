@@ -10,6 +10,8 @@
     <script src="../script.js" defer></script>
     <script src="log.js" defer></script>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styleschat.css">
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 </head>
 <body>
     <div class="header-image">
@@ -38,6 +40,15 @@
         <img src="static/images/image_home.jpg" alt="Home Image">
         <div class="dropdown-description">Si jamais il ya besoin d'un sous-titre pour faire stylé sur a page d'accueil le voilà.</div>
     </main>
+    <div id="chat-widget">
+        <div id="chat-header">Chatbot IA</div>
+        <div id="chat-body"></div>
+        <input id="chat-input" type="text" placeholder="Entrez votre message...">
+    </div>
+
+    <button id="chat-button">💬</button>
+
+    <script src="scriptchat.js"></script>
     <div class="footer">
         <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
     </div>

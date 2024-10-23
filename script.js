@@ -1,48 +1,75 @@
-document.getElementById('chat-button').addEventListener('click', function () {
-    const chatWidget = document.getElementById('chat-widget');
-    chatWidget.style.display = chatWidget.style.display === 'none' ? 'block' : 'none';
-});
+// Variable globale pour stocker les données du CSV
+let csvData = {};
 
-document.getElementById('chat-header').addEventListener('click', function () {
-    document.getElementById('chat-widget').style.display = 'none';
-});
-
-document.getElementById('chat-input').addEventListener('keypress', async function (e) {
-    if (e.key === 'Enter') {
-        const userMessage = e.target.value;
-        addMessage('You: ' + userMessage);
-        e.target.value = '';
-
-        const botResponse = await getBotResponseFromONNX(userMessage);
-        addMessage('Bot: ' + botResponse);
-    }
-});
-
-function addMessage(message) {
-    const chatBody = document.getElementById('chat-body');
-    const messageElement = document.createElement('div');
-    messageElement.textContent = message;
-    chatBody.appendChild(messageElement);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-async function getBotResponseFromONNX(userMessage) {
-    try {
-        // Charger le modèle ONNX
-        const session = await ort.InferenceSession.create('./distilgpt2.onnx');
-
-        // Préparer l'entrée pour le modèle (simplifié ici)
-        const inputTensor = new ort.Tensor('float32', [userMessage.length], [1]);
-
-        // Exécuter l'inférence
-        const feeds = { input_ids: inputTensor };
-        const results = await session.run(feeds);
-
-        // Récupérer et renvoyer le texte généré
-        const output = results.output.data;
-        return output;
-    } catch (error) {
-        console.error('Erreur:', error);
-        return "Désolé, une erreur est survenue lors de la génération de la réponse.";
+// Fonction générique pour remplir un menu déroulant à partir d'une colonne spécifique d'un fichier CSV
+function populateDropdown(csvFilePath, columnName, dropdownId, delimiter = ',') {
+    // Charger les données CSV si elles ne sont pas déjà chargées
+    if (csvData[csvFilePath]) {
+        createDropdownOptions(csvData[csvFilePath], columnName, dropdownId);
+    } else {
+        loadCSV(csvFilePath, function(data) {
+            createDropdownOptions(data, columnName, dropdownId);
+        }, delimiter);
     }
 }
+
+// Fonction pour créer les options du menu déroulant
+function createDropdownOptions(data, columnName, dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.innerHTML = ''; // Vider les options existantes
+    data.forEach(function(row) {
+        const option = document.createElement('option');
+        option.value = row[columnName];
+        option.text = row[columnName];
+        dropdown.appendChild(option);
+    });
+}
+
+// Fonction générique pour afficher des informations basées sur une sélection
+function displayInfo(selectedValue, outputDivId, csvFilePath, keyMapping, columnKey, delimiter = ',') {
+    const data = csvData[csvFilePath];
+    if (!data) {
+        console.error(`Les données du fichier CSV (${csvFilePath}) ne sont pas chargées.`);
+        return;
+    }
+
+    const selectedData = data.find(row => row[columnKey] === selectedValue);
+    if (!selectedData) {
+        console.error(`Donnée non trouvée : ${selectedValue}`);
+        return;
+    }
+
+    const outputDiv = document.getElementById(outputDivId);
+    outputDiv.innerHTML = ''; // Vider les informations précédentes
+
+    // Afficher les données correspondantes à partir du keyMapping
+    for (let key in keyMapping) {
+        const value = selectedData[key];
+        const displayText = `${keyMapping[key]} : ${value || 'N/A'}`;
+        const p = document.createElement('p');
+        p.textContent = displayText;
+        outputDiv.appendChild(p);
+    }
+}
+
+// Exemple d'utilisation dans votre projet spécifique
+// Appel pour charger les matériaux et remplir le menu déroulant dans l'onglet 4
+populateDropdown('/static/csv/impact_benefices_fdv.csv', 'Matériau', 'materialDropdown', ';');
+
+// Ajout d'un écouteur d'événement pour afficher les informations lorsqu'un matériau est sélectionné
+document.getElementById('materialDropdown').addEventListener('change', function() {
+    const selectedMaterial = this.value;
+    if (selectedMaterial) {
+        // Exemple de keyMapping dans un projet spécifique
+        const keyMapping = {
+            'Incinération - Impact (kg éq. CO2/tonne)': 'Impact de l\'incinération',
+            'Recyclage - Impact (kg éq. CO2/tonne)': 'Impact du recyclage',
+            'Méthanisation - Impact (kg éq. CO2/tonne)': 'Impact de la méthanisation',
+            'Incinération - Émissions Évitées (kg éq. CO2/tonne)': 'Émissions évitées par l\'incinération',
+            'Recyclage - Émissions Évitées (kg éq. CO2/tonne)': 'Émissions évitées par le recyclage',
+            'Méthanisation - Émissions Évitées (kg éq. CO2/tonne)': 'Émissions évitées par la méthanisation'
+        };
+        displayInfo(selectedMaterial, 'materialInfo', '../../static/csv/impact_benefices_fdv.csv', keyMapping, 'Matériau', ';');
+    }
+});
+// aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier V1.01</div>
+        <div class="header-overlay">ENSAM x Cartier</div>
     </div>
 
     <header class="menu">
@@ -73,6 +73,10 @@
         fetch('../static/json/materials.json')
             .then(response => response.json())
             .then(data => {
+                if (!Array.isArray(data)) {
+                    console.error('Les données JSON pour materials.json ne sont pas un tableau.');
+                    return;
+                }
                 jsonData = data;
                 const labels = data.map(item => item["Material Family"]);
                 const co2Data = data.map(item => item["Impact CO2 (t CO2e)"]);
@@ -105,6 +109,10 @@
                 fetch('../static/json/pays_mat_co2.json')
                     .then(response => response.json())
                     .then(countryData => {
+                        if (!Array.isArray(countryData)) {
+                            console.error('Les données JSON pour pays_mat_co2.json ne sont pas un tableau.');
+                            return;
+                        }
                         createPieCharts(document.getElementById('countrySelector').value, countryData);
                     })
                     .catch(error => console.error('Erreur lors du chargement du fichier JSON des pays:', error));
@@ -112,12 +120,15 @@
             .catch(error => console.error('Erreur lors du chargement du JSON:', error));
 
         function getCountryData(country, countryData) {
-            return countryData.find(item => item["Country"] === country);
+            return Array.isArray(countryData) ? countryData.find(item => item["Country"] === country) : null;
         }
 
         function createPieCharts(country, countryData) {
             const countryInfo = getCountryData(country, countryData);
-            if (!countryInfo) return;
+            if (!countryInfo) {
+                console.warn(`Aucune donnée trouvée pour le pays sélectionné : ${country}`);
+                return;
+            }
 
             const labels = Object.keys(countryInfo).slice(1);
             const masses = Object.values(countryInfo).slice(1).map(val => parseFloat(val.replace(",", ".")));
@@ -172,6 +183,10 @@
             fetch('../static/json/pays_mat_co2.json')
                 .then(response => response.json())
                 .then(countryData => {
+                    if (!Array.isArray(countryData)) {
+                        console.error('Les données JSON pour pays_mat_co2.json ne sont pas un tableau.');
+                        return;
+                    }
                     createPieCharts(selectedCountry, countryData);
                 })
                 .catch(error => console.error('Erreur lors du chargement du fichier JSON des pays:', error));

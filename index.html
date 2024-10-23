@@ -163,7 +163,7 @@
             const email = document.getElementById('email').value;
             // Ici vous pouvez ajouter le code pour envoyer un email avec le mot de passe
             const generatedPassword = Math.random().toString(36).slice(-8); // Génère un mot de passe aléatoire
-const templateParams = {
+            const templateParams = {
                 to_name: email,
                 to_email: email,
                 from_name: 'PJT S9 team',
@@ -201,7 +201,7 @@ const templateParams = {
 
         // Initialisation du captcha lors du chargement de la page
         window.onload = function() {
-            const rememberMe = localStorage.getItem('rememberMe');
+            const rememberedEmail = localStorage.getItem('userEmail');
             if (rememberedEmail) {
                 document.getElementById('username').value = rememberedEmail;
                 document.getElementById('rememberMe').checked = true;

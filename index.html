@@ -1,21 +1,236 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot ONNX</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <title>Page de connexion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+        input[type="text"], input[type="password"], input[type="email"], input[type="checkbox"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .captcha {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .captcha input {
+            width: 60px;
+            margin-left: 10px;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        .message {
+            color: black;
+            margin: 10px 0;
+        }
+        .options {
+            display: flex;
+            justify-content: center; /* Pour centrer l'ensemble des options */
+            align-items: center;
+            gap: 20px; /* Espacement entre les éléments */
+            margin: 10px 0;
+        }
+        .forgot-password {
+            text-align: right;
+        }
+        .error-message {
+            color: red;
+            margin: 10px 0;
+        }
+
+    </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
 </head>
 <body>
-    <div id="chat-widget">
-        <div id="chat-header">Chatbot IA</div>
-        <div id="chat-body"></div>
-        <input id="chat-input" type="text" placeholder="Entrez votre message...">
+    <div class="container">
+        <h2>Connexion</h2>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <input type="text" id="username" placeholder="Nom d'utilisateur" required><br>
+            <input type="password" id="password" placeholder="Mot de passe" required><br>
+            <div class="g-recaptcha" data-sitekey="6Lfo_2gqAAAAAGStZ1IPZSLKORoW_48bKjNiBhPk"></div>
+            <br/>
+            <div class="options">
+              <div class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Se souvenir de moi</label>
+              </div>
+                <div class="forgot-password">
+                <a href="#" onclick="handleForgotPassword()">Mot de passe oublié ?</a>
+              </div>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <button type="submit">Se connecter</button>
+        </form>
+        <form id="resetPasswordRequestForm" onsubmit="sendResetRequest(event)" style="display:none;">
+            <input type="email" id="userEmail" placeholder="Votre adresse e-mail" required>
+            <button type="submit">Demander la réinitialisation du mot de passe</button>
+        </form>
+        <h3>Nouvel utilisateur ?</h3>
+        <form id="signupForm" onsubmit="return handleSignup(event)">
+            <input type="email" id="email" placeholder="Adresse e-mail" required><br>
+            <button type="submit">Recevoir mot de passe</button>
+        </form>
     </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function() {
+        emailjs.init("QSBLibzLIomIh4Uxc");
+      })();
+    </script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzpI692v8PsQ0PWdcGtJYgJIFf6OIfMFE",
+            authDomain: "pjt-ensam-cartier.firebaseapp.com",
+            projectId: "pjt-ensam-cartier",
+            storageBucket: "pjt-ensam-cartier.appspot.com",
+            messagingSenderId: "708937457593",
+            appId: "1:708937457593:web:116f36369aab30e4616068",
+            measurementId: "G-2EPWZY0EP0"
 
-    <button id="chat-button">💬</button>
+        };
+        
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
 
-    <script src="script.js"></script>
+            const response = grecaptcha.getResponse();
+            if (response.length === 0) {
+                document.getElementById('errorMessage').innerText = 'Veuillez vérifier le reCAPTCHA.';
+                return false;
+            }
+
+            if (username === "" || password === "") {
+                document.getElementById('errorMessage').innerText = 'Veuillez remplir tous les champs.';
+                return false;
+            }
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(username, password);
+                const user = userCredential.user;
+                
+                alert("Connexion réussie");
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('userEmail', username);
+                }
+                // Connexion réussie
+                localStorage.setItem('userToken', user.accessToken);  // Stocker le jeton de connexion dans localStorage
+                localStorage.setItem('isLoggedIn', 'true');                
+                window.location.href = 'dashboard.html';
+            } catch(error) {
+                    document.getElementById('errorMessage').innerText = "Erreur : " + error.message;
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            // Ici vous pouvez ajouter le code pour envoyer un email avec le mot de passe
+            const generatedPassword = Math.random().toString(36).slice(-8); // Génère un mot de passe aléatoire
+            const templateParams = {
+                to_name: email,
+                to_email: email,
+                from_name: 'PJT S9 team',
+                subject: 'Votre mot de passe',
+                message: `Hello,\n\nYour new password is : ${generatedPassword}\n\nPlease connect with your ID : ${email}\n\nThank you.`
+            };
+            emailjs.send("service_y8hi5kg", "template_vqvfpvv", templateParams)
+                .then(() => {
+                    alert('Un email a été envoyé à ' + email + ' avec votre mot de passe.');
+                    auth.createUserWithEmailAndPassword(email, generatedPassword);
+                })
+                .catch((error) => {
+                 alert('Erreur lors de l\'envoi de l\'email : ' + error.text);
+                })
+
+                .then(()=> {
+                    alert("Inscription réussie. Vous pouvez maintenant vous connecter.");
+                })
+                .catch(error => {
+                    alert("Erreur : " + error.message);
+                });            
+        }
+
+
+        function handleForgotPassword() {
+            document.getElementById("resetPasswordRequestForm").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
+        }
+
+        // Initialisation du captcha lors du chargement de la page
+        window.onload = function() {
+            const rememberedEmail = localStorage.getItem('userEmail');
+            if (rememberedEmail) {
+                document.getElementById('username').value = rememberedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+        };
+
+        function sendResetRequest(event) {
+            event.preventDefault(); // Empêche la soumission normale du formulaire
+
+            const userEmail = document.getElementById('userEmail').value;
+
+            const templateParams = {
+              user_email: userEmail,
+              admin_email: 'pjt.ensam.s9@gmail.com',
+              message: `Une demande de réinitialisation de mot de passe a été faite pour l'adresse e-mail suivante : ${userEmail}`
+            };
+
+            emailjs.send('service_y8hi5kg', 'template_j3w1ki3', templateParams)
+              .then((response) => {
+                console.log('Email envoyé avec succès !', response.status, response.text);
+                alert('Votre demande de réinitialisation a été envoyée à l\'administrateur.');
+              })
+              .catch((error) => {
+                console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+                alert('Erreur : impossible d\'envoyer votre demande. Veuillez réessayer plus tard.');
+              });
+        }
+    </script>
 </body>
 </html>

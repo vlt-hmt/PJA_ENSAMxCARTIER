@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,19 +11,14 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">ENSAM x Cartier</div>
+        <div class="header-overlay">ENSAM x Cartier V1.01</div>
     </div>
 
     <header class="menu">
         <div id="menu-container"></div>
         <script>
             fetch('../menu.html')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur réseau lors du chargement du menu.');
-                    }
-                    return response.text();
-                })
+                .then(response => response.text())
                 .then(data => {
                     document.getElementById('menu-container').innerHTML = data;
                 })
@@ -31,7 +27,7 @@
     </header>
 
     <main class="content">
-        <h1>Données Matériaux Campagne EOY2024, V1.01</h1>
+        <h1>Données Matériaux Campagne EOY2024</h1>
         <p>D'après les données de la campagne EOY 2024, l'histogramme ci-dessous représente l'impact Carbone théorique calculé par la maison Cartier à l'aide de coefficients en kgCO2eq/kg matière.</p>
         <p>Sous cet histogramme, il est possible de sélectionner un pays et d'avoir plus d'informations localement par pays.</p>
         <canvas id="materialsChart" width="800" height="400"></canvas>
@@ -58,8 +54,8 @@
     </div>
 
     <script>
-        let jsonData; // Variable pour stocker les données JSON chargées
-        let pieChartMass, pieChartCO2; // Variables pour les graphiques circulaires
+        let jsonData;
+        let pieChartMass, pieChartCO2;
 
         const materialColors = {
             "MDF LIGHT": "#FF6384",
@@ -127,8 +123,11 @@
             const masses = Object.values(countryInfo).slice(1).map(val => parseFloat(val.replace(",", ".")));
             const totalMass = masses.reduce((acc, val) => acc + val, 0);
             const massPercentages = masses.map(mass => (mass / totalMass) * 100);
+            const co2Percentages = masses.map((mass, index) => mass * jsonData[index]["Impact CO2 (t CO2e)"] / totalMass);
 
             if (pieChartMass) pieChartMass.destroy();
+            if (pieChartCO2) pieChartCO2.destroy();
+
             const ctxMass = document.getElementById('pieChartMass').getContext('2d');
             pieChartMass = new Chart(ctxMass, {
                 type: 'pie',
@@ -144,6 +143,25 @@
                     plugins: {
                         legend: { position: 'top' },
                         title: { display: true, text: 'Pourcentage de masse par matériau' }
+                    }
+                }
+            });
+
+            const ctxCO2 = document.getElementById('pieChartCO2').getContext('2d');
+            pieChartCO2 = new Chart(ctxCO2, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: co2Percentages,
+                        backgroundColor: labels.map(label => materialColors[label] || '#CCCCCC'),
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: 'Pourcentage de CO2 par matériau' }
                     }
                 }
             });

@@ -4,124 +4,39 @@
     <!-- Métadonnées -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.25 - Comparaison de Scénarios</title>
+    <title>Version 2.23 - Comparaison de Scénarios</title>
     <!-- Feuilles de style -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
     <!-- Feuilles de style pour la carte -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
     <style>
-        /* Styles globaux */
+        /* Vos styles existants */
+        /* ... (Vous pouvez inclure ici votre CSS global fourni) ... */
+        /* Je vais inclure le CSS global pour que les styles soient cohérents */
+
         body {
             font-family: 'Playfair Display', serif;
             margin: 0;
             padding: 0;
             background: linear-gradient(to bottom, #e0e0e0, #ffffff);
             color: #333333;
+            transition: all 0.3s ease;
         }
-
-        h1, h2, h3 {
-            font-family: 'Libre Bodoni', serif;
-            color: #bfa13a;
-        }
-
-        /* Styles pour le header */
-        .header-image {
-            position: relative;
-            height: 150px;
-            background-image: url('https://source.unsplash.com/random/1920x150?industry');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .header-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.6);
-            color: #ffffff;
-            padding: 10px;
-            text-align: center;
-            font-size: 24px;
-        }
-
-        /* Styles pour le menu */
-        .menu {
-            background-color: #333;
-            overflow: hidden;
-        }
-
-        .menu a {
-            float: left;
-            display: block;
-            color: #bfa13a;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-
-        .menu a:hover {
-            background-color: #111;
-            color: #fff;
-        }
-
-        /* Styles pour le contenu principal */
-        .content {
-            padding: 20px;
-        }
-
-        /* Styles pour les sections */
-        section {
-            margin-bottom: 30px;
-        }
-
-        /* Styles pour les inputs et les boutons */
-        input, select, button {
-            font-family: 'Montserrat', sans-serif;
-            padding: 8px;
-            margin: 5px 0;
-        }
-
-        button {
-            background-color: #bfa13a;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #a58d30;
-        }
-
-        /* Styles pour les tableaux */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            text-align: center;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        /* Styles spécifiques */
-        .allocation-control {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+        /* ... (le reste de votre CSS global) ... */
+        
+        /* Styles spécifiques pour cette page */
+        #material-selection {
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
         }
-
+        #material-list {
+            margin-top: 20px;
+        }
         .material-item {
             display: flex;
             justify-content: space-between;
@@ -129,12 +44,10 @@
             border-bottom: 1px solid #ccc;
             align-items: center;
         }
-
         .material-item div {
             width: 20%;
             text-align: center;
         }
-
         .material-item button {
             background-color: red;
             color: white;
@@ -143,66 +56,46 @@
             cursor: pointer;
             border-radius: 4px;
         }
-
-        .route-section h2 {
-            margin-top: 40px;
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
         }
-
+        .route-section {
+            margin: 30px 0;
+        }
         .input-group {
+            margin-bottom: 20px;
+            position: relative;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 10px;
         }
-
-        .large-input {
-            width: 300px;
-            margin-right: 10px;
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
         }
-
-        .small-input {
-            width: 80px;
-            margin-right: 10px;
+        .button-add {
+            margin-top: 5px;
         }
-
         .remove-button {
             background-color: red;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 5px;
             cursor: pointer;
             border-radius: 8px;
         }
-
-        .button-add {
-            margin-top: 10px;
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            flex-grow: 1;
+            margin-right: 10px;
         }
-
-        /* Styles pour la carte */
-        #map {
-            height: 400px;
-            margin-top: 20px;
+        .small-input {
+            width: 90px;
         }
-
-        /* Styles pour les avertissements */
-        #warning-message {
-            color: red;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        /* Styles pour le footer */
-        .footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #333;
-            color: #bfa13a;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
-
-        /* Autocomplete */
         .autocomplete-suggestions {
             position: absolute;
             background: white;
@@ -214,22 +107,65 @@
             top: 110%;
             left: 0;
         }
-
         .autocomplete-suggestion {
             padding: 5px;
             cursor: pointer;
         }
-
         .autocomplete-suggestion:hover {
             background-color: #f0f0f0;
         }
-
-        /* Styles pour les tableaux dynamiques */
-        .distance-table {
+        /* Styles supplémentaires */
+        .content h1 {
             margin-top: 20px;
         }
-
-        /* Styles pour les lignes non adaptées */
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+        .allocation-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .detailed-summary {
+            margin-top: 30px;
+        }
+        .detailed-summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .detailed-summary th, .detailed-summary td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .detailed-summary th {
+            background-color: #f0f0f0;
+        }
+        /* Styles pour les tableaux générés dynamiquement */
+        .distance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .distance-table th, .distance-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .distance-table th {
+            background-color: #f4f4f4;
+        }
+        /* Style pour les lignes en rouge dans le tableau détaillé */
         .non-adapte {
             color: red;
         }
@@ -237,11 +173,19 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.25 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.23 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
-        <!-- Vous pouvez inclure votre menu ici -->
+        <div id="menu-container"></div>
+        <script>
+            fetch('../menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                })
+                .catch(error => console.error('Erreur lors du chargement du menu :', error));
+        </script>
     </header>
 
     <main class="content">
@@ -309,6 +253,7 @@
                         <option value="Recyclage">Recyclage</option>
                         <option value="Méthanisation">Méthanisation</option>
                         <option value="Incinération">Incinération</option>
+                        <!-- Option Enfouissement supprimée -->
                     </select>
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
                     <div class="autocomplete-suggestions"></div>
@@ -342,7 +287,7 @@
                     </tbody>
                 </table>
             </div>
-            <div id="warning-message"></div>
+            <div id="warning-message" style="color: red; font-weight: bold; margin-top: 20px;"></div>
 
             <!-- Bouton pour télécharger le PDF -->
             <button onclick="downloadPDF()">Télécharger le récapitulatif en PDF</button>
@@ -353,18 +298,13 @@
     </div>
 
     <!-- Inclusion des scripts nécessaires -->
-    <!-- Leaflet -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-    <!-- Leaflet Routing Machine -->
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <!-- jsPDF et jsPDF-AutoTable -->
+    <!-- Inclusion de jsPDF et jsPDF-AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        // Assurez-vous que jsPDF est correctement importé
-        const { jsPDF } = window.jspdf;
-
         // Variables globales
         let materialsData = {};
         let vehicleData = [];
@@ -372,9 +312,80 @@
         let selectedMaterials = [];
         let routeControls = [];
         let adaptationData = {};
-        let allWarnings = []; // Variable globale pour les avertissements
 
-        // Fonction pour charger les données de matériaux
+        // Fonction pour générer des nuances de couleurs pour un lieu de stockage
+        function generateShades(baseColor, count) {
+            let shades = [];
+            // Convertir la couleur de base en HSL
+            let hsl = hexToHSL(baseColor);
+            let lightnessIncrement = 5; // Incrément réduit pour des nuances plus proches
+
+            for (let i = 0; i < count; i++) {
+                let newLightness = hsl.l - (i * lightnessIncrement);
+                if (newLightness < 20) newLightness = 20; // Empêcher une luminosité trop basse
+                let newColor = `hsl(${hsl.h}, ${hsl.s}%, ${newLightness}%)`;
+                shades.push(newColor);
+            }
+            return shades;
+        }
+
+        function hexToHSL(H) {
+            // Convertir HEX en RGB
+            let r = 0, g = 0, b = 0;
+            if (H.length == 7) {
+                r = parseInt(H.slice(1, 3), 16);
+                g = parseInt(H.slice(3, 5), 16);
+                b = parseInt(H.slice(5, 7), 16);
+            }
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            // Trouver le max et le min des valeurs RGB
+            let max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if(max == min){
+                h = s = 0; // Achromatique
+            } else {
+                let d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch(max){
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+                    case g: h = ((b - r) / d + 2); break;
+                    case b: h = ((r - g) / d + 4); break;
+                }
+                h *= 60;
+            }
+
+            return { h: Math.round(h), s: Math.round(s*100), l: Math.round(l*100) };
+        }
+
+        // Fonction pour obtenir une couleur de base pour chaque lieu de stockage
+        function getBaseColor(index) {
+            var baseColors = ['#0000FF', '#FF0000', '#008000', '#FFA500', '#800080']; // Bleu, Rouge, Vert, Orange, Violet
+            return baseColors[index % baseColors.length];
+        }
+
+        // Fonctions de chargement des données
+        async function loadAdaptationData() {
+            try {
+                const response = await fetch('../static/json/adaptation_traitement.json');
+                const data = await response.json();
+                adaptationData = data.reduce((acc, item) => {
+                    acc[item.Matériau] = {
+                        "Recyclage": item["Adapté au Recyclage"],
+                        "Méthanisation": item["Adapté à la Méthanisation"],
+                        "Incinération": item["Adapté à l'Incinération"]
+                        // "Enfouissement" supprimé
+                    };
+                    return acc;
+                }, {});
+            } catch (error) {
+                console.error("Erreur lors du chargement des données d'adaptation :", error);
+            }
+        }
+
         async function loadMaterialsData() {
             try {
                 const response = await fetch('../static/json/impactfdvmat.json');
@@ -393,7 +404,6 @@
             }
         }
 
-        // Fonction pour charger les données de véhicules
         async function loadVehicleData() {
             try {
                 const response = await fetch('../static/json/vehiculecarbone.json');
@@ -404,25 +414,6 @@
             }
         }
 
-        // Fonction pour charger les données d'adaptation
-        async function loadAdaptationData() {
-            try {
-                const response = await fetch('../static/json/adaptation_traitement.json');
-                const data = await response.json();
-                adaptationData = data.reduce((acc, item) => {
-                    acc[item.Matériau] = {
-                        "Recyclage": item["Adapté au Recyclage"],
-                        "Méthanisation": item["Adapté à la Méthanisation"],
-                        "Incinération": item["Adapté à l'Incinération"]
-                    };
-                    return acc;
-                }, {});
-            } catch (error) {
-                console.error("Erreur lors du chargement des données d'adaptation :", error);
-            }
-        }
-
-        // Fonction pour remplir le dropdown des matériaux
         function populateDropdown() {
             const materialDropdown = document.getElementById("material-dropdown");
             Object.keys(materialsData).forEach(material => {
@@ -433,7 +424,6 @@
             });
         }
 
-        // Fonction pour afficher la densité personnalisée
         function showCustomDensity() {
             const selectedMaterial = document.getElementById("material-dropdown").value;
             const customDensityContainer = document.getElementById("custom-density");
@@ -443,7 +433,6 @@
             }
         }
 
-        // Fonction pour ajouter un matériau
         function addMaterial() {
             const selectedMaterial = document.getElementById("material-dropdown").value;
             const customDensity = document.getElementById("custom-density").value;
@@ -478,7 +467,6 @@
             calculateVehicles();
         }
 
-        // Fonction pour supprimer un matériau
         function removeMaterial(button) {
             const materialItem = button.parentElement.parentElement;
             const materialName = materialItem.children[0].innerText;
@@ -489,7 +477,6 @@
             calculateVehicles();
         }
 
-        // Fonction pour calculer les véhicules nécessaires
         function calculateVehicles() {
             let totalWeight = 0; // en kg
             let totalVolume = 0; // en m³
@@ -539,7 +526,6 @@
             document.getElementById('vehicle-results').textContent = `Véhicule(s) proposé(s) : ${vehicleNames.join(", ")}`;
         }
 
-        // Fonction pour l'autocomplétion des adresses
         function autocompleteAddress(input) {
             const query = input.value;
             const suggestionsDiv = input.parentElement.querySelector(".autocomplete-suggestions");
@@ -573,7 +559,6 @@
                 });
         }
 
-        // Fermer les suggestions lorsqu'on clique en dehors
         document.addEventListener('click', function(event) {
             const suggestions = document.querySelectorAll('.autocomplete-suggestions');
 
@@ -584,7 +569,6 @@
             });
         });
 
-        // Fonction pour ajouter un input de stockage
         function addStorageInput() {
             const container = document.getElementById("storage-container");
             const inputGroup = document.createElement("div");
@@ -623,7 +607,6 @@
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
-        // Fonction pour ajouter un input de traitement
         function addTreatmentInput() {
             const container = document.getElementById("treatment-container");
             const inputGroup = document.createElement("div");
@@ -651,6 +634,7 @@
                 <option value="Recyclage">Recyclage</option>
                 <option value="Méthanisation">Méthanisation</option>
                 <option value="Incinération">Incinération</option>
+                <!-- Option Enfouissement supprimée -->
             `;
 
             const removeButton = document.createElement("button");
@@ -671,7 +655,6 @@
             container.insertBefore(inputGroup, container.querySelector(".button-add"));
         }
 
-        // Fonction pour supprimer un input
         function removeInput(button) {
             const inputGroup = button.parentElement;
             inputGroup.remove();
@@ -684,8 +667,302 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Fonctions pour les itinéraires et les calculs
-        // ... (Inclure vos fonctions `compareRoutes`, `calculateRoute`, `calculateTransportEmissions`, `calculateTreatmentEmissions`, etc.)
+        // Fonction compareRoutes mise à jour
+        async function compareRoutes() {
+            const allocationInput = document.getElementById('allocation-coeff');
+            const allocationCoefficient = parseFloat(allocationInput.value) / 100;
+
+            // Réinitialiser les contrôles d'itinéraire sur la carte
+            routeControls.forEach(control => {
+                map.removeControl(control);
+            });
+            routeControls = [];
+
+            // Réinitialiser les messages
+            const statusMessage = document.getElementById('status-message');
+            const errorMessage = document.getElementById('error-message');
+            statusMessage.textContent = 'Calcul des distances en cours...';
+            errorMessage.textContent = '';
+
+            // Vider les conteneurs de résultats
+            const distanceTableContainer = document.querySelector("#distance-table-container");
+            distanceTableContainer.innerHTML = '';
+
+            // Réinitialiser les variables
+            const detailedTable = document.querySelector("#detailed-summary-table tbody");
+            detailedTable.innerHTML = '';
+
+            let allWarnings = [];
+            let storageLocations = [];
+            let storageColors = {};
+            let resultsByStorage = {};
+
+            const storageGroups = document.querySelectorAll("#storage-container .input-group");
+            const treatmentGroups = document.querySelectorAll("#treatment-container .input-group");
+
+            if (storageGroups.length === 0 || treatmentGroups.length === 0) {
+                alert("Veuillez ajouter au moins un lieu de stockage et un lieu de traitement.");
+                statusMessage.textContent = '';
+                return;
+            }
+
+            if (selectedVehicles.length === 0 || selectedMaterials.length === 0) {
+                alert("Veuillez sélectionner des matériaux et calculer les véhicules avant de comparer.");
+                statusMessage.textContent = '';
+                return;
+            }
+
+            let totalCalculations = storageGroups.length * treatmentGroups.length;
+            let completedCalculations = 0;
+
+            // Collecter les lieux de stockage et assigner des couleurs de base
+            storageGroups.forEach((storageGroup, index) => {
+                const storageLat = parseFloat(storageGroup.querySelector(".latitude-input").value);
+                const storageLon = parseFloat(storageGroup.querySelector(".longitude-input").value);
+                const storageName = storageGroup.querySelector(".large-input").value || 'Lieu de stockage ' + (index + 1);
+
+                storageLocations.push({
+                    name: storageName,
+                    lat: storageLat,
+                    lon: storageLon
+                });
+
+                storageColors[storageName] = getBaseColor(index);
+                resultsByStorage[storageName] = [];
+            });
+
+            for (let s = 0; s < storageLocations.length; s++) {
+                const storage = storageLocations[s];
+                const storageLat = storage.lat;
+                const storageLon = storage.lon;
+                const storageName = storage.name;
+
+                if (storageLat && storageLon) {
+                    // Générer des nuances pour les itinéraires à partir de ce lieu de stockage
+                    const shades = generateShades(storageColors[storageName], treatmentGroups.length);
+
+                    for (let t = 0; t < treatmentGroups.length; t++) {
+                        const treatmentGroup = treatmentGroups[t];
+                        const treatmentLat = parseFloat(treatmentGroup.querySelector(".latitude-input").value);
+                        const treatmentLon = parseFloat(treatmentGroup.querySelector(".longitude-input").value);
+                        const treatmentName = treatmentGroup.querySelector(".large-input").value || 'Lieu de traitement';
+                        const treatmentOption = treatmentGroup.querySelector(".treatment-option").value;
+
+                        try {
+                            const route = await calculateRoute(storageLat, storageLon, treatmentLat, treatmentLon);
+                            const distance = (route.summary.totalDistance / 1000).toFixed(2); // Convertir en km
+
+                            // Calcul des émissions de transport
+                            const transportEmissions = calculateTransportEmissions(distance);
+
+                            // Calcul des émissions de traitement, collecter les avertissements
+                            const treatmentEmissions = calculateTreatmentEmissions(treatmentOption, allWarnings);
+
+                            // Calcul des émissions totales
+                            const totalEmissions = transportEmissions + treatmentEmissions;
+
+                            // Stocker les résultats pour ce lieu de stockage
+                            resultsByStorage[storageName].push({
+                                storageName: storageName,
+                                treatmentName: treatmentName,
+                                treatmentOption: treatmentOption,
+                                distance: distance,
+                                transportEmissions: transportEmissions,
+                                treatmentEmissions: treatmentEmissions,
+                                totalEmissions: totalEmissions
+                            });
+
+                            // Ajouter l'itinéraire à la carte avec la nuance correspondante
+                            const routeControl = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(storageLat, storageLon),
+                                    L.latLng(treatmentLat, treatmentLon)
+                                ],
+                                routeWhileDragging: false,
+                                addWaypoints: false,
+                                draggableWaypoints: false,
+                                fitSelectedRoutes: false,
+                                show: false,
+                                lineOptions: {
+                                    styles: [{color: shades[t], opacity: 1, weight: 5}]
+                                }
+                            }).addTo(map);
+
+                            routeControls.push(routeControl);
+
+                        } catch (err) {
+                            console.error('Erreur lors du calcul de l\'itinéraire:', err);
+                            errorMessage.textContent = 'Erreur lors du calcul de certains itinéraires. Vérifiez votre connexion ou réessayez plus tard.';
+                        }
+
+                        completedCalculations++;
+                        statusMessage.textContent = `Calcul des distances en cours... (${completedCalculations}/${totalCalculations})`;
+                    }
+                }
+            }
+
+            // Afficher les avertissements après toutes les itérations
+            if (allWarnings.length > 0) {
+                const warningMessage = [...new Set(allWarnings)].join("<br>");
+                document.getElementById("warning-message").innerHTML = `<strong>Avertissements :</strong><br>${warningMessage}`;
+            } else {
+                document.getElementById("warning-message").innerHTML = ""; // Nettoyer si aucun avertissement
+            }
+
+            // Générer les tableaux des distances par lieu de stockage
+            for (const storageName in resultsByStorage) {
+                const storageResults = resultsByStorage[storageName];
+
+                // Trier les résultats par émissions totales croissantes
+                storageResults.sort((a, b) => a.totalEmissions - b.totalEmissions);
+
+                // Créer un nouveau tableau pour ce lieu de stockage
+                const tableContainer = document.createElement('div');
+                tableContainer.innerHTML = `<h3>Résultats pour ${storageName}</h3>`;
+
+                const table = document.createElement('table');
+                table.className = 'distance-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Lieu de Stockage</th>
+                            <th>Lieu de Traitement</th>
+                            <th>Mode de Traitement</th>
+                            <th>Distance</th>
+                            <th>Émissions Transport (kg CO₂e)</th>
+                            <th>Émissions Traitement (kg CO₂e)</th>
+                            <th>Émissions Totales (kg CO₂e)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+
+                const tbody = table.querySelector('tbody');
+
+                storageResults.forEach(result => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${result.storageName}</td>
+                        <td>${result.treatmentName}</td>
+                        <td>${result.treatmentOption}</td>
+                        <td>${result.distance} km</td>
+                        <td>${result.transportEmissions.toFixed(2)}</td>
+                        <td>${result.treatmentEmissions.toFixed(2)}</td>
+                        <td>${result.totalEmissions.toFixed(2)}</td>
+                    `;
+
+                    tbody.appendChild(row);
+                });
+
+                tableContainer.appendChild(table);
+                distanceTableContainer.appendChild(tableContainer);
+            }
+
+            // Mettre à jour le tableau détaillé
+            updateDetailedSummary(allWarnings);
+
+            statusMessage.textContent = 'Toutes les distances ont été calculées.';
+        }
+
+        function updateDetailedSummary(allWarnings) {
+            const detailedTable = document.querySelector("#detailed-summary-table tbody");
+            detailedTable.innerHTML = '';
+
+            selectedMaterials.forEach(material => {
+                const matData = materialsData[material.name].impacts;
+                const weightTonnes = material.weight / 1000;
+
+                // Parcourir les traitements possibles
+                ['Recyclage', 'Méthanisation', 'Incinération'].forEach(treatmentOption => {
+                    const impactPerTonne = parseFloat(matData[`${treatmentOption} - Impact (kg éq. CO2/tonne)`]) || 0;
+                    const avoidedPerTonne = parseFloat(matData[`${treatmentOption} - Émissions Évitées (kg éq. CO2/tonne)`]) || 0;
+
+                    const allocationInput = document.getElementById('allocation-coeff');
+                    const allocationCoefficient = treatmentOption === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
+
+                    const impact = impactPerTonne * weightTonnes;
+                    const avoided = avoidedPerTonne * weightTonnes;
+                    const net = (impact + avoided) * allocationCoefficient;
+
+                    const detailRow = document.createElement('tr');
+                    detailRow.innerHTML = `
+                        <td>${material.name}</td>
+                        <td>${treatmentOption}</td>
+                        <td>${impact.toFixed(2)}</td>
+                        <td>${avoided.toFixed(2)}</td>
+                        <td>${net.toFixed(2)}</td>
+                    `;
+
+                    // Vérifier si le matériau est adapté au traitement choisi
+                    if (adaptationData[material.name] && adaptationData[material.name][treatmentOption] === 0) {
+                        detailRow.classList.add('non-adapte');
+                    }
+
+                    detailedTable.appendChild(detailRow);
+                });
+            });
+        }
+
+        function calculateRoute(lat1, lon1, lat2, lon2) {
+            return new Promise((resolve, reject) => {
+                const router = L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1'
+                });
+                router.route([
+                    {
+                        latLng: L.latLng(lat1, lon1)
+                    },
+                    {
+                        latLng: L.latLng(lat2, lon2)
+                    }
+                ], function(err, routes) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(routes[0]);
+                    }
+                });
+            });
+        }
+
+        function calculateTransportEmissions(distance) {
+            // Distance en km
+            // Calculer les émissions pour chaque véhicule
+            let totalEmissions = 0;
+            selectedVehicles.forEach(vehicle => {
+                const emissionsPerTonKm = vehicle.emissionsPerTonKm; // kg CO₂e par tonne.km
+                const totalWeightTonnes = selectedMaterials.reduce((sum, mat) => sum + mat.weight, 0) / 1000; // Convertir en tonnes
+                const emissions = emissionsPerTonKm * totalWeightTonnes * distance;
+                totalEmissions += emissions;
+            });
+            return totalEmissions;
+        }
+
+        function calculateTreatmentEmissions(treatmentType, allWarnings) {
+            // Calculer les émissions de traitement pour chaque matériau
+            let totalEmissions = 0;
+            const allocationInput = document.getElementById('allocation-coeff');
+            const allocationCoefficient = treatmentType === 'Recyclage' ? parseFloat(allocationInput.value) / 100 : 1;
+
+            selectedMaterials.forEach(material => {
+                const materialData = materialsData[material.name].impacts;
+                const weightTonnes = material.weight / 1000; // Convertir en tonnes
+                const impactPerTonne = parseFloat(materialData[`${treatmentType} - Impact (kg éq. CO2/tonne)`]) || 0;
+                const avoidedPerTonne = parseFloat(materialData[`${treatmentType} - Émissions Évitées (kg éq. CO2/tonne)`]) || 0;
+                const netEmissions = (impactPerTonne + avoidedPerTonne) * allocationCoefficient;
+
+                // Ajouter les émissions nettes au total
+                totalEmissions += netEmissions * weightTonnes;
+
+                // Vérifier si le matériau est adapté au traitement choisi
+                if (adaptationData[material.name] && adaptationData[material.name][treatmentType] === 0) {
+                    // Si le matériau n'est pas adapté, ajouter un avertissement spécifique
+                    allWarnings.push(`${material.name} n'est pas adapté au traitement par ${treatmentType.toLowerCase()}.`);
+                }
+            });
+            return totalEmissions;
+        }
 
         // Fonction pour télécharger le PDF
         function downloadPDF() {
@@ -694,27 +971,19 @@
             const detailedSummaryTable = document.querySelector('#detailed-summary-table');
 
             // Initialiser jsPDF en mode paysage
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF('landscape');
 
-            let yOffset = 20;
+            let yOffset = 10;
 
-            // Ajouter le titre "ENSAM x CARTIER" et la date/heure
-            doc.setFontSize(22);
-            doc.setFont('Playfair Display', 'normal');
-            doc.text('ENSAM x CARTIER', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
-            yOffset += 10;
-
-            // Ajouter la date et l'heure de génération du rapport
-            const currentDate = new Date();
-            const dateString = currentDate.toLocaleDateString('fr-FR');
-            const timeString = currentDate.toLocaleTimeString('fr-FR');
-            doc.setFontSize(12);
-            doc.setFont('Montserrat', 'normal');
-            doc.text(`Rapport généré le ${dateString} à ${timeString}`, doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
-            yOffset += 15;
+            // Ajouter une image (logo ou image d'en-tête)
+            // Assurez-vous que l'image est accessible (par URL ou base64)
+            // Exemple avec une image base64 (vous devrez remplacer 'your_base64_image_string' par votre image)
+            // doc.addImage('data:image/jpeg;base64,your_base64_image_string', 'JPEG', 10, yOffset, 40, 20);
+            // yOffset += 25;
 
             // Ajouter un titre au PDF
-            doc.setFontSize(18);
+            doc.setFontSize(22);
             doc.setFont('Playfair Display', 'normal');
             doc.text('Récapitulatif des résultats', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
             yOffset += 10;
@@ -723,63 +992,11 @@
             doc.setFontSize(14);
             doc.setFont('Montserrat', 'normal');
             const introText = "Ce document présente le récapitulatif des scénarios comparés, incluant les émissions liées au transport et au traitement des matériaux sélectionnés.";
-            doc.text(introText, 14, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 28 });
+            doc.text(introText, 10, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 20 });
             yOffset += 20;
-
-            // Ajouter les avertissements s'il y en a
-            const warningMessageDiv = document.getElementById("warning-message");
-            if (warningMessageDiv.innerHTML.trim() !== "") {
-                const warnings = warningMessageDiv.innerText.split('\n');
-                doc.setFontSize(12);
-                doc.setTextColor(255, 0, 0); // Rouge
-                doc.text('Avertissements :', 14, yOffset);
-                yOffset += 6;
-                doc.setFontSize(10);
-                warnings.forEach(warning => {
-                    doc.text(`- ${warning}`, 14, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 28 });
-                    yOffset += 5;
-                });
-                doc.setTextColor(0, 0, 0); // Reset couleur
-                yOffset += 10;
-            }
 
             // Ajuster les marges pour les tableaux
-            const margin = { top: yOffset, bottom: 20, left: 14, right: 14 };
-
-            // Identifier le meilleur scénario global
-            let bestTotalEmissions = Infinity;
-            let bestScenario = null;
-
-            distanceTables.forEach((table) => {
-                const tbody = table.querySelector('tbody');
-                const rows = Array.from(tbody.querySelectorAll('tr'));
-
-                rows.forEach(row => {
-                    const totalEmissions = parseFloat(row.cells[6].innerText);
-                    if (totalEmissions < bestTotalEmissions) {
-                        bestTotalEmissions = totalEmissions;
-                        bestScenario = {
-                            storageName: row.cells[0].innerText,
-                            treatmentName: row.cells[1].innerText,
-                            treatmentOption: row.cells[2].innerText,
-                            totalEmissions: totalEmissions
-                        };
-                    }
-                });
-            });
-
-            // Ajouter un encadré pour le meilleur scénario
-            doc.setFontSize(16);
-            doc.setFont('Playfair Display', 'normal');
-            doc.setTextColor(0, 0, 0);
-            doc.text('Meilleur Scénario', 14, yOffset);
-            yOffset += 8;
-
-            doc.setFontSize(12);
-            doc.setFont('Montserrat', 'normal');
-            const scenarioText = `Le meilleur scénario est le traitement "${bestScenario.treatmentOption}" au lieu "${bestScenario.treatmentName}" depuis "${bestScenario.storageName}", avec des émissions totales de ${bestScenario.totalEmissions.toFixed(2)} kg CO₂e.`;
-            doc.text(scenarioText, 14, yOffset, { maxWidth: doc.internal.pageSize.getWidth() - 28 });
-            yOffset += 20;
+            const margin = { top: yOffset, bottom: 20, left: 10, right: 10 };
 
             // Ajouter les tableaux de distances
             distanceTables.forEach((table) => {
@@ -790,64 +1007,20 @@
 
                 yOffset += 8;
 
-                // Créer une copie du tableau pour le modifier sans affecter le DOM
-                const tableClone = table.cloneNode(true);
-
-                // Supprimer les colonnes d'adresses complètes ou les raccourcir
-                const headers = tableClone.querySelectorAll('th');
-                headers.forEach((th, index) => {
-                    if (th.innerText === 'Lieu de Stockage' || th.innerText === 'Lieu de Traitement') {
-                        th.innerText = th.innerText.replace('Lieu de ', '');
-                    }
-                });
-
-                const rows = tableClone.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    // Raccourcir les noms des lieux
-                    cells[0].innerText = abbreviateLocation(cells[0].innerText);
-                    cells[1].innerText = abbreviateLocation(cells[1].innerText);
-                });
-
                 doc.autoTable({
-                    html: tableClone,
+                    html: table,
                     startY: yOffset,
                     styles: {
                         font: 'Montserrat',
                         fontSize: 8,
                         cellPadding: 2,
-                        overflow: 'linebreak',
-                        halign: 'center',
+                        overflow: 'linebreak'
                     },
                     headStyles: { fillColor: [191, 161, 58] }, // Couleur or
                     alternateRowStyles: { fillColor: [245, 245, 245] },
                     margin: margin,
                     theme: 'grid',
-                    tableWidth: 'auto',
-                    columnStyles: {
-                        0: { cellWidth: 'wrap' },
-                        1: { cellWidth: 'wrap' },
-                        2: { cellWidth: 'wrap' },
-                        3: { cellWidth: 'wrap' },
-                        4: { cellWidth: 'wrap' },
-                        5: { cellWidth: 'wrap' },
-                        6: { cellWidth: 'wrap' },
-                    },
-                    didParseCell: function(data) {
-                        // Ajuster la taille de police pour le contenu de la cellule si nécessaire
-                        var cellWidth = data.cell.width;
-                        var textWidth = doc.getTextWidth(data.cell.text[0]);
-                        while (textWidth > cellWidth && data.cell.styles.fontSize > 5) {
-                            data.cell.styles.fontSize--;
-                            textWidth = doc.getTextWidth(data.cell.text[0], data.cell.styles);
-                        }
-                    },
-                    rowStyles: (row, data) => {
-                        const totalEmissions = parseFloat(row.cells[6].text);
-                        if (totalEmissions === bestTotalEmissions) {
-                            return { fillColor: [204, 255, 204] }; // Couleur de surbrillance pour le meilleur scénario (vert clair)
-                        }
-                    }
+                    tableWidth: 'wrap',
                 });
 
                 yOffset = doc.lastAutoTable.finalY + 10;
@@ -872,45 +1045,19 @@
                     font: 'Montserrat',
                     fontSize: 8,
                     cellPadding: 2,
-                    overflow: 'linebreak',
-                    halign: 'center',
+                    overflow: 'linebreak'
                 },
                 headStyles: { fillColor: [191, 161, 58] },
                 alternateRowStyles: { fillColor: [245, 245, 245] },
                 margin: margin,
                 theme: 'grid',
-                tableWidth: 'auto',
-                columnStyles: {
-                    0: { cellWidth: 'wrap' },
-                    1: { cellWidth: 'wrap' },
-                    2: { cellWidth: 'wrap' },
-                    3: { cellWidth: 'wrap' },
-                    4: { cellWidth: 'wrap' },
-                },
-                didParseCell: function(data) {
-                    // Ajuster la taille de police pour le contenu de la cellule si nécessaire
-                    var cellWidth = data.cell.width;
-                    var textWidth = doc.getTextWidth(data.cell.text[0]);
-                    while (textWidth > cellWidth && data.cell.styles.fontSize > 5) {
-                        data.cell.styles.fontSize--;
-                        textWidth = doc.getTextWidth(data.cell.text[0], data.cell.styles);
-                    }
-                },
+                tableWidth: 'wrap',
             });
 
             // Enregistrer le PDF
             doc.save('recapitulatif.pdf');
         }
 
-        // Fonction pour abréger les noms de lieux
-        function abbreviateLocation(locationName) {
-            // Vous pouvez personnaliser cette fonction pour abréger les noms selon vos besoins
-            // Par exemple, ne garder que les 3 premiers mots
-            const words = locationName.split(' ');
-            return words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
-        }
-
-        // Charger les données au chargement de la page
         window.onload = function() {
             loadMaterialsData();
             loadVehicleData();

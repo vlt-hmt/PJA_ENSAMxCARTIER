@@ -152,7 +152,7 @@
                 if (document.getElementById('rememberMe').checked) {
                     localStorage.setItem('userEmail', username);
                 }
-                window.location.href = 'index.html';
+                window.location.href = 'dashboard.html';
             } catch(error) {
                     document.getElementById('errorMessage').innerText = "Erreur : " + error.message;
             }

@@ -93,14 +93,14 @@
                 <input type="checkbox" id="rememberMe">
                 <label for="rememberMe">Se souvenir de moi</label>
               </div>
-              <div class="forgot-password">
-                <a href="#" onclick="handleForgotPassword()">Mot de passe oublié ?</a>
-              </div>
             </div>
             <div class="error-message" id="errorMessage"></div>
             <button type="submit">Se connecter</button>
         </form>
-
+        <form id="resetPasswordRequestForm" onsubmit="sendResetRequest(event)">
+            <input type="email" id="userEmail" placeholder="Votre adresse e-mail" required>
+            <button type="submit">Demander la réinitialisation du mot de passe</button>
+        </form>
         <h3>Nouvel utilisateur ?</h3>
         <form id="signupForm" onsubmit="return handleSignup(event)">
             <input type="email" id="email" placeholder="Adresse e-mail" required><br>

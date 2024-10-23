@@ -4,7 +4,7 @@
     <!-- Métadonnées -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version 2.19 - Comparaison de Scénarios</title>
+    <title>Version 2.26 - Comparaison de Scénarios</title>
     <!-- Feuilles de style -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
@@ -170,7 +170,7 @@
 </head>
 <body>
     <div class="header-image">
-        <div class="header-overlay">Version 2.19 - Comparaison de Scénarios</div>
+        <div class="header-overlay">Version 2.26 - Comparaison de Scénarios</div>
     </div>
 
     <header class="menu">
@@ -250,7 +250,6 @@
                         <option value="Recyclage">Recyclage</option>
                         <option value="Méthanisation">Méthanisation</option>
                         <option value="Incinération">Incinération</option>
-                        <!-- Option Enfouissement supprimée -->
                     </select>
                     <button class="remove-button" onclick="removeInput(this)">Supprimer</button>
                     <div class="autocomplete-suggestions"></div>
@@ -752,7 +751,7 @@
                             const transportEmissions = calculateTransportEmissions(distance);
 
                             // Calcul des émissions de traitement, collecter les avertissements
-                            const treatmentEmissions = calculateTreatmentEmissions(treatmentOption, allWarnings);
+                            const treatmentEmissions = calculateTreatmentEmissions(treatmentOption);
 
                             // Calcul des émissions totales
                             const totalEmissions = transportEmissions + treatmentEmissions;
@@ -955,6 +954,13 @@
             return totalEmissions;
         }
 
+        // Fonction pour abréger les adresses
+        function abbreviateAddress(address) {
+            // Conserver uniquement les 3 premiers mots de l'adresse
+            const words = address.split(' ');
+            return words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+        }
+
         // Fonction pour télécharger le PDF
         function downloadPDF() {
             // Récupérer les tableaux à inclure dans le PDF
@@ -967,10 +973,19 @@
 
             let yOffset = 20;
 
-            // Ajouter le titre "ENSAM x CARTIER"
+            // Ajouter le titre "ENSAM x CARTIER" et la date/heure
             doc.setFontSize(22);
             doc.setFont('Playfair Display', 'normal');
             doc.text('ENSAM x CARTIER', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
+            yOffset += 10;
+
+            // Ajouter la date et l'heure actuelles
+            const currentDate = new Date();
+            const dateString = currentDate.toLocaleDateString('fr-FR');
+            const timeString = currentDate.toLocaleTimeString('fr-FR');
+            doc.setFontSize(12);
+            doc.setFont('Montserrat', 'normal');
+            doc.text(`Généré le ${dateString} à ${timeString}`, doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
             yOffset += 15;
 
             // Ajouter un titre au PDF
@@ -1013,8 +1028,20 @@
 
                 yOffset += 8;
 
+                // Créer une copie du tableau pour modifier les adresses
+                const tableClone = table.cloneNode(true);
+
+                // Raccourcir les adresses dans le tableau
+                const rows = tableClone.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const storageCell = row.cells[0];
+                    const treatmentCell = row.cells[1];
+                    storageCell.textContent = abbreviateAddress(storageCell.textContent);
+                    treatmentCell.textContent = abbreviateAddress(treatmentCell.textContent);
+                });
+
                 doc.autoTable({
-                    html: table,
+                    html: tableClone,
                     startY: yOffset,
                     styles: {
                         font: 'Montserrat',
@@ -1060,8 +1087,11 @@
                 tableWidth: 'wrap',
             });
 
+            // Générer un nom de fichier sympathique
+            const fileName = `recapitulatif_${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2,'0')}-${currentDate.getDate().toString().padStart(2,'0')}.pdf`;
+
             // Enregistrer le PDF
-            doc.save('recapitulatif.pdf');
+            doc.save(fileName);
         }
 
         window.onload = function() {

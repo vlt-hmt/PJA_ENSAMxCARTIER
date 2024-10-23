@@ -29,7 +29,7 @@ function addMessage(message) {
 async function getBotResponse(userMessage) {
     try {
         // Charger le modèle ONNX à partir de Google Drive
-        const modelUrl = 'https://drive.google.com/file/d/1pZ55p2uKGPnq7olmUfffIVfcmWo_t1KH/view?usp=sharing'; // Lien de téléchargement direct
+        const modelUrl = 'https://cors-anywhere.herokuapp.com/https://drive.google.com/uc?export=download&id=1pZ55p2uKGPnq7olmUfffIVfcmWo_t1KH'; // Lien de téléchargement direct
         const session = await ort.InferenceSession.create(modelUrl);
 
         // Préparer l'entrée pour le modèle (simplifié ici)

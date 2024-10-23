@@ -150,13 +150,14 @@
             }
 
             try {
-                await auth.signInWithEmailAndPassword(username, password);
+                const userCredential = await auth.signInWithEmailAndPassword(username, password);
+                const user = userCredential.user;
+                
                 alert("Connexion réussie");
                 if (document.getElementById('rememberMe').checked) {
                     localStorage.setItem('userEmail', username);
                 }
                 // Connexion réussie
-                const user = username.user;
                 localStorage.setItem('userToken', user.accessToken);  // Stocker le jeton de connexion dans localStorage
                 window.location.href = 'dashboard.html';
             } catch(error) {

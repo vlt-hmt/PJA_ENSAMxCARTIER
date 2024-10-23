@@ -157,7 +157,7 @@
                 }
                 // Connexion réussie
                 const user = username.user;
-                localStorage.setItem('userToken', user.za);  // Stocker le jeton de connexion dans localStorage
+                localStorage.setItem('userToken', user.accessToken);  // Stocker le jeton de connexion dans localStorage
                 window.location.href = 'dashboard.html';
             } catch(error) {
                     document.getElementById('errorMessage').innerText = "Erreur : " + error.message;

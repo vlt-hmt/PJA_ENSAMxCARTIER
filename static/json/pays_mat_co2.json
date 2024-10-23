@@ -1,49 +1,59 @@
-{
-    "data": {
-        "Germany": [209.2, 40.6, 32.1, 14.7, 4.6, 0.5, 4.1, 6.7, 4.8, 0.1],
-        "France": [711.0, 104.0, 110.8, 67.4, 9.1, 0.8, 4.3, 17.3, 17.9, 0.0],
-        "Italy": [78.1, 1.7, 38.3, 18.6, 0.5, 0.2, 3.0, 0.3, 2.2, 0.0],
-        "Holland": [206.5, 33.7, 15.2, 8.4, 3.2, 0.3, 1.4, 1.4, 4.8, 0.1],
-        "Spain": [273.3, 38.9, 38.3, 20.0, 4.2, 0.4, 3.1, 5.0, 6.6, 0.1],
-        "Switzerland": [321.6, 76.7, 79.4, 53.0, 6.4, 0.2, 0.1, 11.3, 6.6, 0.2],
-        "UK": [189.4, 44.7, 28.7, 17.4, 3.5, 0.3, 1.5, 4.8, 4.1, 0.2],
-        "RLGE Export": [138.3, 40.6, 0.4, 0.3, 3.6, 0.2, 0.4, 6.0, 2.6, 0.1],
-        "RLG AFRICA": [32.5, 6.7, 0.1, 0.1, 0.6, 0.1, 0.2, 0.2, 0.7, 0.0],
-        "Switzerland / STAGE": [8.1, 5.6, 6.3, 4.2, 0.4, 0.0, 0.0, 1.4, 0.0, 0.0],
-        "Brazil": [35.9, 10.5, 11.5, 7.9, 0.7, 0.0, 0.0, 1.4, 0.7, 0.0],
-        "China": [2158.5, 394.1, 445.5, 243.8, 38.9, 3.8, 31.0, 71.5, 51.2, 0.0],
-        "Korea": [284.8, 84.8, 65.5, 33.2, 9.0, 0.9, 7.0, 17.3, 5.6, 0.7],
-        "Hong Kong": [1254.8, 186.8, 215.9, 122.1, 19.9, 1.7, 12.3, 25.0, 30.7, 0.4],
-        "Japan": [498.5, 208.3, 95.1, 64.1, 17.1, 0.6, 1.6, 42.5, 7.1, 0.4],
-        "Mexico": [103.2, 27.6, 25.9, 16.5, 1.9, 0.1, 0.7, 1.7, 1.8, 0.0],
-        "Miami": [176.7, 45.9, 40.8, 27.4, 3.7, 0.2, 0.1, 5.8, 3.7, 0.0],
-        "Dubai": [658.6, 149.8, 136.6, 75.8, 13.1, 1.5, 10.0, 15.0, 14.0, 0.4],
-        "Singapore": [987.0, 164.0, 157.7, 85.2, 15.0, 1.9, 12.9, 11.6, 23.6, 0.1],
-        "Taiwan": [163.7, 41.7, 39.9, 22.0, 4.0, 0.4, 3.1, 5.7, 3.3, 0.1],
-        "USA": [2655.4, 402.0, 390.7, 212.4, 39.3, 4.4, 29.9, 45.9, 65.1, 0.6]
+[
+    {
+        "country": "Germany",
+        "masses": [209.2, 40.6, 32.1, 14.7, 4.6, 0.5, 4.1, 6.7, 4.8, 0.1],
+        "densities": {
+            "STAINLESS STEEL": 8000,
+            "MDF LIGHT": 700,
+            "RECYCLED CARDBOARD": 690,
+            "RECYCLED POLYESTER": 1380,
+            "MICROFIBER": 1500,
+            "ALUMINIUM": 2700,
+            "PAPER": 1200,
+            "PMMA": 1180,
+            "PP": 900,
+            "PVA": 1300
+        },
+        "carbonImpact": {
+            "STAINLESS STEEL": 4.91,
+            "MDF LIGHT": 0.818,
+            "RECYCLED CARDBOARD": 0.725,
+            "RECYCLED POLYESTER": 4.18,
+            "MICROFIBER": 12.6,
+            "ALUMINIUM": 7.6,
+            "PAPER": 1.27,
+            "PMMA": 1.18,
+            "PP": 2.32,
+            "PVA": 0.11
+        }
     },
-    "densities": {
-        "STAINLESS STEEL": 8000,
-        "MDF LIGHT": 700,
-        "RECYCLED CARDBOARD": 690,
-        "RECYCLED POLYESTER": 1380,
-        "MICROFIBER": 1500,
-        "ALUMINIUM": 2700,
-        "PAPER": 1200,
-        "PMMA": 1180,
-        "PP": 900,
-        "PVA": 1300
+    {
+        "country": "France",
+        "masses": [711.0, 104.0, 110.8, 67.4, 9.1, 0.8, 4.3, 17.3, 17.9, 0.0],
+        "densities": {
+            "STAINLESS STEEL": 8000,
+            "MDF LIGHT": 700,
+            "RECYCLED CARDBOARD": 690,
+            "RECYCLED POLYESTER": 1380,
+            "MICROFIBER": 1500,
+            "ALUMINIUM": 2700,
+            "PAPER": 1200,
+            "PMMA": 1180,
+            "PP": 900,
+            "PVA": 1300
+        },
+        "carbonImpact": {
+            "STAINLESS STEEL": 4.91,
+            "MDF LIGHT": 0.818,
+            "RECYCLED CARDBOARD": 0.725,
+            "RECYCLED POLYESTER": 4.18,
+            "MICROFIBER": 12.6,
+            "ALUMINIUM": 7.6,
+            "PAPER": 1.27,
+            "PMMA": 1.18,
+            "PP": 2.32,
+            "PVA": 0.11
+        }
     },
-    "carbonImpact": {
-        "STAINLESS STEEL": 4.91,
-        "MDF LIGHT": 0.818,
-        "RECYCLED CARDBOARD": 0.725,
-        "RECYCLED POLYESTER": 4.18,
-        "MICROFIBER": 12.6,
-        "ALUMINIUM": 7.6,
-        "PAPER": 1.27,
-        "PMMA": 1.18,
-        "PP": 2.32,
-        "PVA": 0.11
-    }
-}
+    // Continuer pour les autres pays...
+]

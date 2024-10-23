@@ -77,6 +77,8 @@
 
     </style>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="container">
@@ -112,15 +114,26 @@
       })();
     </script>
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzpI692v8PsQ0PWdcGtJYgJIFf6OIfMFE",
+            authDomain: "pjt-ensam-cartier.firebaseapp.com",
+            projectId: "pjt-ensam-cartier",
+            storageBucket: "pjt-ensam-cartier.appspot.com",
+            messagingSenderId: "708937457593",
+            appId: "1:708937457593:web:116f36369aab30e4616068",
+            measurementId: "G-2EPWZY0EP0"
+
+        };
+        
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
         async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
-
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://localhost:3000/login", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
 
             const response = grecaptcha.getResponse();
             if (response.length === 0) {
@@ -133,28 +146,16 @@
                 return false;
             }
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        document.getElementById('errorMessage').innerText = 'Connexion réussie';
-                        if (rememberMe) {
-                            // Stocker les informations de connexion pour les futures sessions
-                            localStorage.setItem('username', username);
-                            localStorage.setItem('rememberMe', true);
-                        } else {
-                            localStorage.removeItem('username');
-                            localStorage.removeItem('rememberMe');
-                        }
-
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        document.getElementById('errorMessage').innerText = 'Nom d\'utilisateur ou mot de passe incorrect.';
-                    }
+            try {
+                await auth.signInWithEmailAndPassword(username, password);
+                alert("Connexion réussie");
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('userEmail', username);
                 }
-            };
-            // Envoyer les données
-            const data = JSON.stringify({ email: username, password: password });
-            xhr.send(data);
+                window.location.href = 'index.html';
+            } catch(error) {
+                    document.getElementById('errorMessage').innerText = "Erreur : " + error.message;
+            }
         }
 
         function handleSignup(event) {
@@ -162,40 +163,28 @@
             const email = document.getElementById('email').value;
             // Ici vous pouvez ajouter le code pour envoyer un email avec le mot de passe
             const generatedPassword = Math.random().toString(36).slice(-8); // Génère un mot de passe aléatoire
+const templateParams = {
+                to_name: email,
+                to_email: email,
+                from_name: 'PJT S9 team',
+                subject: 'Votre mot de passe',
+                message: `Hello,\n\nYour new password is : ${generatedPassword}\n\nPlease connect with your ID : ${email}\n\nThank you.`
+            };
+            emailjs.send("service_y8hi5kg", "template_vqvfpvv", templateParams)
+                .then(() => {
+                    alert('Un email a été envoyé à ' + email + ' avec votre mot de passe.');
+                    auth.createUserWithEmailAndPassword(email, generatedPassword);
+                })
+                .catch((error) => {
+                 alert('Erreur lors de l\'envoi de l\'email : ' + error.text);
+                })
 
-            // Créer une requête XMLHttpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://localhost:3000/register", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 201) {
-                        alert('Inscription réussie. Votre mot de passe a été envoyé par email.');
-
-                        const templateParams = {
-                            to_name: email,
-                            to_email: email,
-                            from_name: 'PJT S9 team',
-                            subject: 'Votre mot de passe',
-                            message: `Hello,\n\nYour new password is : ${generatedPassword}\n\nPlease connect with your ID : ${email}\n\nThank you.`
-                        };
-                        emailjs.send("service_y8hi5kg", "template_vqvfpvv", templateParams)
-                            .then(() => {
-                                alert('Un email a été envoyé à ' + email + ' avec votre mot de passe.');
-                            })
-                            .catch((error) => {
-                                alert('Erreur lors de l\'envoi de l\'email : ' + error.text);
-                            });
-                        } else {
-                            alert('Erreur lors de l\'inscription.');
-                        }
-                    }
-                };
-
-                // Envoyer les données
-                const data = JSON.stringify({ email: email, password: generatedPassword });
-                xhr.send(data);
+                .then(()=> {
+                    alert("Inscription réussie. Vous pouvez maintenant vous connecter.");
+                })
+                .catch(error => {
+                    alert("Erreur : " + error.message);
+                });            
         }
 
 
@@ -207,48 +196,14 @@
               alert('Veuillez entrer votre nom d\'utilisateur pour réinitialiser le mot de passe.');
           } else {
             alert('Un lien de réinitialisation du mot de passe a été envoyé à votre adresse e-mail.');
-            // Créer une requête XMLHttpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://localhost:3000/register", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 201) {
-                        alert('Inscription réussie. Votre mot de passe a été envoyé par email.');
-
-                        const templateParams = {
-                            to_name: username,
-                            to_email: username,
-                            from_name: 'PJT S9 team',
-                            subject: 'Votre mot de passe',
-                            message: `Hello,\n\nYour new password is : ${generatedPassword}\n\nPlease connect with your ID : ${username}\n\nThank you.`
-                        };
-                        emailjs.send("service_y8hi5kg", "template_vqvfpvv", templateParams)
-                            .then(() => {
-                                alert('Un email a été envoyé à ' + username + ' avec votre mot de passe.');
-                            })
-                            .catch((error) => {
-                                alert('Erreur lors de l\'envoi de l\'email : ' + error.text);
-                            });
-                        } else {
-                            alert('Erreur lors de l\'inscription.');
-                        }
-                    }
-                };
-
-                // Envoyer les données
-                const data = JSON.stringify({ email: username, password: generatedPassword });
-                xhr.send(data);
-
           }
         }
 
         // Initialisation du captcha lors du chargement de la page
         window.onload = function() {
             const rememberMe = localStorage.getItem('rememberMe');
-            if (rememberMe) {
-                document.getElementById('username').value = localStorage.getItem('username');
+            if (rememberedEmail) {
+                document.getElementById('username').value = rememberedEmail;
                 document.getElementById('rememberMe').checked = true;
             }
         };

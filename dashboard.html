@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="styleschat.css">
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@1.1.0/dist/transformers.min.js"></script>
+    <script src="scriptchat.js"></script>
 </head>
 <body>
     <div class="header-image">
@@ -48,7 +49,22 @@
     </div>
 
     <button id="chat-button">💬</button>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            if (typeof window.transformers === 'undefined') {
+                console.error("Transformers.js n'a pas été chargé correctement.");
+                return;
+            }
 
-    <script src="scriptchat.js"></script>
+            // Charger le tokenizer et utiliser transformers ici
+            try {
+                const tokenizer = await window.transformers.tokenizer('Xenova/gpt2');
+                console.log("Tokenizer chargé avec succès");
+                // Utiliser le tokenizer pour encoder des textes...
+            } catch (error) {
+                console.error("Erreur lors du chargement du tokenizer:", error);
+            }
+        });
+    </script>
 </body>
 </html>

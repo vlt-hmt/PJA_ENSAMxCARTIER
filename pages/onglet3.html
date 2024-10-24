@@ -43,7 +43,18 @@
                 <option value="UK">Royaume-Uni</option>
                 <option value="China">Chine</option>
                 <option value="USA">États-Unis</option>
-            </select>
+                <option value="RLGE Export">RLGE Export</option>
+                <option value="RLG AFRICA">RLG Afrique</option>
+                <option value="Brazil">Brésil</option>
+                <option value="Korea">Corée</option>
+                <option value="Hong Kong">Hong Kong</option>
+                <option value="Japan">Japno</option>
+                <option value="Mexico">Mexique</option>
+                <option value="Miami">Miami</option>
+                <option value="Dubai">Dubai</option>
+                <option value="Singapore">Singapour</option>
+                <option value="Taiwan">Taiwan</option>
+           </select>
         </div>
         <canvas id="pieChartMass" width="400" height="400"></canvas>
         <canvas id="pieChartCO2" width="400" height="400"></canvas>
@@ -54,143 +65,134 @@
     </div>
 
     <script>
-        let jsonData;
-        let pieChartMass, pieChartCO2;
+           let data = {}; // Les données seront chargées dynamiquement
 
-        const materialColors = {
-            "MDF LIGHT": "#FF6384",
-            "RECYCLED CARDBOARD": "#36A2EB",
-            "RECYCLED POLYESTER": "#FFCE56",
-            "MICROFIBER": "#4BC0C0",
-            "ALUMINIUM": "#9966FF",
-            "PAPER": "#FF9F40",
-            "RECYCLED PMMA": "#C9CBCF",
-            "RECYCLED PP": "#E7E9ED",
-            "PVA": "#8BC34A",
-            "PET": "#00ACC1"
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("../static/json/pays_mat.json")
+            .then(response => response.json())
+            .then(jsonData => {
+                data = jsonData;
+                const countrySelect = document.getElementById("country-select");
+                Object.keys(data).forEach(country => {
+                    const option = document.createElement("option");
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+                updateChart(); // Met à jour le graphique avec les données chargées
+            })
+            .catch(error => {
+                console.error("Erreur lors du chargement des données JSON :", error);
+             });
+        });
+        const materials = ["STAINLESS STEEL", "MDF LIGHT", "RECYCLED CARDBOARD", "RECYCLED POLYESTER", "MICROFIBER", "ALUMINIUM", "PAPER", "PMMA", "PP", "PVA"];
+        const carbonImpact = {
+            "MDF LIGHT": 0.818,
+            "STAINLESS STEEL": 4.91,
+            "RECYCLED CARDBOARD": 0.725,
+            "RECYCLED POLYESTER": 4.18,
+            "MICROFIBER": 12.6,
+            "ALUMINIUM": 7.6,
+            "PAPER": 1.27,
+            "PMMA": 1.18,
+            "PP": 2.32,
+            "PVA": 0.11,
         };
 
-        fetch('../static/json/materials.json')
-            .then(response => response.json())
-            .then(data => {
-                if (!Array.isArray(data)) {
-                    console.error('Les données JSON pour materials.json ne sont pas un tableau.');
-                    return;
-                }
-                jsonData = data;
-                const labels = data.map(item => item["Material Family"]);
-                const co2Data = data.map(item => item["Impact CO2 (t CO2e)"]);
-                const weightData = data.map(item => item["Material weight (t)"]);
+        const densities = {
+            "MDF LIGHT": 700,
+            "STAINLESS STEEL": 8000,
+            "RECYCLED CARDBOARD": 690,
+            "RECYCLED POLYESTER": 1380,
+            "MICROFIBER": 1500,
+            "ALUMINIUM": 2700,
+            "PAPER": 1200,
+            "PMMA": 1180,
+            "PP": 900,
+            "PVA": 1300
+        };
 
-                const ctx = document.getElementById('materialsChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Impact CO2 (t CO2e)',
-                            data: co2Data,
-                            backgroundColor: labels.map(label => materialColors[label] || 'rgba(75, 192, 192, 0.5)'),
-                        }, {
-                            label: 'Material Weight (t)',
-                            data: weightData,
-                            backgroundColor: labels.map(label => materialColors[label] || 'rgba(255, 99, 132, 0.5)'),
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
+        const materialColors = [
+            '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+            '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+        ];
 
-                fetch('../static/json/pays_mat_co2.json')
-                    .then(response => response.json())
-                    .then(countryData => {
-                        if (!Array.isArray(countryData)) {
-                            console.error('Les données JSON pour pays_mat_co2.json ne sont pas un tableau.');
-                            return;
-                        }
-                        createPieCharts(document.getElementById('countrySelector').value, countryData);
-                    })
-                    .catch(error => console.error('Erreur lors du chargement du fichier JSON des pays:', error));
-            })
-            .catch(error => console.error('Erreur lors du chargement du JSON:', error));
-
-        function getCountryData(country, countryData) {
-            return Array.isArray(countryData) ? countryData.find(item => item["Country"] === country) : null;
-        }
-
-        function createPieCharts(country, countryData) {
-            const countryInfo = getCountryData(country, countryData);
-            if (!countryInfo) {
-                console.warn(`Aucune donnée trouvée pour le pays sélectionné : ${country}`);
-                return;
-            }
-
-            const labels = Object.keys(countryInfo).slice(1);
-            const masses = Object.values(countryInfo).slice(1).map(val => parseFloat(val.replace(",", ".")));
-            const totalMass = masses.reduce((acc, val) => acc + val, 0);
-            const massPercentages = masses.map(mass => (mass / totalMass) * 100);
-            const co2Percentages = masses.map((mass, index) => mass * jsonData[index]["Impact CO2 (t CO2e)"] / totalMass);
-
-            if (pieChartMass) pieChartMass.destroy();
-            if (pieChartCO2) pieChartCO2.destroy();
-
-            const ctxMass = document.getElementById('pieChartMass').getContext('2d');
-            pieChartMass = new Chart(ctxMass, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: massPercentages,
-                        backgroundColor: labels.map(label => materialColors[label] || '#CCCCCC'),
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        title: { display: true, text: 'Pourcentage de masse par matériau' }
-                    }
-                }
+        document.addEventListener("DOMContentLoaded", function() {
+            const countrySelect = document.getElementById("country-select");
+            Object.keys(data).forEach(country => {
+                const option = document.createElement("option");
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
             });
-
-            const ctxCO2 = document.getElementById('pieChartCO2').getContext('2d');
-            pieChartCO2 = new Chart(ctxCO2, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: co2Percentages,
-                        backgroundColor: labels.map(label => materialColors[label] || '#CCCCCC'),
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        title: { display: true, text: 'Pourcentage de CO2 par matériau' }
-                    }
-                }
-            });
-        }
-
-        document.getElementById('countrySelector').addEventListener('change', (event) => {
-            const selectedCountry = event.target.value;
-            fetch('../static/json/pays_mat_co2.json')
-                .then(response => response.json())
-                .then(countryData => {
-                    if (!Array.isArray(countryData)) {
-                        console.error('Les données JSON pour pays_mat_co2.json ne sont pas un tableau.');
-                        return;
-                    }
-                    createPieCharts(selectedCountry, countryData);
-                })
-                .catch(error => console.error('Erreur lors du chargement du fichier JSON des pays:', error));
+            updateChart();
         });
-    </script>
+
+        function updateChart() {
+            const country = document.getElementById("country-select").value || "Germany";
+            const values = data[country];
+
+            updatePieChart('chart', values, 'Répartition des Matériaux en ' + country + ' (Poids)', materials);
+            updateTable(country, values);
+        }
+
+        function updatePieChart(chartId, values, title, labels) {
+            const chartData = [{
+                values: values,
+                labels: labels,
+                type: 'pie',
+                textinfo: 'label+percent',
+                hoverinfo: 'label+percent+name+value',
+                marker: { colors: materialColors }
+            }];
+
+            const layout = {
+                title: title
+            };
+
+            Plotly.newPlot(chartId, chartData, layout);
+        }
+
+        function updateTable(country, values) {
+            const tableBody = document.querySelector("#summary-table tbody");
+            tableBody.innerHTML = "";
+
+            let totalQuantity = 0;
+            let totalCarbonImpact = 0;
+            let totalVolume = 0;
+            const carbonImpacts = [];
+            const volumes = [];
+
+            materials.forEach((material, index) => {
+                const quantity = values[index];
+                const carbonImpactPerKg = carbonImpact[material.toUpperCase()] || 0;
+                const carbonImpactTotal = quantity * carbonImpactPerKg;
+                const density = densities[material.toUpperCase()] || 1;
+                const volume = quantity / density;
+
+                totalQuantity += quantity;
+                totalCarbonImpact += carbonImpactTotal;
+                totalVolume += volume;
+                carbonImpacts.push(carbonImpactTotal);
+                volumes.push(volume);
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${material}</td>
+                    <td>${quantity.toFixed(2)}</td>
+                    <td>${carbonImpactTotal.toFixed(2)}</td>
+                    <td>${volume.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById("total-quantity").textContent = totalQuantity.toFixed(2);
+            document.getElementById("total-carbon-impact").textContent = totalCarbonImpact.toFixed(2);
+            document.getElementById("total-volume").textContent = totalVolume.toFixed(2);
+
+            updatePieChart('carbon-chart', carbonImpacts, 'Répartition des Impacts Carbone par Matériaux', materials);
+            updatePieChart('volume-chart', volumes, 'Répartition des Volumes par Matériaux', materials);
+        }
+    </script> 
 </body>
 </html>

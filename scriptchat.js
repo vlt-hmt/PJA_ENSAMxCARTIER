@@ -35,8 +35,11 @@ async function getBotResponse(userMessage) {
         // Encoder le message utilisateur en tant qu'input_id
         const inputIds = tokenize(userMessage); // Fonction de tokenisation à créer (voir plus bas)
 
+        // Convertir l'array en BigInt64Array
+        const inputBigIntIds = new BigInt64Array(inputIds.map(id => BigInt(id)));
+        
         // Créer un tensor d'entrée avec la forme attendue (1, sequence_length)
-        const inputTensor = new ort.Tensor('int64', inputIds, [1, inputIds.length]);
+        const inputTensor = new ort.Tensor('int64', inputBigIntIds, [1, inputIds.length]);
 
         // Exécuter l'inférence
         const feeds = { input_ids: inputTensor };

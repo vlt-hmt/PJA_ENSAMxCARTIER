@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="styleschat.css">
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@1.1.0/dist/transformers.min.js"></script>
-    <script src="scriptchat.js"></script>
 </head>
 <body>
     <div class="header-image">
@@ -49,6 +48,7 @@
     </div>
 
     <button id="chat-button">💬</button>
+    <script src="scriptchat.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", async function () {
             if (typeof window.transformers === 'undefined') {

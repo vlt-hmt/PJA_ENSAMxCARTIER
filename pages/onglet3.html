@@ -5,108 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graphiques Circulaires par Pays</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        .chart-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .chart {
-            flex: 1;
-            max-width: 600px;
-            width: 100%;
-            min-width: 300px;
-        }
-        table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 80%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css"> <!-- Ton fichier CSS global -->
 </head>
 <body>
-    <h1>Graphique de Matériaux par Pays</h1>
-    <label for="country-select">Sélectionnez un pays :</label>
-    <select id="country-select" onchange="updateChart()">
-        <!-- Les options de pays seront ajoutées par JavaScript -->
-    </select>
-    <div class="chart-container">
-        <div id="chart" class="chart"></div>
-        <div id="volume-chart" class="chart"></div>
-        <div id="carbon-chart" class="chart"></div>
+    <div class="header-image">
+        <div class="header-overlay">ENSAM x Cartier</div>
     </div>
-    <table id="summary-table">
-        <thead>
-            <tr>
-                <th>Matériau</th>
-                <th>Quantité (kg)</th>
-                <th>Impact Carbone (kgCO2)</th>
-                <th>Volume (m³)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Les données seront ajoutées par JavaScript -->
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Total</th>
-                <th id="total-quantity">0</th>
-                <th id="total-carbon-impact">0</th>
-                <th id="total-volume">0</th>
-            </tr>
-        </tfoot>
-    </table>
+    <header class="menu">
+        <div id="menu-container"></div>
+        <script>
+            fetch('../menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                })
+                .catch(error => console.error('Erreur lors du chargement du menu :', error));
+        </script>
+    </header>
+    <main class="content">
+        <h1>Données Matériaux Campagne EOY2024</h1>
+        <p>D'après les données de la campagne EOY 2024, l'histogramme ci-dessous représente l'impact Carbone théorique calculé par la maison Cartier à l'aide de coefficients en kgCO2eq/kg matière.</p>
+        <p>Sous cet histogramme, il est possible de sélectionner un pays et d'avoir plus d'informations localement par pays.</p>
+        
+        <div class="chart-container">
+            <div id="chart" class="chart"></div>
+            <div id="volume-chart" class="chart"></div>
+            <div id="carbon-chart" class="chart"></div>
+        </div>
+        <label for="country-select">Sélectionnez un pays :</label>
+        <select id="country-select" onchange="updateChart()">
+            <!-- Les options de pays seront ajoutées par JavaScript -->
+        </select>
+        
+        <table id="summary-table">
+            <thead>
+                <tr>
+                    <th>Matériau</th>
+                    <th>Quantité (kg)</th>
+                    <th>Impact Carbone (kgCO2)</th>
+                    <th>Volume (m³)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les données seront ajoutées par JavaScript -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th id="total-quantity">0</th>
+                    <th id="total-carbon-impact">0</th>
+                    <th id="total-volume">0</th>
+                </tr>
+            </tfoot>
+        </table>
+    </main>
     <script>
         let data = {}; // Les données seront chargées dynamiquement
 
-        const materials = ["STAINLESS STEEL", "MDF LIGHT", "RECYCLED CARDBOARD", "RECYCLED POLYESTER", "MICROFIBER", "ALUMINIUM", "PAPER", "PMMA", "PP", "PVA"];
-        const carbonImpact = {
-            "MDF LIGHT": 0.818,
-            "STAINLESS STEEL": 4.91,
-            "RECYCLED CARDBOARD": 0.725,
-            "RECYCLED POLYESTER": 4.18,
-            "MICROFIBER": 12.6,
-            "ALUMINIUM": 7.6,
-            "PAPER": 1.27,
-            "PMMA": 1.18,
-            "PP": 2.32,
-            "PVA": 0.11,
-        };
-
-        const densities = {
-            "MDF LIGHT": 700,
-            "STAINLESS STEEL": 8000,
-            "RECYCLED CARDBOARD": 690,
-            "RECYCLED POLYESTER": 1380,
-            "MICROFIBER": 1500,
-            "ALUMINIUM": 2700,
-            "PAPER": 1200,
-            "PMMA": 1180,
-            "PP": 900,
-            "PVA": 1300
-        };
-
-        const materialColors = [
-            '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-            '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
-        ];
-
         document.addEventListener("DOMContentLoaded", function() {
-            fetch("../static/json/pays_mat.json")
+            fetch("https://<your-github-username>.github.io/<repository-name>/data.json")
                 .then(response => response.json())
                 .then(jsonData => {
                     data = jsonData;
@@ -156,8 +113,6 @@
             let totalQuantity = 0;
             let totalCarbonImpact = 0;
             let totalVolume = 0;
-            const carbonImpacts = [];
-            const volumes = [];
 
             materials.forEach((material, index) => {
                 const quantity = values[index];
@@ -169,8 +124,6 @@
                 totalQuantity += quantity;
                 totalCarbonImpact += carbonImpactTotal;
                 totalVolume += volume;
-                carbonImpacts.push(carbonImpactTotal);
-                volumes.push(volume);
 
                 const row = document.createElement("tr");
                 row.innerHTML = `

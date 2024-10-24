@@ -106,7 +106,7 @@
         ];
 
         document.addEventListener("DOMContentLoaded", function() {
-            fetch("https://<your-github-username>.github.io/<repository-name>/pays_mat.json")
+            fetch("../static/json/pays_mat.json")
                 .then(response => response.json())
                 .then(jsonData => {
                     data = jsonData;

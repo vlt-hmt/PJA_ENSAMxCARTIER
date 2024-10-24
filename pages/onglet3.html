@@ -86,6 +86,7 @@
             "PP": 2.32,
             "PVA": 0.11,
         };
+
         const densities = {
             "MDF LIGHT": 700,
             "STAINLESS STEEL": 8000,
@@ -98,12 +99,14 @@
             "PP": 900,
             "PVA": 1300
         };
+
         const materialColors = [
             '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
             '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
         ];
+
         document.addEventListener("DOMContentLoaded", function() {
-            fetch("../static/json/pays_mat.json")
+            fetch("https://<your-github-username>.github.io/<repository-name>/pays_mat.json")
                 .then(response => response.json())
                 .then(jsonData => {
                     data = jsonData;
@@ -132,29 +135,43 @@
         function updatePieChart(chartId, values, title, labels) {
             const chartData = [{
                 values: values,
-@@ -113,6 +148,47 @@ <h1>Données Matériaux Campagne EOY2024</h1>
+                labels: labels,
+                type: 'pie',
+                textinfo: 'label+percent',
+                hoverinfo: 'label+percent+name+value',
+                marker: { colors: materialColors }
+            }];
+
+            const layout = {
+                title: title
+            };
 
             Plotly.newPlot(chartId, chartData, layout);
         }
+
         function updateTable(country, values) {
             const tableBody = document.querySelector("#summary-table tbody");
             tableBody.innerHTML = "";
+
             let totalQuantity = 0;
             let totalCarbonImpact = 0;
             let totalVolume = 0;
             const carbonImpacts = [];
             const volumes = [];
+
             materials.forEach((material, index) => {
                 const quantity = values[index];
                 const carbonImpactPerKg = carbonImpact[material.toUpperCase()] || 0;
                 const carbonImpactTotal = quantity * carbonImpactPerKg;
                 const density = densities[material.toUpperCase()] || 1;
                 const volume = quantity / density;
+
                 totalQuantity += quantity;
                 totalCarbonImpact += carbonImpactTotal;
                 totalVolume += volume;
                 carbonImpacts.push(carbonImpactTotal);
                 volumes.push(volume);
+
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${material}</td>
@@ -164,9 +181,11 @@
                 `;
                 tableBody.appendChild(row);
             });
+
             document.getElementById("total-quantity").textContent = totalQuantity.toFixed(2);
             document.getElementById("total-carbon-impact").textContent = totalCarbonImpact.toFixed(2);
             document.getElementById("total-volume").textContent = totalVolume.toFixed(2);
+
             updatePieChart('carbon-chart', carbonImpacts, 'Répartition des Impacts Carbone par Matériaux', materials);
             updatePieChart('volume-chart', volumes, 'Répartition des Volumes par Matériaux', materials);
         }

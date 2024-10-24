@@ -65,26 +65,45 @@
     </div>
 
     <script>
-           let data = {}; // Les données seront chargées dynamiquement
+ let data = {}; // Les données seront chargées dynamiquement
 
-    document.addEventListener("DOMContentLoaded", function() {
-        fetch("../static/json/pays_mat.json")
-            .then(response => response.json())
-            .then(jsonData => {
-                data = jsonData;
-                const countrySelect = document.getElementById("country-select");
-                Object.keys(data).forEach(country => {
-                    const option = document.createElement("option");
-                    option.value = country;
-                    option.textContent = country;
-                    countrySelect.appendChild(option);
-                });
-                updateChart(); // Met à jour le graphique avec les données chargées
-            })
-            .catch(error => {
-                console.error("Erreur lors du chargement des données JSON :", error);
-             });
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("../static/json/pays_mat.json")
+        .then(response => response.json())
+        .then(jsonData => {
+            data = jsonData;
+            const countrySelect = document.getElementById("countrySelector");
+            Object.keys(data).forEach(country => {
+                const option = document.createElement("option");
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+            updateChart(); // Met à jour le graphique avec les données chargées seulement après avoir ajouté les options
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement des données JSON :", error);
         });
+});
+
+function updateChart() {
+    const countrySelect = document.getElementById("countrySelector");
+    if (!countrySelect) {
+        console.error("Élément select non trouvé !");
+        return;
+    }
+
+    const country = countrySelect.value || "Germany";
+    const values = data[country];
+
+    if (!values) {
+        console.error("Aucune donnée disponible pour ce pays :", country);
+        return;
+    }
+
+    updatePieChart('materialsChart', values, 'Répartition des Matériaux en ' + country + ' (Poids)', materials);
+    // Assurez-vous que les fonctions comme updateTable existent et sont appelées ici.
+}
         const materials = ["STAINLESS STEEL", "MDF LIGHT", "RECYCLED CARDBOARD", "RECYCLED POLYESTER", "MICROFIBER", "ALUMINIUM", "PAPER", "PMMA", "PP", "PVA"];
         const carbonImpact = {
             "MDF LIGHT": 0.818,

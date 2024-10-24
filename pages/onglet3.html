@@ -1,11 +1,12 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphiques Circulaires par Pays</title>
+    <title>ENSAM x Cartier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="style.css"> <!-- Ton fichier CSS global -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
     <div class="header-image">
@@ -26,122 +27,75 @@
         <h1>Données Matériaux Campagne EOY2024</h1>
         <p>D'après les données de la campagne EOY 2024, l'histogramme ci-dessous représente l'impact Carbone théorique calculé par la maison Cartier à l'aide de coefficients en kgCO2eq/kg matière.</p>
         <p>Sous cet histogramme, il est possible de sélectionner un pays et d'avoir plus d'informations localement par pays.</p>
-        
-        <div class="chart-container">
-            <div id="chart" class="chart"></div>
-            <div id="volume-chart" class="chart"></div>
-            <div id="carbon-chart" class="chart"></div>
+        <canvas id="materialsChart" width="800" height="400"></canvas>
+        <div>
+            <label for="countrySelector">Sélectionnez un pays :</label>
+            <select id="countrySelector">
+                <!-- Options des pays -->
+            </select>
         </div>
-        <label for="country-select">Sélectionnez un pays :</label>
-        <select id="country-select" onchange="updateChart()">
-            <!-- Les options de pays seront ajoutées par JavaScript -->
-        </select>
-        
-        <table id="summary-table">
-            <thead>
-                <tr>
-                    <th>Matériau</th>
-                    <th>Quantité (kg)</th>
-                    <th>Impact Carbone (kgCO2)</th>
-                    <th>Volume (m³)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Les données seront ajoutées par JavaScript -->
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th>Total</th>
-                    <th id="total-quantity">0</th>
-                    <th id="total-carbon-impact">0</th>
-                    <th id="total-volume">0</th>
-                </tr>
-            </tfoot>
-        </table>
+        <canvas id="pieChartMass" width="400" height="400"></canvas>
+        <canvas id="pieChartCO2" width="400" height="400"></canvas>
     </main>
+    <div class="footer">
+        <p>&copy; 2024/2025 Baptiste Légier, Pierre-Vincent Arcade, Valentin Hyaumet. All rights reserved.</p>
+    </div>
     <script>
         let data = {}; // Les données seront chargées dynamiquement
 
         document.addEventListener("DOMContentLoaded", function() {
-            fetch("https://<your-github-username>.github.io/<repository-name>/data.json")
+            fetch("../static/json/pays_mat.json")
                 .then(response => response.json())
                 .then(jsonData => {
                     data = jsonData;
-                    const countrySelect = document.getElementById("country-select");
-                    Object.keys(data).forEach(country => {
-                        const option = document.createElement("option");
-                        option.value = country;
-                        option.textContent = country;
-                        countrySelect.appendChild(option);
-                    });
-                    updateChart(); // Met à jour le graphique avec les données chargées
+                    const countrySelect = document.getElementById("countrySelector");
+                    if (countrySelect) {
+                        // Ajouter les options de pays après avoir chargé les données
+                        Object.keys(data).forEach(country => {
+                            const option = document.createElement("option");
+                            option.value = country;
+                            option.textContent = country;
+                            countrySelect.appendChild(option);
+                        });
+                        // Sélectionner un pays par défaut
+                        countrySelect.value = "Germany";
+                        updateChart();
+                    } else {
+                        console.error("Élément select non trouvé !");
+                    }
                 })
                 .catch(error => {
                     console.error("Erreur lors du chargement des données JSON :", error);
                 });
+            // Mettre à jour le graphique lors du changement de pays
+            document.getElementById("countrySelector").addEventListener("change", updateChart);
         });
 
         function updateChart() {
-            const country = document.getElementById("country-select").value || "Germany";
+            const countrySelect = document.getElementById("countrySelector");
+            if (!countrySelect) {
+                console.error("Élément select non trouvé !");
+                return;
+            }
+            const country = countrySelect.value;
             const values = data[country];
 
-            updatePieChart('chart', values, 'Répartition des Matériaux en ' + country + ' (Poids)', materials);
-            updateTable(country, values);
+            if (!values) {
+                console.error("Aucune donnée disponible pour ce pays :", country);
+                return;
+            }
+            updatePieChart('materialsChart', values, 'Répartition des Matériaux en ' + country + ' (Poids)', materials);
         }
 
+        const materials = ["STAINLESS STEEL", "MDF LIGHT", "RECYCLED CARDBOARD", "RECYCLED POLYESTER", "MICROFIBER", "ALUMINIUM", "PAPER", "PMMA", "PP", "PVA"];
+        const materialColors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
         function updatePieChart(chartId, values, title, labels) {
             const chartData = [{
                 values: values,
-                labels: labels,
-                type: 'pie',
-                textinfo: 'label+percent',
-                hoverinfo: 'label+percent+name+value',
-                marker: { colors: materialColors }
-            }];
-
-            const layout = {
-                title: title
-            };
+@@ -113,6 +148,47 @@ <h1>Données Matériaux Campagne EOY2024</h1>
 
             Plotly.newPlot(chartId, chartData, layout);
         }
-
-        function updateTable(country, values) {
-            const tableBody = document.querySelector("#summary-table tbody");
-            tableBody.innerHTML = "";
-
-            let totalQuantity = 0;
-            let totalCarbonImpact = 0;
-            let totalVolume = 0;
-
-            materials.forEach((material, index) => {
-                const quantity = values[index];
-                const carbonImpactPerKg = carbonImpact[material.toUpperCase()] || 0;
-                const carbonImpactTotal = quantity * carbonImpactPerKg;
-                const density = densities[material.toUpperCase()] || 1;
-                const volume = quantity / density;
-
-                totalQuantity += quantity;
-                totalCarbonImpact += carbonImpactTotal;
-                totalVolume += volume;
-
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${material}</td>
-                    <td>${quantity.toFixed(2)}</td>
-                    <td>${carbonImpactTotal.toFixed(2)}</td>
-                    <td>${volume.toFixed(2)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            document.getElementById("total-quantity").textContent = totalQuantity.toFixed(2);
-            document.getElementById("total-carbon-impact").textContent = totalCarbonImpact.toFixed(2);
-            document.getElementById("total-volume").textContent = totalVolume.toFixed(2);
-
-            updatePieChart('carbon-chart', carbonImpacts, 'Répartition des Impacts Carbone par Matériaux', materials);
-            updatePieChart('volume-chart', volumes, 'Répartition des Volumes par Matériaux', materials);
-        }
-    </script>
+    </script> 
 </body>
 </html>

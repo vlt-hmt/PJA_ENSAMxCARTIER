@@ -32,8 +32,11 @@ async function getBotResponse(userMessage) {
         const modelUrl = 'https://huggingface.co/PJJT/distilgpt2-onnx/resolve/main/distilgpt2.onnx'; // Lien de téléchargement direct
         const session = await ort.InferenceSession.create(modelUrl);
 
-        // Préparer l'entrée pour le modèle (simplifié ici)
-        const inputTensor = new ort.Tensor('int64', [userMessage.length], [1]);
+        // Encoder le message utilisateur en tant qu'input_id
+        const inputIds = tokenize(userMessage); // Fonction de tokenisation à créer (voir plus bas)
+
+        // Créer un tensor d'entrée avec la forme attendue (1, sequence_length)
+        const inputTensor = new ort.Tensor('int64', inputIds, [1, inputIds.length]);
 
         // Exécuter l'inférence
         const feeds = { input_ids: inputTensor };
@@ -46,5 +49,11 @@ async function getBotResponse(userMessage) {
         console.error('Erreur:', error);
         return "Désolé, une erreur est survenue lors de la génération de la réponse.";
     }
+}
+
+async function tokenize(text) {
+    const tokenizer = await window.transformers.tokenizer('Xenova/gpt2');
+    const tokens = tokenizer.encode(text);
+    return tokens.ids; // Cela renvoie un tableau d'IDs approprié pour le modèle
 }
 
